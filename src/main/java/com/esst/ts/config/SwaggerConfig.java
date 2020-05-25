@@ -27,9 +27,9 @@ public class SwaggerConfig {
     }
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("force项目接口文档")
-                .description("force项目接口测试")
-                .version("1.6.3")
+                .title("")
+                .description("")
+                .version("")
                 .termsOfServiceUrl("")
                 .license("")
                 .licenseUrl("")
