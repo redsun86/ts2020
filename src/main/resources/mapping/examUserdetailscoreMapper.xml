@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.examUserdetailscoreMapper" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.examUserdetailscore" >
+    <id column="UserDetailScoreID" property="userdetailscoreid" jdbcType="INTEGER" />
+    <result column="UDS_ExamID" property="udsExamid" jdbcType="INTEGER" />
+    <result column="UDS_ExamModel" property="udsExammodel" jdbcType="INTEGER" />
+    <result column="UDS_PaperID" property="udsPaperid" jdbcType="INTEGER" />
+    <result column="UDS_UserID" property="udsUserid" jdbcType="INTEGER" />
+    <result column="UDS_StartTime" property="udsStarttime" jdbcType="TIMESTAMP" />
+    <result column="UDS_EndTime" property="udsEndtime" jdbcType="TIMESTAMP" />
+    <result column="UDS_ObjectiveScore" property="udsObjectivescore" jdbcType="DOUBLE" />
+    <result column="UDS_SubjectiveScore" property="udsSubjectivescore" jdbcType="DOUBLE" />
+    <result column="UDS_SubSimuScore" property="udsSubsimuscore" jdbcType="VARCHAR" />
+    <result column="UDS_Score" property="udsScore" jdbcType="DOUBLE" />
+    <result column="UDS_PercentScore" property="udsPercentscore" jdbcType="DOUBLE" />
+    <result column="UDS_IsExamed" property="udsIsexamed" jdbcType="INTEGER" />
+    <result column="UDS_MarkingUserID" property="udsMarkinguserid" jdbcType="INTEGER" />
+    <result column="UDS_IsMarked" property="udsIsmarked" jdbcType="INTEGER" />
+    <result column="UDS_MarkingTime" property="udsMarkingtime" jdbcType="TIMESTAMP" />
+    <result column="UDS_SimnetScoreReport" property="udsSimnetscorereport" jdbcType="VARCHAR" />
+    <result column="UDS_IsSend" property="udsIssend" jdbcType="INTEGER" />
+    <result column="UDS_SendIp" property="udsSendip" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.esst.ts.model.examUserdetailscoreWithBLOBs" extends="BaseResultMap" >
+    <result column="UDS_UserSingleAnswer" property="udsUsersingleanswer" jdbcType="LONGVARCHAR" />
+    <result column="UDS_UserMultipleAnswer" property="udsUsermultipleanswer" jdbcType="LONGVARCHAR" />
+    <result column="UDS_UserJudgeAnswer" property="udsUserjudgeanswer" jdbcType="LONGVARCHAR" />
+    <result column="UDS_UserFillBlankAnswer" property="udsUserfillblankanswer" jdbcType="LONGVARCHAR" />
+    <result column="UDS_UserEssayAnswer" property="udsUseressayanswer" jdbcType="LONGVARCHAR" />
+    <result column="UDS_UserCaculateAnswer" property="udsUsercaculateanswer" jdbcType="LONGVARCHAR" />
+    <result column="UDS_UserSingleScore" property="udsUsersinglescore" jdbcType="LONGVARCHAR" />
+    <result column="UDS_UserMultipleScore" property="udsUsermultiplescore" jdbcType="LONGVARCHAR" />
+    <result column="UDS_UserJudgeScore" property="udsUserjudgescore" jdbcType="LONGVARCHAR" />
+    <result column="UDS_UserFillBlankScore" property="udsUserfillblankscore" jdbcType="LONGVARCHAR" />
+    <result column="UDS_UserEssayScore" property="udsUseressayscore" jdbcType="LONGVARCHAR" />
+    <result column="UDS_UserCaculateScore" property="udsUsercaculatescore" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    UserDetailScoreID, UDS_ExamID, UDS_ExamModel, UDS_PaperID, UDS_UserID, UDS_StartTime, 
+    UDS_EndTime, UDS_ObjectiveScore, UDS_SubjectiveScore, UDS_SubSimuScore, UDS_Score, 
+    UDS_PercentScore, UDS_IsExamed, UDS_MarkingUserID, UDS_IsMarked, UDS_MarkingTime, 
+    UDS_SimnetScoreReport, UDS_IsSend, UDS_SendIp
+  </sql>
+  <sql id="Blob_Column_List" >
+    UDS_UserSingleAnswer, UDS_UserMultipleAnswer, UDS_UserJudgeAnswer, UDS_UserFillBlankAnswer, 
+    UDS_UserEssayAnswer, UDS_UserCaculateAnswer, UDS_UserSingleScore, UDS_UserMultipleScore, 
+    UDS_UserJudgeScore, UDS_UserFillBlankScore, UDS_UserEssayScore, UDS_UserCaculateScore
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from exam_userdetailscore
+    where UserDetailScoreID = #{userdetailscoreid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from exam_userdetailscore
+    where UserDetailScoreID = #{userdetailscoreid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.esst.ts.model.examUserdetailscoreWithBLOBs" >
+    insert into exam_userdetailscore (UserDetailScoreID, UDS_ExamID, UDS_ExamModel, 
+      UDS_PaperID, UDS_UserID, UDS_StartTime, 
+      UDS_EndTime, UDS_ObjectiveScore, UDS_SubjectiveScore, 
+      UDS_SubSimuScore, UDS_Score, UDS_PercentScore, 
+      UDS_IsExamed, UDS_MarkingUserID, UDS_IsMarked, 
+      UDS_MarkingTime, UDS_SimnetScoreReport, 
+      UDS_IsSend, UDS_SendIp, UDS_UserSingleAnswer, 
+      UDS_UserMultipleAnswer, UDS_UserJudgeAnswer, 
+      UDS_UserFillBlankAnswer, UDS_UserEssayAnswer, 
+      UDS_UserCaculateAnswer, UDS_UserSingleScore, 
+      UDS_UserMultipleScore, UDS_UserJudgeScore, 
+      UDS_UserFillBlankScore, UDS_UserEssayScore, 
+      UDS_UserCaculateScore)
+    values (#{userdetailscoreid,jdbcType=INTEGER}, #{udsExamid,jdbcType=INTEGER}, #{udsExammodel,jdbcType=INTEGER}, 
+      #{udsPaperid,jdbcType=INTEGER}, #{udsUserid,jdbcType=INTEGER}, #{udsStarttime,jdbcType=TIMESTAMP}, 
+      #{udsEndtime,jdbcType=TIMESTAMP}, #{udsObjectivescore,jdbcType=DOUBLE}, #{udsSubjectivescore,jdbcType=DOUBLE}, 
+      #{udsSubsimuscore,jdbcType=VARCHAR}, #{udsScore,jdbcType=DOUBLE}, #{udsPercentscore,jdbcType=DOUBLE}, 
+      #{udsIsexamed,jdbcType=INTEGER}, #{udsMarkinguserid,jdbcType=INTEGER}, #{udsIsmarked,jdbcType=INTEGER}, 
+      #{udsMarkingtime,jdbcType=TIMESTAMP}, #{udsSimnetscorereport,jdbcType=VARCHAR}, 
+      #{udsIssend,jdbcType=INTEGER}, #{udsSendip,jdbcType=VARCHAR}, #{udsUsersingleanswer,jdbcType=LONGVARCHAR}, 
+      #{udsUsermultipleanswer,jdbcType=LONGVARCHAR}, #{udsUserjudgeanswer,jdbcType=LONGVARCHAR}, 
+      #{udsUserfillblankanswer,jdbcType=LONGVARCHAR}, #{udsUseressayanswer,jdbcType=LONGVARCHAR}, 
+      #{udsUsercaculateanswer,jdbcType=LONGVARCHAR}, #{udsUsersinglescore,jdbcType=LONGVARCHAR}, 
+      #{udsUsermultiplescore,jdbcType=LONGVARCHAR}, #{udsUserjudgescore,jdbcType=LONGVARCHAR}, 
+      #{udsUserfillblankscore,jdbcType=LONGVARCHAR}, #{udsUseressayscore,jdbcType=LONGVARCHAR}, 
+      #{udsUsercaculatescore,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.esst.ts.model.examUserdetailscoreWithBLOBs" >
+    insert into exam_userdetailscore
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userdetailscoreid != null" >
+        UserDetailScoreID,
+      </if>
+      <if test="udsExamid != null" >
+        UDS_ExamID,
+      </if>
+      <if test="udsExammodel != null" >
+        UDS_ExamModel,
+      </if>
+      <if test="udsPaperid != null" >
+        UDS_PaperID,
+      </if>
+      <if test="udsUserid != null" >
+        UDS_UserID,
+      </if>
+      <if test="udsStarttime != null" >
+        UDS_StartTime,
+      </if>
+      <if test="udsEndtime != null" >
+        UDS_EndTime,
+      </if>
+      <if test="udsObjectivescore != null" >
+        UDS_ObjectiveScore,
+      </if>
+      <if test="udsSubjectivescore != null" >
+        UDS_SubjectiveScore,
+      </if>
+      <if test="udsSubsimuscore != null" >
+        UDS_SubSimuScore,
+      </if>
+      <if test="udsScore != null" >
+        UDS_Score,
+      </if>
+      <if test="udsPercentscore != null" >
+        UDS_PercentScore,
+      </if>
+      <if test="udsIsexamed != null" >
+        UDS_IsExamed,
+      </if>
+      <if test="udsMarkinguserid != null" >
+        UDS_MarkingUserID,
+      </if>
+      <if test="udsIsmarked != null" >
+        UDS_IsMarked,
+      </if>
+      <if test="udsMarkingtime != null" >
+        UDS_MarkingTime,
+      </if>
+      <if test="udsSimnetscorereport != null" >
+        UDS_SimnetScoreReport,
+      </if>
+      <if test="udsIssend != null" >
+        UDS_IsSend,
+      </if>
+      <if test="udsSendip != null" >
+        UDS_SendIp,
+      </if>
+      <if test="udsUsersingleanswer != null" >
+        UDS_UserSingleAnswer,
+      </if>
+      <if test="udsUsermultipleanswer != null" >
+        UDS_UserMultipleAnswer,
+      </if>
+      <if test="udsUserjudgeanswer != null" >
+        UDS_UserJudgeAnswer,
+      </if>
+      <if test="udsUserfillblankanswer != null" >
+        UDS_UserFillBlankAnswer,
+      </if>
+      <if test="udsUseressayanswer != null" >
+        UDS_UserEssayAnswer,
+      </if>
+      <if test="udsUsercaculateanswer != null" >
+        UDS_UserCaculateAnswer,
+      </if>
+      <if test="udsUsersinglescore != null" >
+        UDS_UserSingleScore,
+      </if>
+      <if test="udsUsermultiplescore != null" >
+        UDS_UserMultipleScore,
+      </if>
+      <if test="udsUserjudgescore != null" >
+        UDS_UserJudgeScore,
+      </if>
+      <if test="udsUserfillblankscore != null" >
+        UDS_UserFillBlankScore,
+      </if>
+      <if test="udsUseressayscore != null" >
+        UDS_UserEssayScore,
+      </if>
+      <if test="udsUsercaculatescore != null" >
+        UDS_UserCaculateScore,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userdetailscoreid != null" >
+        #{userdetailscoreid,jdbcType=INTEGER},
+      </if>
+      <if test="udsExamid != null" >
+        #{udsExamid,jdbcType=INTEGER},
+      </if>
+      <if test="udsExammodel != null" >
+        #{udsExammodel,jdbcType=INTEGER},
+      </if>
+      <if test="udsPaperid != null" >
+        #{udsPaperid,jdbcType=INTEGER},
+      </if>
+      <if test="udsUserid != null" >
+        #{udsUserid,jdbcType=INTEGER},
+      </if>
+      <if test="udsStarttime != null" >
+        #{udsStarttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="udsEndtime != null" >
+        #{udsEndtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="udsObjectivescore != null" >
+        #{udsObjectivescore,jdbcType=DOUBLE},
+      </if>
+      <if test="udsSubjectivescore != null" >
+        #{udsSubjectivescore,jdbcType=DOUBLE},
+      </if>
+      <if test="udsSubsimuscore != null" >
+        #{udsSubsimuscore,jdbcType=VARCHAR},
+      </if>
+      <if test="udsScore != null" >
+        #{udsScore,jdbcType=DOUBLE},
+      </if>
+      <if test="udsPercentscore != null" >
+        #{udsPercentscore,jdbcType=DOUBLE},
+      </if>
+      <if test="udsIsexamed != null" >
+        #{udsIsexamed,jdbcType=INTEGER},
+      </if>
+      <if test="udsMarkinguserid != null" >
+        #{udsMarkinguserid,jdbcType=INTEGER},
+      </if>
+      <if test="udsIsmarked != null" >
+        #{udsIsmarked,jdbcType=INTEGER},
+      </if>
+      <if test="udsMarkingtime != null" >
+        #{udsMarkingtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="udsSimnetscorereport != null" >
+        #{udsSimnetscorereport,jdbcType=VARCHAR},
+      </if>
+      <if test="udsIssend != null" >
+        #{udsIssend,jdbcType=INTEGER},
+      </if>
+      <if test="udsSendip != null" >
+        #{udsSendip,jdbcType=VARCHAR},
+      </if>
+      <if test="udsUsersingleanswer != null" >
+        #{udsUsersingleanswer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUsermultipleanswer != null" >
+        #{udsUsermultipleanswer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUserjudgeanswer != null" >
+        #{udsUserjudgeanswer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUserfillblankanswer != null" >
+        #{udsUserfillblankanswer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUseressayanswer != null" >
+        #{udsUseressayanswer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUsercaculateanswer != null" >
+        #{udsUsercaculateanswer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUsersinglescore != null" >
+        #{udsUsersinglescore,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUsermultiplescore != null" >
+        #{udsUsermultiplescore,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUserjudgescore != null" >
+        #{udsUserjudgescore,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUserfillblankscore != null" >
+        #{udsUserfillblankscore,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUseressayscore != null" >
+        #{udsUseressayscore,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUsercaculatescore != null" >
+        #{udsUsercaculatescore,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.examUserdetailscoreWithBLOBs" >
+    update exam_userdetailscore
+    <set >
+      <if test="udsExamid != null" >
+        UDS_ExamID = #{udsExamid,jdbcType=INTEGER},
+      </if>
+      <if test="udsExammodel != null" >
+        UDS_ExamModel = #{udsExammodel,jdbcType=INTEGER},
+      </if>
+      <if test="udsPaperid != null" >
+        UDS_PaperID = #{udsPaperid,jdbcType=INTEGER},
+      </if>
+      <if test="udsUserid != null" >
+        UDS_UserID = #{udsUserid,jdbcType=INTEGER},
+      </if>
+      <if test="udsStarttime != null" >
+        UDS_StartTime = #{udsStarttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="udsEndtime != null" >
+        UDS_EndTime = #{udsEndtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="udsObjectivescore != null" >
+        UDS_ObjectiveScore = #{udsObjectivescore,jdbcType=DOUBLE},
+      </if>
+      <if test="udsSubjectivescore != null" >
+        UDS_SubjectiveScore = #{udsSubjectivescore,jdbcType=DOUBLE},
+      </if>
+      <if test="udsSubsimuscore != null" >
+        UDS_SubSimuScore = #{udsSubsimuscore,jdbcType=VARCHAR},
+      </if>
+      <if test="udsScore != null" >
+        UDS_Score = #{udsScore,jdbcType=DOUBLE},
+      </if>
+      <if test="udsPercentscore != null" >
+        UDS_PercentScore = #{udsPercentscore,jdbcType=DOUBLE},
+      </if>
+      <if test="udsIsexamed != null" >
+        UDS_IsExamed = #{udsIsexamed,jdbcType=INTEGER},
+      </if>
+      <if test="udsMarkinguserid != null" >
+        UDS_MarkingUserID = #{udsMarkinguserid,jdbcType=INTEGER},
+      </if>
+      <if test="udsIsmarked != null" >
+        UDS_IsMarked = #{udsIsmarked,jdbcType=INTEGER},
+      </if>
+      <if test="udsMarkingtime != null" >
+        UDS_MarkingTime = #{udsMarkingtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="udsSimnetscorereport != null" >
+        UDS_SimnetScoreReport = #{udsSimnetscorereport,jdbcType=VARCHAR},
+      </if>
+      <if test="udsIssend != null" >
+        UDS_IsSend = #{udsIssend,jdbcType=INTEGER},
+      </if>
+      <if test="udsSendip != null" >
+        UDS_SendIp = #{udsSendip,jdbcType=VARCHAR},
+      </if>
+      <if test="udsUsersingleanswer != null" >
+        UDS_UserSingleAnswer = #{udsUsersingleanswer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUsermultipleanswer != null" >
+        UDS_UserMultipleAnswer = #{udsUsermultipleanswer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUserjudgeanswer != null" >
+        UDS_UserJudgeAnswer = #{udsUserjudgeanswer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUserfillblankanswer != null" >
+        UDS_UserFillBlankAnswer = #{udsUserfillblankanswer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUseressayanswer != null" >
+        UDS_UserEssayAnswer = #{udsUseressayanswer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUsercaculateanswer != null" >
+        UDS_UserCaculateAnswer = #{udsUsercaculateanswer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUsersinglescore != null" >
+        UDS_UserSingleScore = #{udsUsersinglescore,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUsermultiplescore != null" >
+        UDS_UserMultipleScore = #{udsUsermultiplescore,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUserjudgescore != null" >
+        UDS_UserJudgeScore = #{udsUserjudgescore,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUserfillblankscore != null" >
+        UDS_UserFillBlankScore = #{udsUserfillblankscore,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUseressayscore != null" >
+        UDS_UserEssayScore = #{udsUseressayscore,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="udsUsercaculatescore != null" >
+        UDS_UserCaculateScore = #{udsUsercaculatescore,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where UserDetailScoreID = #{userdetailscoreid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.esst.ts.model.examUserdetailscoreWithBLOBs" >
+    update exam_userdetailscore
+    set UDS_ExamID = #{udsExamid,jdbcType=INTEGER},
+      UDS_ExamModel = #{udsExammodel,jdbcType=INTEGER},
+      UDS_PaperID = #{udsPaperid,jdbcType=INTEGER},
+      UDS_UserID = #{udsUserid,jdbcType=INTEGER},
+      UDS_StartTime = #{udsStarttime,jdbcType=TIMESTAMP},
+      UDS_EndTime = #{udsEndtime,jdbcType=TIMESTAMP},
+      UDS_ObjectiveScore = #{udsObjectivescore,jdbcType=DOUBLE},
+      UDS_SubjectiveScore = #{udsSubjectivescore,jdbcType=DOUBLE},
+      UDS_SubSimuScore = #{udsSubsimuscore,jdbcType=VARCHAR},
+      UDS_Score = #{udsScore,jdbcType=DOUBLE},
+      UDS_PercentScore = #{udsPercentscore,jdbcType=DOUBLE},
+      UDS_IsExamed = #{udsIsexamed,jdbcType=INTEGER},
+      UDS_MarkingUserID = #{udsMarkinguserid,jdbcType=INTEGER},
+      UDS_IsMarked = #{udsIsmarked,jdbcType=INTEGER},
+      UDS_MarkingTime = #{udsMarkingtime,jdbcType=TIMESTAMP},
+      UDS_SimnetScoreReport = #{udsSimnetscorereport,jdbcType=VARCHAR},
+      UDS_IsSend = #{udsIssend,jdbcType=INTEGER},
+      UDS_SendIp = #{udsSendip,jdbcType=VARCHAR},
+      UDS_UserSingleAnswer = #{udsUsersingleanswer,jdbcType=LONGVARCHAR},
+      UDS_UserMultipleAnswer = #{udsUsermultipleanswer,jdbcType=LONGVARCHAR},
+      UDS_UserJudgeAnswer = #{udsUserjudgeanswer,jdbcType=LONGVARCHAR},
+      UDS_UserFillBlankAnswer = #{udsUserfillblankanswer,jdbcType=LONGVARCHAR},
+      UDS_UserEssayAnswer = #{udsUseressayanswer,jdbcType=LONGVARCHAR},
+      UDS_UserCaculateAnswer = #{udsUsercaculateanswer,jdbcType=LONGVARCHAR},
+      UDS_UserSingleScore = #{udsUsersinglescore,jdbcType=LONGVARCHAR},
+      UDS_UserMultipleScore = #{udsUsermultiplescore,jdbcType=LONGVARCHAR},
+      UDS_UserJudgeScore = #{udsUserjudgescore,jdbcType=LONGVARCHAR},
+      UDS_UserFillBlankScore = #{udsUserfillblankscore,jdbcType=LONGVARCHAR},
+      UDS_UserEssayScore = #{udsUseressayscore,jdbcType=LONGVARCHAR},
+      UDS_UserCaculateScore = #{udsUsercaculatescore,jdbcType=LONGVARCHAR}
+    where UserDetailScoreID = #{userdetailscoreid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.examUserdetailscore" >
+    update exam_userdetailscore
+    set UDS_ExamID = #{udsExamid,jdbcType=INTEGER},
+      UDS_ExamModel = #{udsExammodel,jdbcType=INTEGER},
+      UDS_PaperID = #{udsPaperid,jdbcType=INTEGER},
+      UDS_UserID = #{udsUserid,jdbcType=INTEGER},
+      UDS_StartTime = #{udsStarttime,jdbcType=TIMESTAMP},
+      UDS_EndTime = #{udsEndtime,jdbcType=TIMESTAMP},
+      UDS_ObjectiveScore = #{udsObjectivescore,jdbcType=DOUBLE},
+      UDS_SubjectiveScore = #{udsSubjectivescore,jdbcType=DOUBLE},
+      UDS_SubSimuScore = #{udsSubsimuscore,jdbcType=VARCHAR},
+      UDS_Score = #{udsScore,jdbcType=DOUBLE},
+      UDS_PercentScore = #{udsPercentscore,jdbcType=DOUBLE},
+      UDS_IsExamed = #{udsIsexamed,jdbcType=INTEGER},
+      UDS_MarkingUserID = #{udsMarkinguserid,jdbcType=INTEGER},
+      UDS_IsMarked = #{udsIsmarked,jdbcType=INTEGER},
+      UDS_MarkingTime = #{udsMarkingtime,jdbcType=TIMESTAMP},
+      UDS_SimnetScoreReport = #{udsSimnetscorereport,jdbcType=VARCHAR},
+      UDS_IsSend = #{udsIssend,jdbcType=INTEGER},
+      UDS_SendIp = #{udsSendip,jdbcType=VARCHAR}
+    where UserDetailScoreID = #{userdetailscoreid,jdbcType=INTEGER}
+  </update>
+</mapper>

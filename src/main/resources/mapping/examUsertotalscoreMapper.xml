@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.examUsertotalscoreMapper" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.examUsertotalscore" >
+    <id column="UserTotalScoreID" property="usertotalscoreid" jdbcType="INTEGER" />
+    <result column="UTS_UserID" property="utsUserid" jdbcType="INTEGER" />
+    <result column="UTS_ExamID" property="utsExamid" jdbcType="INTEGER" />
+    <result column="UTS_StartTime" property="utsStarttime" jdbcType="TIMESTAMP" />
+    <result column="UTS_EndTime" property="utsEndtime" jdbcType="TIMESTAMP" />
+    <result column="UTS_IsExamed" property="utsIsexamed" jdbcType="INTEGER" />
+    <result column="UTS_IsSimnetExamed" property="utsIssimnetexamed" jdbcType="INTEGER" />
+    <result column="UTS_ExamTimes" property="utsExamtimes" jdbcType="INTEGER" />
+    <result column="UTS_SimnetExamTimes" property="utsSimnetexamtimes" jdbcType="INTEGER" />
+    <result column="UTS_AcademicScore" property="utsAcademicscore" jdbcType="DOUBLE" />
+    <result column="UTS_SimnetScore" property="utsSimnetscore" jdbcType="DOUBLE" />
+    <result column="UTS_Score" property="utsScore" jdbcType="DOUBLE" />
+    <result column="UTS_PercentScore" property="utsPercentscore" jdbcType="DOUBLE" />
+    <result column="UTS_PerformanceRating" property="utsPerformancerating" jdbcType="INTEGER" />
+    <result column="UTS_ExamCompletionStatus" property="utsExamcompletionstatus" jdbcType="INTEGER" />
+    <result column="UTS_ScoreReport" property="utsScorereport" jdbcType="VARCHAR" />
+    <result column="UTS_IsSendSimnetStatistics" property="utsIssendsimnetstatistics" jdbcType="INTEGER" />
+    <result column="UTS_SendIp" property="utsSendip" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    UserTotalScoreID, UTS_UserID, UTS_ExamID, UTS_StartTime, UTS_EndTime, UTS_IsExamed, 
+    UTS_IsSimnetExamed, UTS_ExamTimes, UTS_SimnetExamTimes, UTS_AcademicScore, UTS_SimnetScore, 
+    UTS_Score, UTS_PercentScore, UTS_PerformanceRating, UTS_ExamCompletionStatus, UTS_ScoreReport, 
+    UTS_IsSendSimnetStatistics, UTS_SendIp
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from exam_usertotalscore
+    where UserTotalScoreID = #{usertotalscoreid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from exam_usertotalscore
+    where UserTotalScoreID = #{usertotalscoreid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.esst.ts.model.examUsertotalscore" >
+    insert into exam_usertotalscore (UserTotalScoreID, UTS_UserID, UTS_ExamID, 
+      UTS_StartTime, UTS_EndTime, UTS_IsExamed, 
+      UTS_IsSimnetExamed, UTS_ExamTimes, UTS_SimnetExamTimes, 
+      UTS_AcademicScore, UTS_SimnetScore, UTS_Score, 
+      UTS_PercentScore, UTS_PerformanceRating, UTS_ExamCompletionStatus, 
+      UTS_ScoreReport, UTS_IsSendSimnetStatistics, 
+      UTS_SendIp)
+    values (#{usertotalscoreid,jdbcType=INTEGER}, #{utsUserid,jdbcType=INTEGER}, #{utsExamid,jdbcType=INTEGER}, 
+      #{utsStarttime,jdbcType=TIMESTAMP}, #{utsEndtime,jdbcType=TIMESTAMP}, #{utsIsexamed,jdbcType=INTEGER}, 
+      #{utsIssimnetexamed,jdbcType=INTEGER}, #{utsExamtimes,jdbcType=INTEGER}, #{utsSimnetexamtimes,jdbcType=INTEGER}, 
+      #{utsAcademicscore,jdbcType=DOUBLE}, #{utsSimnetscore,jdbcType=DOUBLE}, #{utsScore,jdbcType=DOUBLE}, 
+      #{utsPercentscore,jdbcType=DOUBLE}, #{utsPerformancerating,jdbcType=INTEGER}, #{utsExamcompletionstatus,jdbcType=INTEGER}, 
+      #{utsScorereport,jdbcType=VARCHAR}, #{utsIssendsimnetstatistics,jdbcType=INTEGER}, 
+      #{utsSendip,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.esst.ts.model.examUsertotalscore" >
+    insert into exam_usertotalscore
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="usertotalscoreid != null" >
+        UserTotalScoreID,
+      </if>
+      <if test="utsUserid != null" >
+        UTS_UserID,
+      </if>
+      <if test="utsExamid != null" >
+        UTS_ExamID,
+      </if>
+      <if test="utsStarttime != null" >
+        UTS_StartTime,
+      </if>
+      <if test="utsEndtime != null" >
+        UTS_EndTime,
+      </if>
+      <if test="utsIsexamed != null" >
+        UTS_IsExamed,
+      </if>
+      <if test="utsIssimnetexamed != null" >
+        UTS_IsSimnetExamed,
+      </if>
+      <if test="utsExamtimes != null" >
+        UTS_ExamTimes,
+      </if>
+      <if test="utsSimnetexamtimes != null" >
+        UTS_SimnetExamTimes,
+      </if>
+      <if test="utsAcademicscore != null" >
+        UTS_AcademicScore,
+      </if>
+      <if test="utsSimnetscore != null" >
+        UTS_SimnetScore,
+      </if>
+      <if test="utsScore != null" >
+        UTS_Score,
+      </if>
+      <if test="utsPercentscore != null" >
+        UTS_PercentScore,
+      </if>
+      <if test="utsPerformancerating != null" >
+        UTS_PerformanceRating,
+      </if>
+      <if test="utsExamcompletionstatus != null" >
+        UTS_ExamCompletionStatus,
+      </if>
+      <if test="utsScorereport != null" >
+        UTS_ScoreReport,
+      </if>
+      <if test="utsIssendsimnetstatistics != null" >
+        UTS_IsSendSimnetStatistics,
+      </if>
+      <if test="utsSendip != null" >
+        UTS_SendIp,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="usertotalscoreid != null" >
+        #{usertotalscoreid,jdbcType=INTEGER},
+      </if>
+      <if test="utsUserid != null" >
+        #{utsUserid,jdbcType=INTEGER},
+      </if>
+      <if test="utsExamid != null" >
+        #{utsExamid,jdbcType=INTEGER},
+      </if>
+      <if test="utsStarttime != null" >
+        #{utsStarttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="utsEndtime != null" >
+        #{utsEndtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="utsIsexamed != null" >
+        #{utsIsexamed,jdbcType=INTEGER},
+      </if>
+      <if test="utsIssimnetexamed != null" >
+        #{utsIssimnetexamed,jdbcType=INTEGER},
+      </if>
+      <if test="utsExamtimes != null" >
+        #{utsExamtimes,jdbcType=INTEGER},
+      </if>
+      <if test="utsSimnetexamtimes != null" >
+        #{utsSimnetexamtimes,jdbcType=INTEGER},
+      </if>
+      <if test="utsAcademicscore != null" >
+        #{utsAcademicscore,jdbcType=DOUBLE},
+      </if>
+      <if test="utsSimnetscore != null" >
+        #{utsSimnetscore,jdbcType=DOUBLE},
+      </if>
+      <if test="utsScore != null" >
+        #{utsScore,jdbcType=DOUBLE},
+      </if>
+      <if test="utsPercentscore != null" >
+        #{utsPercentscore,jdbcType=DOUBLE},
+      </if>
+      <if test="utsPerformancerating != null" >
+        #{utsPerformancerating,jdbcType=INTEGER},
+      </if>
+      <if test="utsExamcompletionstatus != null" >
+        #{utsExamcompletionstatus,jdbcType=INTEGER},
+      </if>
+      <if test="utsScorereport != null" >
+        #{utsScorereport,jdbcType=VARCHAR},
+      </if>
+      <if test="utsIssendsimnetstatistics != null" >
+        #{utsIssendsimnetstatistics,jdbcType=INTEGER},
+      </if>
+      <if test="utsSendip != null" >
+        #{utsSendip,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.examUsertotalscore" >
+    update exam_usertotalscore
+    <set >
+      <if test="utsUserid != null" >
+        UTS_UserID = #{utsUserid,jdbcType=INTEGER},
+      </if>
+      <if test="utsExamid != null" >
+        UTS_ExamID = #{utsExamid,jdbcType=INTEGER},
+      </if>
+      <if test="utsStarttime != null" >
+        UTS_StartTime = #{utsStarttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="utsEndtime != null" >
+        UTS_EndTime = #{utsEndtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="utsIsexamed != null" >
+        UTS_IsExamed = #{utsIsexamed,jdbcType=INTEGER},
+      </if>
+      <if test="utsIssimnetexamed != null" >
+        UTS_IsSimnetExamed = #{utsIssimnetexamed,jdbcType=INTEGER},
+      </if>
+      <if test="utsExamtimes != null" >
+        UTS_ExamTimes = #{utsExamtimes,jdbcType=INTEGER},
+      </if>
+      <if test="utsSimnetexamtimes != null" >
+        UTS_SimnetExamTimes = #{utsSimnetexamtimes,jdbcType=INTEGER},
+      </if>
+      <if test="utsAcademicscore != null" >
+        UTS_AcademicScore = #{utsAcademicscore,jdbcType=DOUBLE},
+      </if>
+      <if test="utsSimnetscore != null" >
+        UTS_SimnetScore = #{utsSimnetscore,jdbcType=DOUBLE},
+      </if>
+      <if test="utsScore != null" >
+        UTS_Score = #{utsScore,jdbcType=DOUBLE},
+      </if>
+      <if test="utsPercentscore != null" >
+        UTS_PercentScore = #{utsPercentscore,jdbcType=DOUBLE},
+      </if>
+      <if test="utsPerformancerating != null" >
+        UTS_PerformanceRating = #{utsPerformancerating,jdbcType=INTEGER},
+      </if>
+      <if test="utsExamcompletionstatus != null" >
+        UTS_ExamCompletionStatus = #{utsExamcompletionstatus,jdbcType=INTEGER},
+      </if>
+      <if test="utsScorereport != null" >
+        UTS_ScoreReport = #{utsScorereport,jdbcType=VARCHAR},
+      </if>
+      <if test="utsIssendsimnetstatistics != null" >
+        UTS_IsSendSimnetStatistics = #{utsIssendsimnetstatistics,jdbcType=INTEGER},
+      </if>
+      <if test="utsSendip != null" >
+        UTS_SendIp = #{utsSendip,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where UserTotalScoreID = #{usertotalscoreid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.examUsertotalscore" >
+    update exam_usertotalscore
+    set UTS_UserID = #{utsUserid,jdbcType=INTEGER},
+      UTS_ExamID = #{utsExamid,jdbcType=INTEGER},
+      UTS_StartTime = #{utsStarttime,jdbcType=TIMESTAMP},
+      UTS_EndTime = #{utsEndtime,jdbcType=TIMESTAMP},
+      UTS_IsExamed = #{utsIsexamed,jdbcType=INTEGER},
+      UTS_IsSimnetExamed = #{utsIssimnetexamed,jdbcType=INTEGER},
+      UTS_ExamTimes = #{utsExamtimes,jdbcType=INTEGER},
+      UTS_SimnetExamTimes = #{utsSimnetexamtimes,jdbcType=INTEGER},
+      UTS_AcademicScore = #{utsAcademicscore,jdbcType=DOUBLE},
+      UTS_SimnetScore = #{utsSimnetscore,jdbcType=DOUBLE},
+      UTS_Score = #{utsScore,jdbcType=DOUBLE},
+      UTS_PercentScore = #{utsPercentscore,jdbcType=DOUBLE},
+      UTS_PerformanceRating = #{utsPerformancerating,jdbcType=INTEGER},
+      UTS_ExamCompletionStatus = #{utsExamcompletionstatus,jdbcType=INTEGER},
+      UTS_ScoreReport = #{utsScorereport,jdbcType=VARCHAR},
+      UTS_IsSendSimnetStatistics = #{utsIssendsimnetstatistics,jdbcType=INTEGER},
+      UTS_SendIp = #{utsSendip,jdbcType=VARCHAR}
+    where UserTotalScoreID = #{usertotalscoreid,jdbcType=INTEGER}
+  </update>
+</mapper>

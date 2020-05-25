@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.examPaperMapper" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.examPaper" >
+    <id column="ExamPaperID" property="exampaperid" jdbcType="INTEGER" />
+    <result column="EP_ExamID" property="epExamid" jdbcType="INTEGER" />
+    <result column="EP_PaperID" property="epPaperid" jdbcType="INTEGER" />
+    <result column="EP_PaperType" property="epPapertype" jdbcType="INTEGER" />
+    <result column="EP_IsPubScore" property="epIspubscore" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ExamPaperID, EP_ExamID, EP_PaperID, EP_PaperType, EP_IsPubScore
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from exam_paper
+    where ExamPaperID = #{exampaperid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from exam_paper
+    where ExamPaperID = #{exampaperid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.esst.ts.model.examPaper" >
+    insert into exam_paper (ExamPaperID, EP_ExamID, EP_PaperID, 
+      EP_PaperType, EP_IsPubScore)
+    values (#{exampaperid,jdbcType=INTEGER}, #{epExamid,jdbcType=INTEGER}, #{epPaperid,jdbcType=INTEGER}, 
+      #{epPapertype,jdbcType=INTEGER}, #{epIspubscore,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.esst.ts.model.examPaper" >
+    insert into exam_paper
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="exampaperid != null" >
+        ExamPaperID,
+      </if>
+      <if test="epExamid != null" >
+        EP_ExamID,
+      </if>
+      <if test="epPaperid != null" >
+        EP_PaperID,
+      </if>
+      <if test="epPapertype != null" >
+        EP_PaperType,
+      </if>
+      <if test="epIspubscore != null" >
+        EP_IsPubScore,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="exampaperid != null" >
+        #{exampaperid,jdbcType=INTEGER},
+      </if>
+      <if test="epExamid != null" >
+        #{epExamid,jdbcType=INTEGER},
+      </if>
+      <if test="epPaperid != null" >
+        #{epPaperid,jdbcType=INTEGER},
+      </if>
+      <if test="epPapertype != null" >
+        #{epPapertype,jdbcType=INTEGER},
+      </if>
+      <if test="epIspubscore != null" >
+        #{epIspubscore,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.examPaper" >
+    update exam_paper
+    <set >
+      <if test="epExamid != null" >
+        EP_ExamID = #{epExamid,jdbcType=INTEGER},
+      </if>
+      <if test="epPaperid != null" >
+        EP_PaperID = #{epPaperid,jdbcType=INTEGER},
+      </if>
+      <if test="epPapertype != null" >
+        EP_PaperType = #{epPapertype,jdbcType=INTEGER},
+      </if>
+      <if test="epIspubscore != null" >
+        EP_IsPubScore = #{epIspubscore,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ExamPaperID = #{exampaperid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.examPaper" >
+    update exam_paper
+    set EP_ExamID = #{epExamid,jdbcType=INTEGER},
+      EP_PaperID = #{epPaperid,jdbcType=INTEGER},
+      EP_PaperType = #{epPapertype,jdbcType=INTEGER},
+      EP_IsPubScore = #{epIspubscore,jdbcType=INTEGER}
+    where ExamPaperID = #{exampaperid,jdbcType=INTEGER}
+  </update>
+</mapper>

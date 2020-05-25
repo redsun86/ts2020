@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.sysUserMapper" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.sysUser" >
+    <id column="UserID" property="userid" jdbcType="INTEGER" />
+    <result column="U_LoginName" property="uLoginname" jdbcType="VARCHAR" />
+    <result column="U_Password" property="uPassword" jdbcType="VARCHAR" />
+    <result column="U_UserNO" property="uUserno" jdbcType="VARCHAR" />
+    <result column="U_CName" property="uCname" jdbcType="VARCHAR" />
+    <result column="U_EName" property="uEname" jdbcType="VARCHAR" />
+    <result column="U_GroupID" property="uGroupid" jdbcType="INTEGER" />
+    <result column="U_Email" property="uEmail" jdbcType="VARCHAR" />
+    <result column="U_Type" property="uType" jdbcType="INTEGER" />
+    <result column="U_Status" property="uStatus" jdbcType="INTEGER" />
+    <result column="U_Licence" property="uLicence" jdbcType="VARCHAR" />
+    <result column="U_Mac" property="uMac" jdbcType="VARCHAR" />
+    <result column="U_Remark" property="uRemark" jdbcType="VARCHAR" />
+    <result column="U_GradeCategoryID" property="uGradecategoryid" jdbcType="INTEGER" />
+    <result column="U_PostID" property="uPostid" jdbcType="INTEGER" />
+    <result column="U_IDCard" property="uIdcard" jdbcType="VARCHAR" />
+    <result column="U_Sex" property="uSex" jdbcType="INTEGER" />
+    <result column="U_BirthDay" property="uBirthday" jdbcType="TIMESTAMP" />
+    <result column="U_MobileNo" property="uMobileno" jdbcType="VARCHAR" />
+    <result column="U_WorkStartDate" property="uWorkstartdate" jdbcType="TIMESTAMP" />
+    <result column="U_WorkEndDate" property="uWorkenddate" jdbcType="TIMESTAMP" />
+    <result column="U_CompanyMail" property="uCompanymail" jdbcType="VARCHAR" />
+    <result column="U_HomeTel" property="uHometel" jdbcType="VARCHAR" />
+    <result column="U_PhotoUrl" property="uPhotourl" jdbcType="VARCHAR" />
+    <result column="U_DateTime" property="uDatetime" jdbcType="TIMESTAMP" />
+    <result column="U_LastIP" property="uLastip" jdbcType="VARCHAR" />
+    <result column="U_LastDateTime" property="uLastdatetime" jdbcType="TIMESTAMP" />
+    <result column="U_Themes" property="uThemes" jdbcType="VARCHAR" />
+    <result column="U_CardNo" property="uCardno" jdbcType="CHAR" />
+    <result column="U_WorkersNo" property="uWorkersno" jdbcType="VARCHAR" />
+    <result column="U_Post" property="uPost" jdbcType="VARCHAR" />
+    <result column="U_Title" property="uTitle" jdbcType="VARCHAR" />
+    <result column="U_OutputPwd" property="uOutputpwd" jdbcType="VARCHAR" />
+    <result column="U_DogID" property="uDogid" jdbcType="VARCHAR" />
+    <result column="U_SkillUserExamTimeID" property="uSkilluserexamtimeid" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.esst.ts.model.sysUser" extends="BaseResultMap" >
+    <result column="U_ExtendField" property="uExtendfield" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    UserID, U_LoginName, U_Password, U_UserNO, U_CName, U_EName, U_GroupID, U_Email, 
+    U_Type, U_Status, U_Licence, U_Mac, U_Remark, U_GradeCategoryID, U_PostID, U_IDCard, 
+    U_Sex, U_BirthDay, U_MobileNo, U_WorkStartDate, U_WorkEndDate, U_CompanyMail, U_HomeTel, 
+    U_PhotoUrl, U_DateTime, U_LastIP, U_LastDateTime, U_Themes, U_CardNo, U_WorkersNo, 
+    U_Post, U_Title, U_OutputPwd, U_DogID, U_SkillUserExamTimeID
+  </sql>
+  <sql id="Blob_Column_List" >
+    U_ExtendField
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sys_user
+    where UserID = #{userid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_user
+    where UserID = #{userid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.esst.ts.model.sysUser" >
+    insert into sys_user (UserID, U_LoginName, U_Password, 
+      U_UserNO, U_CName, U_EName, 
+      U_GroupID, U_Email, U_Type, 
+      U_Status, U_Licence, U_Mac, 
+      U_Remark, U_GradeCategoryID, U_PostID, 
+      U_IDCard, U_Sex, U_BirthDay, 
+      U_MobileNo, U_WorkStartDate, U_WorkEndDate, 
+      U_CompanyMail, U_HomeTel, U_PhotoUrl, 
+      U_DateTime, U_LastIP, U_LastDateTime, 
+      U_Themes, U_CardNo, U_WorkersNo, 
+      U_Post, U_Title, U_OutputPwd, 
+      U_DogID, U_SkillUserExamTimeID, U_ExtendField
+      )
+    values (#{userid,jdbcType=INTEGER}, #{uLoginname,jdbcType=VARCHAR}, #{uPassword,jdbcType=VARCHAR}, 
+      #{uUserno,jdbcType=VARCHAR}, #{uCname,jdbcType=VARCHAR}, #{uEname,jdbcType=VARCHAR}, 
+      #{uGroupid,jdbcType=INTEGER}, #{uEmail,jdbcType=VARCHAR}, #{uType,jdbcType=INTEGER}, 
+      #{uStatus,jdbcType=INTEGER}, #{uLicence,jdbcType=VARCHAR}, #{uMac,jdbcType=VARCHAR}, 
+      #{uRemark,jdbcType=VARCHAR}, #{uGradecategoryid,jdbcType=INTEGER}, #{uPostid,jdbcType=INTEGER}, 
+      #{uIdcard,jdbcType=VARCHAR}, #{uSex,jdbcType=INTEGER}, #{uBirthday,jdbcType=TIMESTAMP}, 
+      #{uMobileno,jdbcType=VARCHAR}, #{uWorkstartdate,jdbcType=TIMESTAMP}, #{uWorkenddate,jdbcType=TIMESTAMP}, 
+      #{uCompanymail,jdbcType=VARCHAR}, #{uHometel,jdbcType=VARCHAR}, #{uPhotourl,jdbcType=VARCHAR}, 
+      #{uDatetime,jdbcType=TIMESTAMP}, #{uLastip,jdbcType=VARCHAR}, #{uLastdatetime,jdbcType=TIMESTAMP}, 
+      #{uThemes,jdbcType=VARCHAR}, #{uCardno,jdbcType=CHAR}, #{uWorkersno,jdbcType=VARCHAR}, 
+      #{uPost,jdbcType=VARCHAR}, #{uTitle,jdbcType=VARCHAR}, #{uOutputpwd,jdbcType=VARCHAR}, 
+      #{uDogid,jdbcType=VARCHAR}, #{uSkilluserexamtimeid,jdbcType=INTEGER}, #{uExtendfield,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.esst.ts.model.sysUser" >
+    insert into sys_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        UserID,
+      </if>
+      <if test="uLoginname != null" >
+        U_LoginName,
+      </if>
+      <if test="uPassword != null" >
+        U_Password,
+      </if>
+      <if test="uUserno != null" >
+        U_UserNO,
+      </if>
+      <if test="uCname != null" >
+        U_CName,
+      </if>
+      <if test="uEname != null" >
+        U_EName,
+      </if>
+      <if test="uGroupid != null" >
+        U_GroupID,
+      </if>
+      <if test="uEmail != null" >
+        U_Email,
+      </if>
+      <if test="uType != null" >
+        U_Type,
+      </if>
+      <if test="uStatus != null" >
+        U_Status,
+      </if>
+      <if test="uLicence != null" >
+        U_Licence,
+      </if>
+      <if test="uMac != null" >
+        U_Mac,
+      </if>
+      <if test="uRemark != null" >
+        U_Remark,
+      </if>
+      <if test="uGradecategoryid != null" >
+        U_GradeCategoryID,
+      </if>
+      <if test="uPostid != null" >
+        U_PostID,
+      </if>
+      <if test="uIdcard != null" >
+        U_IDCard,
+      </if>
+      <if test="uSex != null" >
+        U_Sex,
+      </if>
+      <if test="uBirthday != null" >
+        U_BirthDay,
+      </if>
+      <if test="uMobileno != null" >
+        U_MobileNo,
+      </if>
+      <if test="uWorkstartdate != null" >
+        U_WorkStartDate,
+      </if>
+      <if test="uWorkenddate != null" >
+        U_WorkEndDate,
+      </if>
+      <if test="uCompanymail != null" >
+        U_CompanyMail,
+      </if>
+      <if test="uHometel != null" >
+        U_HomeTel,
+      </if>
+      <if test="uPhotourl != null" >
+        U_PhotoUrl,
+      </if>
+      <if test="uDatetime != null" >
+        U_DateTime,
+      </if>
+      <if test="uLastip != null" >
+        U_LastIP,
+      </if>
+      <if test="uLastdatetime != null" >
+        U_LastDateTime,
+      </if>
+      <if test="uThemes != null" >
+        U_Themes,
+      </if>
+      <if test="uCardno != null" >
+        U_CardNo,
+      </if>
+      <if test="uWorkersno != null" >
+        U_WorkersNo,
+      </if>
+      <if test="uPost != null" >
+        U_Post,
+      </if>
+      <if test="uTitle != null" >
+        U_Title,
+      </if>
+      <if test="uOutputpwd != null" >
+        U_OutputPwd,
+      </if>
+      <if test="uDogid != null" >
+        U_DogID,
+      </if>
+      <if test="uSkilluserexamtimeid != null" >
+        U_SkillUserExamTimeID,
+      </if>
+      <if test="uExtendfield != null" >
+        U_ExtendField,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="uLoginname != null" >
+        #{uLoginname,jdbcType=VARCHAR},
+      </if>
+      <if test="uPassword != null" >
+        #{uPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="uUserno != null" >
+        #{uUserno,jdbcType=VARCHAR},
+      </if>
+      <if test="uCname != null" >
+        #{uCname,jdbcType=VARCHAR},
+      </if>
+      <if test="uEname != null" >
+        #{uEname,jdbcType=VARCHAR},
+      </if>
+      <if test="uGroupid != null" >
+        #{uGroupid,jdbcType=INTEGER},
+      </if>
+      <if test="uEmail != null" >
+        #{uEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="uType != null" >
+        #{uType,jdbcType=INTEGER},
+      </if>
+      <if test="uStatus != null" >
+        #{uStatus,jdbcType=INTEGER},
+      </if>
+      <if test="uLicence != null" >
+        #{uLicence,jdbcType=VARCHAR},
+      </if>
+      <if test="uMac != null" >
+        #{uMac,jdbcType=VARCHAR},
+      </if>
+      <if test="uRemark != null" >
+        #{uRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="uGradecategoryid != null" >
+        #{uGradecategoryid,jdbcType=INTEGER},
+      </if>
+      <if test="uPostid != null" >
+        #{uPostid,jdbcType=INTEGER},
+      </if>
+      <if test="uIdcard != null" >
+        #{uIdcard,jdbcType=VARCHAR},
+      </if>
+      <if test="uSex != null" >
+        #{uSex,jdbcType=INTEGER},
+      </if>
+      <if test="uBirthday != null" >
+        #{uBirthday,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uMobileno != null" >
+        #{uMobileno,jdbcType=VARCHAR},
+      </if>
+      <if test="uWorkstartdate != null" >
+        #{uWorkstartdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uWorkenddate != null" >
+        #{uWorkenddate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uCompanymail != null" >
+        #{uCompanymail,jdbcType=VARCHAR},
+      </if>
+      <if test="uHometel != null" >
+        #{uHometel,jdbcType=VARCHAR},
+      </if>
+      <if test="uPhotourl != null" >
+        #{uPhotourl,jdbcType=VARCHAR},
+      </if>
+      <if test="uDatetime != null" >
+        #{uDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uLastip != null" >
+        #{uLastip,jdbcType=VARCHAR},
+      </if>
+      <if test="uLastdatetime != null" >
+        #{uLastdatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uThemes != null" >
+        #{uThemes,jdbcType=VARCHAR},
+      </if>
+      <if test="uCardno != null" >
+        #{uCardno,jdbcType=CHAR},
+      </if>
+      <if test="uWorkersno != null" >
+        #{uWorkersno,jdbcType=VARCHAR},
+      </if>
+      <if test="uPost != null" >
+        #{uPost,jdbcType=VARCHAR},
+      </if>
+      <if test="uTitle != null" >
+        #{uTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="uOutputpwd != null" >
+        #{uOutputpwd,jdbcType=VARCHAR},
+      </if>
+      <if test="uDogid != null" >
+        #{uDogid,jdbcType=VARCHAR},
+      </if>
+      <if test="uSkilluserexamtimeid != null" >
+        #{uSkilluserexamtimeid,jdbcType=INTEGER},
+      </if>
+      <if test="uExtendfield != null" >
+        #{uExtendfield,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.sysUser" >
+    update sys_user
+    <set >
+      <if test="uLoginname != null" >
+        U_LoginName = #{uLoginname,jdbcType=VARCHAR},
+      </if>
+      <if test="uPassword != null" >
+        U_Password = #{uPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="uUserno != null" >
+        U_UserNO = #{uUserno,jdbcType=VARCHAR},
+      </if>
+      <if test="uCname != null" >
+        U_CName = #{uCname,jdbcType=VARCHAR},
+      </if>
+      <if test="uEname != null" >
+        U_EName = #{uEname,jdbcType=VARCHAR},
+      </if>
+      <if test="uGroupid != null" >
+        U_GroupID = #{uGroupid,jdbcType=INTEGER},
+      </if>
+      <if test="uEmail != null" >
+        U_Email = #{uEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="uType != null" >
+        U_Type = #{uType,jdbcType=INTEGER},
+      </if>
+      <if test="uStatus != null" >
+        U_Status = #{uStatus,jdbcType=INTEGER},
+      </if>
+      <if test="uLicence != null" >
+        U_Licence = #{uLicence,jdbcType=VARCHAR},
+      </if>
+      <if test="uMac != null" >
+        U_Mac = #{uMac,jdbcType=VARCHAR},
+      </if>
+      <if test="uRemark != null" >
+        U_Remark = #{uRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="uGradecategoryid != null" >
+        U_GradeCategoryID = #{uGradecategoryid,jdbcType=INTEGER},
+      </if>
+      <if test="uPostid != null" >
+        U_PostID = #{uPostid,jdbcType=INTEGER},
+      </if>
+      <if test="uIdcard != null" >
+        U_IDCard = #{uIdcard,jdbcType=VARCHAR},
+      </if>
+      <if test="uSex != null" >
+        U_Sex = #{uSex,jdbcType=INTEGER},
+      </if>
+      <if test="uBirthday != null" >
+        U_BirthDay = #{uBirthday,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uMobileno != null" >
+        U_MobileNo = #{uMobileno,jdbcType=VARCHAR},
+      </if>
+      <if test="uWorkstartdate != null" >
+        U_WorkStartDate = #{uWorkstartdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uWorkenddate != null" >
+        U_WorkEndDate = #{uWorkenddate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uCompanymail != null" >
+        U_CompanyMail = #{uCompanymail,jdbcType=VARCHAR},
+      </if>
+      <if test="uHometel != null" >
+        U_HomeTel = #{uHometel,jdbcType=VARCHAR},
+      </if>
+      <if test="uPhotourl != null" >
+        U_PhotoUrl = #{uPhotourl,jdbcType=VARCHAR},
+      </if>
+      <if test="uDatetime != null" >
+        U_DateTime = #{uDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uLastip != null" >
+        U_LastIP = #{uLastip,jdbcType=VARCHAR},
+      </if>
+      <if test="uLastdatetime != null" >
+        U_LastDateTime = #{uLastdatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uThemes != null" >
+        U_Themes = #{uThemes,jdbcType=VARCHAR},
+      </if>
+      <if test="uCardno != null" >
+        U_CardNo = #{uCardno,jdbcType=CHAR},
+      </if>
+      <if test="uWorkersno != null" >
+        U_WorkersNo = #{uWorkersno,jdbcType=VARCHAR},
+      </if>
+      <if test="uPost != null" >
+        U_Post = #{uPost,jdbcType=VARCHAR},
+      </if>
+      <if test="uTitle != null" >
+        U_Title = #{uTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="uOutputpwd != null" >
+        U_OutputPwd = #{uOutputpwd,jdbcType=VARCHAR},
+      </if>
+      <if test="uDogid != null" >
+        U_DogID = #{uDogid,jdbcType=VARCHAR},
+      </if>
+      <if test="uSkilluserexamtimeid != null" >
+        U_SkillUserExamTimeID = #{uSkilluserexamtimeid,jdbcType=INTEGER},
+      </if>
+      <if test="uExtendfield != null" >
+        U_ExtendField = #{uExtendfield,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where UserID = #{userid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.esst.ts.model.sysUser" >
+    update sys_user
+    set U_LoginName = #{uLoginname,jdbcType=VARCHAR},
+      U_Password = #{uPassword,jdbcType=VARCHAR},
+      U_UserNO = #{uUserno,jdbcType=VARCHAR},
+      U_CName = #{uCname,jdbcType=VARCHAR},
+      U_EName = #{uEname,jdbcType=VARCHAR},
+      U_GroupID = #{uGroupid,jdbcType=INTEGER},
+      U_Email = #{uEmail,jdbcType=VARCHAR},
+      U_Type = #{uType,jdbcType=INTEGER},
+      U_Status = #{uStatus,jdbcType=INTEGER},
+      U_Licence = #{uLicence,jdbcType=VARCHAR},
+      U_Mac = #{uMac,jdbcType=VARCHAR},
+      U_Remark = #{uRemark,jdbcType=VARCHAR},
+      U_GradeCategoryID = #{uGradecategoryid,jdbcType=INTEGER},
+      U_PostID = #{uPostid,jdbcType=INTEGER},
+      U_IDCard = #{uIdcard,jdbcType=VARCHAR},
+      U_Sex = #{uSex,jdbcType=INTEGER},
+      U_BirthDay = #{uBirthday,jdbcType=TIMESTAMP},
+      U_MobileNo = #{uMobileno,jdbcType=VARCHAR},
+      U_WorkStartDate = #{uWorkstartdate,jdbcType=TIMESTAMP},
+      U_WorkEndDate = #{uWorkenddate,jdbcType=TIMESTAMP},
+      U_CompanyMail = #{uCompanymail,jdbcType=VARCHAR},
+      U_HomeTel = #{uHometel,jdbcType=VARCHAR},
+      U_PhotoUrl = #{uPhotourl,jdbcType=VARCHAR},
+      U_DateTime = #{uDatetime,jdbcType=TIMESTAMP},
+      U_LastIP = #{uLastip,jdbcType=VARCHAR},
+      U_LastDateTime = #{uLastdatetime,jdbcType=TIMESTAMP},
+      U_Themes = #{uThemes,jdbcType=VARCHAR},
+      U_CardNo = #{uCardno,jdbcType=CHAR},
+      U_WorkersNo = #{uWorkersno,jdbcType=VARCHAR},
+      U_Post = #{uPost,jdbcType=VARCHAR},
+      U_Title = #{uTitle,jdbcType=VARCHAR},
+      U_OutputPwd = #{uOutputpwd,jdbcType=VARCHAR},
+      U_DogID = #{uDogid,jdbcType=VARCHAR},
+      U_SkillUserExamTimeID = #{uSkilluserexamtimeid,jdbcType=INTEGER},
+      U_ExtendField = #{uExtendfield,jdbcType=LONGVARCHAR}
+    where UserID = #{userid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.sysUser" >
+    update sys_user
+    set U_LoginName = #{uLoginname,jdbcType=VARCHAR},
+      U_Password = #{uPassword,jdbcType=VARCHAR},
+      U_UserNO = #{uUserno,jdbcType=VARCHAR},
+      U_CName = #{uCname,jdbcType=VARCHAR},
+      U_EName = #{uEname,jdbcType=VARCHAR},
+      U_GroupID = #{uGroupid,jdbcType=INTEGER},
+      U_Email = #{uEmail,jdbcType=VARCHAR},
+      U_Type = #{uType,jdbcType=INTEGER},
+      U_Status = #{uStatus,jdbcType=INTEGER},
+      U_Licence = #{uLicence,jdbcType=VARCHAR},
+      U_Mac = #{uMac,jdbcType=VARCHAR},
+      U_Remark = #{uRemark,jdbcType=VARCHAR},
+      U_GradeCategoryID = #{uGradecategoryid,jdbcType=INTEGER},
+      U_PostID = #{uPostid,jdbcType=INTEGER},
+      U_IDCard = #{uIdcard,jdbcType=VARCHAR},
+      U_Sex = #{uSex,jdbcType=INTEGER},
+      U_BirthDay = #{uBirthday,jdbcType=TIMESTAMP},
+      U_MobileNo = #{uMobileno,jdbcType=VARCHAR},
+      U_WorkStartDate = #{uWorkstartdate,jdbcType=TIMESTAMP},
+      U_WorkEndDate = #{uWorkenddate,jdbcType=TIMESTAMP},
+      U_CompanyMail = #{uCompanymail,jdbcType=VARCHAR},
+      U_HomeTel = #{uHometel,jdbcType=VARCHAR},
+      U_PhotoUrl = #{uPhotourl,jdbcType=VARCHAR},
+      U_DateTime = #{uDatetime,jdbcType=TIMESTAMP},
+      U_LastIP = #{uLastip,jdbcType=VARCHAR},
+      U_LastDateTime = #{uLastdatetime,jdbcType=TIMESTAMP},
+      U_Themes = #{uThemes,jdbcType=VARCHAR},
+      U_CardNo = #{uCardno,jdbcType=CHAR},
+      U_WorkersNo = #{uWorkersno,jdbcType=VARCHAR},
+      U_Post = #{uPost,jdbcType=VARCHAR},
+      U_Title = #{uTitle,jdbcType=VARCHAR},
+      U_OutputPwd = #{uOutputpwd,jdbcType=VARCHAR},
+      U_DogID = #{uDogid,jdbcType=VARCHAR},
+      U_SkillUserExamTimeID = #{uSkilluserexamtimeid,jdbcType=INTEGER}
+    where UserID = #{userid,jdbcType=INTEGER}
+  </update>
+</mapper>

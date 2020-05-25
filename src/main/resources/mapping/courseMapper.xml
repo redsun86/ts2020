@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.courseMapper" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.course" >
+    <id column="CourseID" property="courseid" jdbcType="INTEGER" />
+    <result column="C_No" property="cNo" jdbcType="VARCHAR" />
+    <result column="C_Name" property="cName" jdbcType="VARCHAR" />
+    <result column="C_DirectoryID" property="cDirectoryid" jdbcType="INTEGER" />
+    <result column="C_Img" property="cImg" jdbcType="VARCHAR" />
+    <result column="C_Format" property="cFormat" jdbcType="INTEGER" />
+    <result column="C_TypeID" property="cTypeid" jdbcType="INTEGER" />
+    <result column="C_GroupID" property="cGroupid" jdbcType="INTEGER" />
+    <result column="C_Hits" property="cHits" jdbcType="INTEGER" />
+    <result column="C_Status" property="cStatus" jdbcType="INTEGER" />
+    <result column="C_Credit" property="cCredit" jdbcType="INTEGER" />
+    <result column="C_HomePage" property="cHomepage" jdbcType="VARCHAR" />
+    <result column="C_IsClose" property="cIsclose" jdbcType="INTEGER" />
+    <result column="C_PassCondition" property="cPasscondition" jdbcType="INTEGER" />
+    <result column="C_ExpirationDate" property="cExpirationdate" jdbcType="TIMESTAMP" />
+    <result column="C_StartDate" property="cStartdate" jdbcType="TIMESTAMP" />
+    <result column="C_CreateDate" property="cCreatedate" jdbcType="TIMESTAMP" />
+    <result column="C_TutorUserID" property="cTutoruserid" jdbcType="INTEGER" />
+    <result column="C_CreateUserID" property="cCreateuserid" jdbcType="INTEGER" />
+    <result column="C_CourseTemplateID" property="cCoursetemplateid" jdbcType="INTEGER" />
+    <result column="C_SimnetUnitNameClient" property="cSimnetunitnameclient" jdbcType="VARCHAR" />
+    <result column="C_SimnetDefaultDcs" property="cSimnetdefaultdcs" jdbcType="INTEGER" />
+    <result column="C_SimnetGuid" property="cSimnetguid" jdbcType="VARCHAR" />
+    <result column="C_SimnetEngName" property="cSimnetengname" jdbcType="VARCHAR" />
+    <result column="C_SimnetVersion" property="cSimnetversion" jdbcType="VARCHAR" />
+    <result column="C_CourseIsEncrypt" property="cCourseisencrypt" jdbcType="INTEGER" />
+    <result column="C_IsWeb" property="cIsweb" jdbcType="INTEGER" />
+    <result column="C_StorageType" property="cStoragetype" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.esst.ts.model.courseWithBLOBs" extends="BaseResultMap" >
+    <result column="C_Description" property="cDescription" jdbcType="LONGVARCHAR" />
+    <result column="C_Tags" property="cTags" jdbcType="LONGVARCHAR" />
+    <result column="C_SimnetXML" property="cSimnetxml" jdbcType="LONGVARCHAR" />
+    <result column="C_SimnetProjects" property="cSimnetprojects" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    CourseID, C_No, C_Name, C_DirectoryID, C_Img, C_Format, C_TypeID, C_GroupID, C_Hits, 
+    C_Status, C_Credit, C_HomePage, C_IsClose, C_PassCondition, C_ExpirationDate, C_StartDate, 
+    C_CreateDate, C_TutorUserID, C_CreateUserID, C_CourseTemplateID, C_SimnetUnitNameClient, 
+    C_SimnetDefaultDcs, C_SimnetGuid, C_SimnetEngName, C_SimnetVersion, C_CourseIsEncrypt, 
+    C_IsWeb, C_StorageType
+  </sql>
+  <sql id="Blob_Column_List" >
+    C_Description, C_Tags, C_SimnetXML, C_SimnetProjects
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from course
+    where CourseID = #{courseid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from course
+    where CourseID = #{courseid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.esst.ts.model.courseWithBLOBs" >
+    insert into course (CourseID, C_No, C_Name, 
+      C_DirectoryID, C_Img, C_Format, 
+      C_TypeID, C_GroupID, C_Hits, 
+      C_Status, C_Credit, C_HomePage, 
+      C_IsClose, C_PassCondition, C_ExpirationDate, 
+      C_StartDate, C_CreateDate, C_TutorUserID, 
+      C_CreateUserID, C_CourseTemplateID, C_SimnetUnitNameClient, 
+      C_SimnetDefaultDcs, C_SimnetGuid, C_SimnetEngName, 
+      C_SimnetVersion, C_CourseIsEncrypt, C_IsWeb, 
+      C_StorageType, C_Description, C_Tags, 
+      C_SimnetXML, C_SimnetProjects)
+    values (#{courseid,jdbcType=INTEGER}, #{cNo,jdbcType=VARCHAR}, #{cName,jdbcType=VARCHAR}, 
+      #{cDirectoryid,jdbcType=INTEGER}, #{cImg,jdbcType=VARCHAR}, #{cFormat,jdbcType=INTEGER}, 
+      #{cTypeid,jdbcType=INTEGER}, #{cGroupid,jdbcType=INTEGER}, #{cHits,jdbcType=INTEGER}, 
+      #{cStatus,jdbcType=INTEGER}, #{cCredit,jdbcType=INTEGER}, #{cHomepage,jdbcType=VARCHAR}, 
+      #{cIsclose,jdbcType=INTEGER}, #{cPasscondition,jdbcType=INTEGER}, #{cExpirationdate,jdbcType=TIMESTAMP}, 
+      #{cStartdate,jdbcType=TIMESTAMP}, #{cCreatedate,jdbcType=TIMESTAMP}, #{cTutoruserid,jdbcType=INTEGER}, 
+      #{cCreateuserid,jdbcType=INTEGER}, #{cCoursetemplateid,jdbcType=INTEGER}, #{cSimnetunitnameclient,jdbcType=VARCHAR}, 
+      #{cSimnetdefaultdcs,jdbcType=INTEGER}, #{cSimnetguid,jdbcType=VARCHAR}, #{cSimnetengname,jdbcType=VARCHAR}, 
+      #{cSimnetversion,jdbcType=VARCHAR}, #{cCourseisencrypt,jdbcType=INTEGER}, #{cIsweb,jdbcType=INTEGER}, 
+      #{cStoragetype,jdbcType=INTEGER}, #{cDescription,jdbcType=LONGVARCHAR}, #{cTags,jdbcType=LONGVARCHAR}, 
+      #{cSimnetxml,jdbcType=LONGVARCHAR}, #{cSimnetprojects,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.esst.ts.model.courseWithBLOBs" >
+    insert into course
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="courseid != null" >
+        CourseID,
+      </if>
+      <if test="cNo != null" >
+        C_No,
+      </if>
+      <if test="cName != null" >
+        C_Name,
+      </if>
+      <if test="cDirectoryid != null" >
+        C_DirectoryID,
+      </if>
+      <if test="cImg != null" >
+        C_Img,
+      </if>
+      <if test="cFormat != null" >
+        C_Format,
+      </if>
+      <if test="cTypeid != null" >
+        C_TypeID,
+      </if>
+      <if test="cGroupid != null" >
+        C_GroupID,
+      </if>
+      <if test="cHits != null" >
+        C_Hits,
+      </if>
+      <if test="cStatus != null" >
+        C_Status,
+      </if>
+      <if test="cCredit != null" >
+        C_Credit,
+      </if>
+      <if test="cHomepage != null" >
+        C_HomePage,
+      </if>
+      <if test="cIsclose != null" >
+        C_IsClose,
+      </if>
+      <if test="cPasscondition != null" >
+        C_PassCondition,
+      </if>
+      <if test="cExpirationdate != null" >
+        C_ExpirationDate,
+      </if>
+      <if test="cStartdate != null" >
+        C_StartDate,
+      </if>
+      <if test="cCreatedate != null" >
+        C_CreateDate,
+      </if>
+      <if test="cTutoruserid != null" >
+        C_TutorUserID,
+      </if>
+      <if test="cCreateuserid != null" >
+        C_CreateUserID,
+      </if>
+      <if test="cCoursetemplateid != null" >
+        C_CourseTemplateID,
+      </if>
+      <if test="cSimnetunitnameclient != null" >
+        C_SimnetUnitNameClient,
+      </if>
+      <if test="cSimnetdefaultdcs != null" >
+        C_SimnetDefaultDcs,
+      </if>
+      <if test="cSimnetguid != null" >
+        C_SimnetGuid,
+      </if>
+      <if test="cSimnetengname != null" >
+        C_SimnetEngName,
+      </if>
+      <if test="cSimnetversion != null" >
+        C_SimnetVersion,
+      </if>
+      <if test="cCourseisencrypt != null" >
+        C_CourseIsEncrypt,
+      </if>
+      <if test="cIsweb != null" >
+        C_IsWeb,
+      </if>
+      <if test="cStoragetype != null" >
+        C_StorageType,
+      </if>
+      <if test="cDescription != null" >
+        C_Description,
+      </if>
+      <if test="cTags != null" >
+        C_Tags,
+      </if>
+      <if test="cSimnetxml != null" >
+        C_SimnetXML,
+      </if>
+      <if test="cSimnetprojects != null" >
+        C_SimnetProjects,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="courseid != null" >
+        #{courseid,jdbcType=INTEGER},
+      </if>
+      <if test="cNo != null" >
+        #{cNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cName != null" >
+        #{cName,jdbcType=VARCHAR},
+      </if>
+      <if test="cDirectoryid != null" >
+        #{cDirectoryid,jdbcType=INTEGER},
+      </if>
+      <if test="cImg != null" >
+        #{cImg,jdbcType=VARCHAR},
+      </if>
+      <if test="cFormat != null" >
+        #{cFormat,jdbcType=INTEGER},
+      </if>
+      <if test="cTypeid != null" >
+        #{cTypeid,jdbcType=INTEGER},
+      </if>
+      <if test="cGroupid != null" >
+        #{cGroupid,jdbcType=INTEGER},
+      </if>
+      <if test="cHits != null" >
+        #{cHits,jdbcType=INTEGER},
+      </if>
+      <if test="cStatus != null" >
+        #{cStatus,jdbcType=INTEGER},
+      </if>
+      <if test="cCredit != null" >
+        #{cCredit,jdbcType=INTEGER},
+      </if>
+      <if test="cHomepage != null" >
+        #{cHomepage,jdbcType=VARCHAR},
+      </if>
+      <if test="cIsclose != null" >
+        #{cIsclose,jdbcType=INTEGER},
+      </if>
+      <if test="cPasscondition != null" >
+        #{cPasscondition,jdbcType=INTEGER},
+      </if>
+      <if test="cExpirationdate != null" >
+        #{cExpirationdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cStartdate != null" >
+        #{cStartdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cCreatedate != null" >
+        #{cCreatedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cTutoruserid != null" >
+        #{cTutoruserid,jdbcType=INTEGER},
+      </if>
+      <if test="cCreateuserid != null" >
+        #{cCreateuserid,jdbcType=INTEGER},
+      </if>
+      <if test="cCoursetemplateid != null" >
+        #{cCoursetemplateid,jdbcType=INTEGER},
+      </if>
+      <if test="cSimnetunitnameclient != null" >
+        #{cSimnetunitnameclient,jdbcType=VARCHAR},
+      </if>
+      <if test="cSimnetdefaultdcs != null" >
+        #{cSimnetdefaultdcs,jdbcType=INTEGER},
+      </if>
+      <if test="cSimnetguid != null" >
+        #{cSimnetguid,jdbcType=VARCHAR},
+      </if>
+      <if test="cSimnetengname != null" >
+        #{cSimnetengname,jdbcType=VARCHAR},
+      </if>
+      <if test="cSimnetversion != null" >
+        #{cSimnetversion,jdbcType=VARCHAR},
+      </if>
+      <if test="cCourseisencrypt != null" >
+        #{cCourseisencrypt,jdbcType=INTEGER},
+      </if>
+      <if test="cIsweb != null" >
+        #{cIsweb,jdbcType=INTEGER},
+      </if>
+      <if test="cStoragetype != null" >
+        #{cStoragetype,jdbcType=INTEGER},
+      </if>
+      <if test="cDescription != null" >
+        #{cDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="cTags != null" >
+        #{cTags,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="cSimnetxml != null" >
+        #{cSimnetxml,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="cSimnetprojects != null" >
+        #{cSimnetprojects,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.courseWithBLOBs" >
+    update course
+    <set >
+      <if test="cNo != null" >
+        C_No = #{cNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cName != null" >
+        C_Name = #{cName,jdbcType=VARCHAR},
+      </if>
+      <if test="cDirectoryid != null" >
+        C_DirectoryID = #{cDirectoryid,jdbcType=INTEGER},
+      </if>
+      <if test="cImg != null" >
+        C_Img = #{cImg,jdbcType=VARCHAR},
+      </if>
+      <if test="cFormat != null" >
+        C_Format = #{cFormat,jdbcType=INTEGER},
+      </if>
+      <if test="cTypeid != null" >
+        C_TypeID = #{cTypeid,jdbcType=INTEGER},
+      </if>
+      <if test="cGroupid != null" >
+        C_GroupID = #{cGroupid,jdbcType=INTEGER},
+      </if>
+      <if test="cHits != null" >
+        C_Hits = #{cHits,jdbcType=INTEGER},
+      </if>
+      <if test="cStatus != null" >
+        C_Status = #{cStatus,jdbcType=INTEGER},
+      </if>
+      <if test="cCredit != null" >
+        C_Credit = #{cCredit,jdbcType=INTEGER},
+      </if>
+      <if test="cHomepage != null" >
+        C_HomePage = #{cHomepage,jdbcType=VARCHAR},
+      </if>
+      <if test="cIsclose != null" >
+        C_IsClose = #{cIsclose,jdbcType=INTEGER},
+      </if>
+      <if test="cPasscondition != null" >
+        C_PassCondition = #{cPasscondition,jdbcType=INTEGER},
+      </if>
+      <if test="cExpirationdate != null" >
+        C_ExpirationDate = #{cExpirationdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cStartdate != null" >
+        C_StartDate = #{cStartdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cCreatedate != null" >
+        C_CreateDate = #{cCreatedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cTutoruserid != null" >
+        C_TutorUserID = #{cTutoruserid,jdbcType=INTEGER},
+      </if>
+      <if test="cCreateuserid != null" >
+        C_CreateUserID = #{cCreateuserid,jdbcType=INTEGER},
+      </if>
+      <if test="cCoursetemplateid != null" >
+        C_CourseTemplateID = #{cCoursetemplateid,jdbcType=INTEGER},
+      </if>
+      <if test="cSimnetunitnameclient != null" >
+        C_SimnetUnitNameClient = #{cSimnetunitnameclient,jdbcType=VARCHAR},
+      </if>
+      <if test="cSimnetdefaultdcs != null" >
+        C_SimnetDefaultDcs = #{cSimnetdefaultdcs,jdbcType=INTEGER},
+      </if>
+      <if test="cSimnetguid != null" >
+        C_SimnetGuid = #{cSimnetguid,jdbcType=VARCHAR},
+      </if>
+      <if test="cSimnetengname != null" >
+        C_SimnetEngName = #{cSimnetengname,jdbcType=VARCHAR},
+      </if>
+      <if test="cSimnetversion != null" >
+        C_SimnetVersion = #{cSimnetversion,jdbcType=VARCHAR},
+      </if>
+      <if test="cCourseisencrypt != null" >
+        C_CourseIsEncrypt = #{cCourseisencrypt,jdbcType=INTEGER},
+      </if>
+      <if test="cIsweb != null" >
+        C_IsWeb = #{cIsweb,jdbcType=INTEGER},
+      </if>
+      <if test="cStoragetype != null" >
+        C_StorageType = #{cStoragetype,jdbcType=INTEGER},
+      </if>
+      <if test="cDescription != null" >
+        C_Description = #{cDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="cTags != null" >
+        C_Tags = #{cTags,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="cSimnetxml != null" >
+        C_SimnetXML = #{cSimnetxml,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="cSimnetprojects != null" >
+        C_SimnetProjects = #{cSimnetprojects,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where CourseID = #{courseid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.esst.ts.model.courseWithBLOBs" >
+    update course
+    set C_No = #{cNo,jdbcType=VARCHAR},
+      C_Name = #{cName,jdbcType=VARCHAR},
+      C_DirectoryID = #{cDirectoryid,jdbcType=INTEGER},
+      C_Img = #{cImg,jdbcType=VARCHAR},
+      C_Format = #{cFormat,jdbcType=INTEGER},
+      C_TypeID = #{cTypeid,jdbcType=INTEGER},
+      C_GroupID = #{cGroupid,jdbcType=INTEGER},
+      C_Hits = #{cHits,jdbcType=INTEGER},
+      C_Status = #{cStatus,jdbcType=INTEGER},
+      C_Credit = #{cCredit,jdbcType=INTEGER},
+      C_HomePage = #{cHomepage,jdbcType=VARCHAR},
+      C_IsClose = #{cIsclose,jdbcType=INTEGER},
+      C_PassCondition = #{cPasscondition,jdbcType=INTEGER},
+      C_ExpirationDate = #{cExpirationdate,jdbcType=TIMESTAMP},
+      C_StartDate = #{cStartdate,jdbcType=TIMESTAMP},
+      C_CreateDate = #{cCreatedate,jdbcType=TIMESTAMP},
+      C_TutorUserID = #{cTutoruserid,jdbcType=INTEGER},
+      C_CreateUserID = #{cCreateuserid,jdbcType=INTEGER},
+      C_CourseTemplateID = #{cCoursetemplateid,jdbcType=INTEGER},
+      C_SimnetUnitNameClient = #{cSimnetunitnameclient,jdbcType=VARCHAR},
+      C_SimnetDefaultDcs = #{cSimnetdefaultdcs,jdbcType=INTEGER},
+      C_SimnetGuid = #{cSimnetguid,jdbcType=VARCHAR},
+      C_SimnetEngName = #{cSimnetengname,jdbcType=VARCHAR},
+      C_SimnetVersion = #{cSimnetversion,jdbcType=VARCHAR},
+      C_CourseIsEncrypt = #{cCourseisencrypt,jdbcType=INTEGER},
+      C_IsWeb = #{cIsweb,jdbcType=INTEGER},
+      C_StorageType = #{cStoragetype,jdbcType=INTEGER},
+      C_Description = #{cDescription,jdbcType=LONGVARCHAR},
+      C_Tags = #{cTags,jdbcType=LONGVARCHAR},
+      C_SimnetXML = #{cSimnetxml,jdbcType=LONGVARCHAR},
+      C_SimnetProjects = #{cSimnetprojects,jdbcType=LONGVARCHAR}
+    where CourseID = #{courseid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.course" >
+    update course
+    set C_No = #{cNo,jdbcType=VARCHAR},
+      C_Name = #{cName,jdbcType=VARCHAR},
+      C_DirectoryID = #{cDirectoryid,jdbcType=INTEGER},
+      C_Img = #{cImg,jdbcType=VARCHAR},
+      C_Format = #{cFormat,jdbcType=INTEGER},
+      C_TypeID = #{cTypeid,jdbcType=INTEGER},
+      C_GroupID = #{cGroupid,jdbcType=INTEGER},
+      C_Hits = #{cHits,jdbcType=INTEGER},
+      C_Status = #{cStatus,jdbcType=INTEGER},
+      C_Credit = #{cCredit,jdbcType=INTEGER},
+      C_HomePage = #{cHomepage,jdbcType=VARCHAR},
+      C_IsClose = #{cIsclose,jdbcType=INTEGER},
+      C_PassCondition = #{cPasscondition,jdbcType=INTEGER},
+      C_ExpirationDate = #{cExpirationdate,jdbcType=TIMESTAMP},
+      C_StartDate = #{cStartdate,jdbcType=TIMESTAMP},
+      C_CreateDate = #{cCreatedate,jdbcType=TIMESTAMP},
+      C_TutorUserID = #{cTutoruserid,jdbcType=INTEGER},
+      C_CreateUserID = #{cCreateuserid,jdbcType=INTEGER},
+      C_CourseTemplateID = #{cCoursetemplateid,jdbcType=INTEGER},
+      C_SimnetUnitNameClient = #{cSimnetunitnameclient,jdbcType=VARCHAR},
+      C_SimnetDefaultDcs = #{cSimnetdefaultdcs,jdbcType=INTEGER},
+      C_SimnetGuid = #{cSimnetguid,jdbcType=VARCHAR},
+      C_SimnetEngName = #{cSimnetengname,jdbcType=VARCHAR},
+      C_SimnetVersion = #{cSimnetversion,jdbcType=VARCHAR},
+      C_CourseIsEncrypt = #{cCourseisencrypt,jdbcType=INTEGER},
+      C_IsWeb = #{cIsweb,jdbcType=INTEGER},
+      C_StorageType = #{cStoragetype,jdbcType=INTEGER}
+    where CourseID = #{courseid,jdbcType=INTEGER}
+  </update>
+</mapper>

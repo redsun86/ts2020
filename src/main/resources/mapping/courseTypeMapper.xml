@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.courseTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.courseType" >
+    <result column="CourseTypeID" property="coursetypeid" jdbcType="INTEGER" />
+    <result column="CT_Name" property="ctName" jdbcType="VARCHAR" />
+    <result column="CT_IsSystemType" property="ctIssystemtype" jdbcType="INTEGER" />
+    <result column="CT_ShowOrder" property="ctShoworder" jdbcType="INTEGER" />
+    <result column="CT_CreateUser" property="ctCreateuser" jdbcType="INTEGER" />
+    <result column="CT_CreateTime" property="ctCreatetime" jdbcType="TIMESTAMP" />
+    <result column="CT_IsSimnet" property="ctIssimnet" jdbcType="INTEGER" />
+  </resultMap>
+  <insert id="insert" parameterType="com.esst.ts.model.courseType" >
+    insert into course_type (CourseTypeID, CT_Name, CT_IsSystemType, 
+      CT_ShowOrder, CT_CreateUser, CT_CreateTime, 
+      CT_IsSimnet)
+    values (#{coursetypeid,jdbcType=INTEGER}, #{ctName,jdbcType=VARCHAR}, #{ctIssystemtype,jdbcType=INTEGER}, 
+      #{ctShoworder,jdbcType=INTEGER}, #{ctCreateuser,jdbcType=INTEGER}, #{ctCreatetime,jdbcType=TIMESTAMP}, 
+      #{ctIssimnet,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.esst.ts.model.courseType" >
+    insert into course_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="coursetypeid != null" >
+        CourseTypeID,
+      </if>
+      <if test="ctName != null" >
+        CT_Name,
+      </if>
+      <if test="ctIssystemtype != null" >
+        CT_IsSystemType,
+      </if>
+      <if test="ctShoworder != null" >
+        CT_ShowOrder,
+      </if>
+      <if test="ctCreateuser != null" >
+        CT_CreateUser,
+      </if>
+      <if test="ctCreatetime != null" >
+        CT_CreateTime,
+      </if>
+      <if test="ctIssimnet != null" >
+        CT_IsSimnet,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="coursetypeid != null" >
+        #{coursetypeid,jdbcType=INTEGER},
+      </if>
+      <if test="ctName != null" >
+        #{ctName,jdbcType=VARCHAR},
+      </if>
+      <if test="ctIssystemtype != null" >
+        #{ctIssystemtype,jdbcType=INTEGER},
+      </if>
+      <if test="ctShoworder != null" >
+        #{ctShoworder,jdbcType=INTEGER},
+      </if>
+      <if test="ctCreateuser != null" >
+        #{ctCreateuser,jdbcType=INTEGER},
+      </if>
+      <if test="ctCreatetime != null" >
+        #{ctCreatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ctIssimnet != null" >
+        #{ctIssimnet,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+</mapper>

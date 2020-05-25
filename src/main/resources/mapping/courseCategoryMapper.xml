@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.courseCategoryMapper" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.courseCategory" >
+    <id column="CourseCategoryID" property="coursecategoryid" jdbcType="INTEGER" />
+    <result column="CC_PID" property="ccPid" jdbcType="INTEGER" />
+    <result column="CC_Name" property="ccName" jdbcType="VARCHAR" />
+    <result column="CC_ShowOrder" property="ccShoworder" jdbcType="INTEGER" />
+    <result column="CC_Deleted" property="ccDeleted" jdbcType="BIT" />
+    <result column="CC_Remark" property="ccRemark" jdbcType="VARCHAR" />
+    <result column="CC_CreateUser" property="ccCreateuser" jdbcType="INTEGER" />
+    <result column="CC_CreateTime" property="ccCreatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    CourseCategoryID, CC_PID, CC_Name, CC_ShowOrder, CC_Deleted, CC_Remark, CC_CreateUser, 
+    CC_CreateTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from course_category
+    where CourseCategoryID = #{coursecategoryid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from course_category
+    where CourseCategoryID = #{coursecategoryid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.esst.ts.model.courseCategory" >
+    insert into course_category (CourseCategoryID, CC_PID, CC_Name, 
+      CC_ShowOrder, CC_Deleted, CC_Remark, 
+      CC_CreateUser, CC_CreateTime)
+    values (#{coursecategoryid,jdbcType=INTEGER}, #{ccPid,jdbcType=INTEGER}, #{ccName,jdbcType=VARCHAR}, 
+      #{ccShoworder,jdbcType=INTEGER}, #{ccDeleted,jdbcType=BIT}, #{ccRemark,jdbcType=VARCHAR}, 
+      #{ccCreateuser,jdbcType=INTEGER}, #{ccCreatetime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.esst.ts.model.courseCategory" >
+    insert into course_category
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="coursecategoryid != null" >
+        CourseCategoryID,
+      </if>
+      <if test="ccPid != null" >
+        CC_PID,
+      </if>
+      <if test="ccName != null" >
+        CC_Name,
+      </if>
+      <if test="ccShoworder != null" >
+        CC_ShowOrder,
+      </if>
+      <if test="ccDeleted != null" >
+        CC_Deleted,
+      </if>
+      <if test="ccRemark != null" >
+        CC_Remark,
+      </if>
+      <if test="ccCreateuser != null" >
+        CC_CreateUser,
+      </if>
+      <if test="ccCreatetime != null" >
+        CC_CreateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="coursecategoryid != null" >
+        #{coursecategoryid,jdbcType=INTEGER},
+      </if>
+      <if test="ccPid != null" >
+        #{ccPid,jdbcType=INTEGER},
+      </if>
+      <if test="ccName != null" >
+        #{ccName,jdbcType=VARCHAR},
+      </if>
+      <if test="ccShoworder != null" >
+        #{ccShoworder,jdbcType=INTEGER},
+      </if>
+      <if test="ccDeleted != null" >
+        #{ccDeleted,jdbcType=BIT},
+      </if>
+      <if test="ccRemark != null" >
+        #{ccRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="ccCreateuser != null" >
+        #{ccCreateuser,jdbcType=INTEGER},
+      </if>
+      <if test="ccCreatetime != null" >
+        #{ccCreatetime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.courseCategory" >
+    update course_category
+    <set >
+      <if test="ccPid != null" >
+        CC_PID = #{ccPid,jdbcType=INTEGER},
+      </if>
+      <if test="ccName != null" >
+        CC_Name = #{ccName,jdbcType=VARCHAR},
+      </if>
+      <if test="ccShoworder != null" >
+        CC_ShowOrder = #{ccShoworder,jdbcType=INTEGER},
+      </if>
+      <if test="ccDeleted != null" >
+        CC_Deleted = #{ccDeleted,jdbcType=BIT},
+      </if>
+      <if test="ccRemark != null" >
+        CC_Remark = #{ccRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="ccCreateuser != null" >
+        CC_CreateUser = #{ccCreateuser,jdbcType=INTEGER},
+      </if>
+      <if test="ccCreatetime != null" >
+        CC_CreateTime = #{ccCreatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where CourseCategoryID = #{coursecategoryid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.courseCategory" >
+    update course_category
+    set CC_PID = #{ccPid,jdbcType=INTEGER},
+      CC_Name = #{ccName,jdbcType=VARCHAR},
+      CC_ShowOrder = #{ccShoworder,jdbcType=INTEGER},
+      CC_Deleted = #{ccDeleted,jdbcType=BIT},
+      CC_Remark = #{ccRemark,jdbcType=VARCHAR},
+      CC_CreateUser = #{ccCreateuser,jdbcType=INTEGER},
+      CC_CreateTime = #{ccCreatetime,jdbcType=TIMESTAMP}
+    where CourseCategoryID = #{coursecategoryid,jdbcType=INTEGER}
+  </update>
+</mapper>

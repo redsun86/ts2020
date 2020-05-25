@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.courseDirectoryMapper" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.courseDirectory" >
+    <id column="CourseDirectoryID" property="coursedirectoryid" jdbcType="INTEGER" />
+    <result column="CD_DName" property="cdDname" jdbcType="VARCHAR" />
+    <result column="CD_DEname" property="cdDename" jdbcType="VARCHAR" />
+    <result column="CD_DPath" property="cdDpath" jdbcType="VARCHAR" />
+    <result column="CD_Type" property="cdType" jdbcType="VARCHAR" />
+    <result column="CD_ParentID" property="cdParentid" jdbcType="INTEGER" />
+    <result column="CD_LeftID" property="cdLeftid" jdbcType="INTEGER" />
+    <result column="CD_RightID" property="cdRightid" jdbcType="INTEGER" />
+    <result column="CD_IsRoot" property="cdIsroot" jdbcType="INTEGER" />
+    <result column="CD_Level" property="cdLevel" jdbcType="INTEGER" />
+    <result column="CD_ChildCount" property="cdChildcount" jdbcType="INTEGER" />
+    <result column="CD_ShowOrder" property="cdShoworder" jdbcType="INTEGER" />
+    <result column="CD_Delete" property="cdDelete" jdbcType="INTEGER" />
+    <result column="CD_DocumentID" property="cdDocumentid" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.esst.ts.model.courseDirectory" extends="BaseResultMap" >
+    <result column="CD_EntrancePath" property="cdEntrancepath" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    CourseDirectoryID, CD_DName, CD_DEname, CD_DPath, CD_Type, CD_ParentID, CD_LeftID, 
+    CD_RightID, CD_IsRoot, CD_Level, CD_ChildCount, CD_ShowOrder, CD_Delete, CD_DocumentID
+  </sql>
+  <sql id="Blob_Column_List" >
+    CD_EntrancePath
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from course_directory
+    where CourseDirectoryID = #{coursedirectoryid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from course_directory
+    where CourseDirectoryID = #{coursedirectoryid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.esst.ts.model.courseDirectory" >
+    insert into course_directory (CourseDirectoryID, CD_DName, CD_DEname, 
+      CD_DPath, CD_Type, CD_ParentID, 
+      CD_LeftID, CD_RightID, CD_IsRoot, 
+      CD_Level, CD_ChildCount, CD_ShowOrder, 
+      CD_Delete, CD_DocumentID, CD_EntrancePath
+      )
+    values (#{coursedirectoryid,jdbcType=INTEGER}, #{cdDname,jdbcType=VARCHAR}, #{cdDename,jdbcType=VARCHAR}, 
+      #{cdDpath,jdbcType=VARCHAR}, #{cdType,jdbcType=VARCHAR}, #{cdParentid,jdbcType=INTEGER}, 
+      #{cdLeftid,jdbcType=INTEGER}, #{cdRightid,jdbcType=INTEGER}, #{cdIsroot,jdbcType=INTEGER}, 
+      #{cdLevel,jdbcType=INTEGER}, #{cdChildcount,jdbcType=INTEGER}, #{cdShoworder,jdbcType=INTEGER}, 
+      #{cdDelete,jdbcType=INTEGER}, #{cdDocumentid,jdbcType=INTEGER}, #{cdEntrancepath,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.esst.ts.model.courseDirectory" >
+    insert into course_directory
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="coursedirectoryid != null" >
+        CourseDirectoryID,
+      </if>
+      <if test="cdDname != null" >
+        CD_DName,
+      </if>
+      <if test="cdDename != null" >
+        CD_DEname,
+      </if>
+      <if test="cdDpath != null" >
+        CD_DPath,
+      </if>
+      <if test="cdType != null" >
+        CD_Type,
+      </if>
+      <if test="cdParentid != null" >
+        CD_ParentID,
+      </if>
+      <if test="cdLeftid != null" >
+        CD_LeftID,
+      </if>
+      <if test="cdRightid != null" >
+        CD_RightID,
+      </if>
+      <if test="cdIsroot != null" >
+        CD_IsRoot,
+      </if>
+      <if test="cdLevel != null" >
+        CD_Level,
+      </if>
+      <if test="cdChildcount != null" >
+        CD_ChildCount,
+      </if>
+      <if test="cdShoworder != null" >
+        CD_ShowOrder,
+      </if>
+      <if test="cdDelete != null" >
+        CD_Delete,
+      </if>
+      <if test="cdDocumentid != null" >
+        CD_DocumentID,
+      </if>
+      <if test="cdEntrancepath != null" >
+        CD_EntrancePath,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="coursedirectoryid != null" >
+        #{coursedirectoryid,jdbcType=INTEGER},
+      </if>
+      <if test="cdDname != null" >
+        #{cdDname,jdbcType=VARCHAR},
+      </if>
+      <if test="cdDename != null" >
+        #{cdDename,jdbcType=VARCHAR},
+      </if>
+      <if test="cdDpath != null" >
+        #{cdDpath,jdbcType=VARCHAR},
+      </if>
+      <if test="cdType != null" >
+        #{cdType,jdbcType=VARCHAR},
+      </if>
+      <if test="cdParentid != null" >
+        #{cdParentid,jdbcType=INTEGER},
+      </if>
+      <if test="cdLeftid != null" >
+        #{cdLeftid,jdbcType=INTEGER},
+      </if>
+      <if test="cdRightid != null" >
+        #{cdRightid,jdbcType=INTEGER},
+      </if>
+      <if test="cdIsroot != null" >
+        #{cdIsroot,jdbcType=INTEGER},
+      </if>
+      <if test="cdLevel != null" >
+        #{cdLevel,jdbcType=INTEGER},
+      </if>
+      <if test="cdChildcount != null" >
+        #{cdChildcount,jdbcType=INTEGER},
+      </if>
+      <if test="cdShoworder != null" >
+        #{cdShoworder,jdbcType=INTEGER},
+      </if>
+      <if test="cdDelete != null" >
+        #{cdDelete,jdbcType=INTEGER},
+      </if>
+      <if test="cdDocumentid != null" >
+        #{cdDocumentid,jdbcType=INTEGER},
+      </if>
+      <if test="cdEntrancepath != null" >
+        #{cdEntrancepath,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.courseDirectory" >
+    update course_directory
+    <set >
+      <if test="cdDname != null" >
+        CD_DName = #{cdDname,jdbcType=VARCHAR},
+      </if>
+      <if test="cdDename != null" >
+        CD_DEname = #{cdDename,jdbcType=VARCHAR},
+      </if>
+      <if test="cdDpath != null" >
+        CD_DPath = #{cdDpath,jdbcType=VARCHAR},
+      </if>
+      <if test="cdType != null" >
+        CD_Type = #{cdType,jdbcType=VARCHAR},
+      </if>
+      <if test="cdParentid != null" >
+        CD_ParentID = #{cdParentid,jdbcType=INTEGER},
+      </if>
+      <if test="cdLeftid != null" >
+        CD_LeftID = #{cdLeftid,jdbcType=INTEGER},
+      </if>
+      <if test="cdRightid != null" >
+        CD_RightID = #{cdRightid,jdbcType=INTEGER},
+      </if>
+      <if test="cdIsroot != null" >
+        CD_IsRoot = #{cdIsroot,jdbcType=INTEGER},
+      </if>
+      <if test="cdLevel != null" >
+        CD_Level = #{cdLevel,jdbcType=INTEGER},
+      </if>
+      <if test="cdChildcount != null" >
+        CD_ChildCount = #{cdChildcount,jdbcType=INTEGER},
+      </if>
+      <if test="cdShoworder != null" >
+        CD_ShowOrder = #{cdShoworder,jdbcType=INTEGER},
+      </if>
+      <if test="cdDelete != null" >
+        CD_Delete = #{cdDelete,jdbcType=INTEGER},
+      </if>
+      <if test="cdDocumentid != null" >
+        CD_DocumentID = #{cdDocumentid,jdbcType=INTEGER},
+      </if>
+      <if test="cdEntrancepath != null" >
+        CD_EntrancePath = #{cdEntrancepath,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where CourseDirectoryID = #{coursedirectoryid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.esst.ts.model.courseDirectory" >
+    update course_directory
+    set CD_DName = #{cdDname,jdbcType=VARCHAR},
+      CD_DEname = #{cdDename,jdbcType=VARCHAR},
+      CD_DPath = #{cdDpath,jdbcType=VARCHAR},
+      CD_Type = #{cdType,jdbcType=VARCHAR},
+      CD_ParentID = #{cdParentid,jdbcType=INTEGER},
+      CD_LeftID = #{cdLeftid,jdbcType=INTEGER},
+      CD_RightID = #{cdRightid,jdbcType=INTEGER},
+      CD_IsRoot = #{cdIsroot,jdbcType=INTEGER},
+      CD_Level = #{cdLevel,jdbcType=INTEGER},
+      CD_ChildCount = #{cdChildcount,jdbcType=INTEGER},
+      CD_ShowOrder = #{cdShoworder,jdbcType=INTEGER},
+      CD_Delete = #{cdDelete,jdbcType=INTEGER},
+      CD_DocumentID = #{cdDocumentid,jdbcType=INTEGER},
+      CD_EntrancePath = #{cdEntrancepath,jdbcType=LONGVARCHAR}
+    where CourseDirectoryID = #{coursedirectoryid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.courseDirectory" >
+    update course_directory
+    set CD_DName = #{cdDname,jdbcType=VARCHAR},
+      CD_DEname = #{cdDename,jdbcType=VARCHAR},
+      CD_DPath = #{cdDpath,jdbcType=VARCHAR},
+      CD_Type = #{cdType,jdbcType=VARCHAR},
+      CD_ParentID = #{cdParentid,jdbcType=INTEGER},
+      CD_LeftID = #{cdLeftid,jdbcType=INTEGER},
+      CD_RightID = #{cdRightid,jdbcType=INTEGER},
+      CD_IsRoot = #{cdIsroot,jdbcType=INTEGER},
+      CD_Level = #{cdLevel,jdbcType=INTEGER},
+      CD_ChildCount = #{cdChildcount,jdbcType=INTEGER},
+      CD_ShowOrder = #{cdShoworder,jdbcType=INTEGER},
+      CD_Delete = #{cdDelete,jdbcType=INTEGER},
+      CD_DocumentID = #{cdDocumentid,jdbcType=INTEGER}
+    where CourseDirectoryID = #{coursedirectoryid,jdbcType=INTEGER}
+  </update>
+</mapper>
