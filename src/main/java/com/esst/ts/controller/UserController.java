@@ -32,7 +32,6 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/web/v1/user")
-@Api(description = "UserController",tags = {"web用户管理相关v1"})
 public class UserController {
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     @Resource
@@ -46,11 +45,6 @@ public class UserController {
      * @param userName 用户名称
      * @param password 用户密码
      */
-    @ApiOperation(value="web端登录接口",httpMethod = "POST",response = Result.class,notes="web端登录接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userName",value = "用户名",required = true,dataType = "String"),
-            @ApiImplicitParam(name = "password",value = "密码",required = true,dataType = "String")
-    })
     @ResponseBody
     @RequestMapping("/userLogin")
     public Result userLogin(@RequestParam(value = "userName") String userName,

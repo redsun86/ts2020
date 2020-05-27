@@ -1,9 +1,5 @@
 package com.esst.ts.service;
 
-import java.util.List;
-import java.util.Map;
-
-import com.esst.ts.utils.PagedModelList;
 import com.esst.ts.model.User;
 
 public interface UserService {
