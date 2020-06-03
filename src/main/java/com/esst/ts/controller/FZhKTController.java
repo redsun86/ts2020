@@ -51,20 +51,38 @@ public class FZhKTController {
         //</editor-fold>
         List<scoreModel> datalist = new ArrayList<scoreModel>();
         //<editor-fold desc="实时数据列表赋值：datalist">
+
+        //<editor-fold desc="临时数据">
+        List<String> stuLst=new ArrayList<String>();
+        stuLst.add("李智");
+        stuLst.add("梁建磊");
+        stuLst.add("曹瑞卿");
+        stuLst.add("史红阳");
+        stuLst.add("专家");
+        //</editor-fold>
         for (int i = 0; i < 5; i++) {
             scoreModel m = new scoreModel();
             m.setId(toString().valueOf(i + 1));
             m.setMachine_id("PC01");
-            m.setUser_name("王五"+toString().valueOf(i + 1));
-            m.setStudent_num("1100");
+            m.setUser_name(stuLst.get(i));
+            m.setStudent_num("STU00"+toString().valueOf(i+1));
             m.setTemplate_id("任务单或试卷id");
             m.setTemplate_name("任务单或试卷名");
             m.setTask_id("任务或试题id");
             m.setTask_name("任务或试题名");
-            m.setScore("10.3");
-            m.setTotal_score("60.1");
-            m.setLearning_time("25.6");
-            m.setStatus("1");
+            int max=80,min=1;
+            int ran2 = (int) (Math.random()*(max-min)+min);
+            double d1=ran2*0.6;
+            double d3=ran2*1.6;
+            m.setScore(String.format("%.2f", d1));
+            m.setTotal_score(toString().valueOf(ran2));
+            m.setLearning_time(String.format("%.2f", d3));
+
+            if (ran2>40) {
+                m.setStatus("1");
+            }else {
+                m.setStatus("0");
+            }
             m.setDetailesscore("带排版的详细成绩");
             m.setReport_url("www.esonline.com/report.pdf");
             datalist.add(m);
@@ -72,10 +90,20 @@ public class FZhKTController {
         //</editor-fold>
         List<taskModel> tasklist = new ArrayList<taskModel>();
         //<editor-fold desc="任务列表赋值：tasklist">
+
+
+        //<editor-fold desc="临时数据">
+        List<String> tLst=new ArrayList<String>();
+        tLst.add("工况");
+        tLst.add("精馏塔");
+        tLst.add("加料");
+        tLst.add("加热");
+        tLst.add("检查参数");
+        //</editor-fold>
         for (int i = 0; i < 5; i++) {
             taskModel m = new taskModel();
             m.setTask_id(toString().valueOf(i + 1));
-            m.setTask_name("任务" + toString().valueOf(i + 1));
+            m.setTask_name(tLst.get(i));
             tasklist.add(m);
         }
         //</editor-fold>
@@ -99,6 +127,27 @@ public class FZhKTController {
         FZhKTMap.put("online_num", online_num);
         r.setData(FZhKTMap);
         //</editor-fold>
+        return r;
+    }
+
+
+    /** 学员端上传成绩接口
+     * @param userId
+     * @param stuNumber
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/updatescore",method = RequestMethod.GET)
+    public Result updatescore(
+            @RequestParam(value = "score_id",required = false) String userId,
+            @RequestParam(value = "stu_number",required = true) String stuNumber,
+            HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        //<editor-fold desc="返回参数初始化">
+        r.setMsg(requestContext.getMessage("OK"));
+        r.setCode(200);
         return r;
     }
 
