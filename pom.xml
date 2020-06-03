@@ -322,13 +322,6 @@
             <version>${paho.version}</version>
         </dependency>
 
-        <!-- 海康相关jar  -->
-        <!--<dependency>
-            <groupId>com.hikvision.artemis</groupId>
-            <artifactId>artemis-http-client</artifactId>
-            <version>1.0</version>
-        </dependency>-->
-
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
