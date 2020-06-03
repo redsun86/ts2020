@@ -123,10 +123,6 @@
             <version>1.2.2</version>
         </dependency>
 
-
-        <!--<mysql-driver.version>5.1.29</mysql-driver.version>-->
-        <!--<mysql-driver.version>8.0.11</mysql-driver.version>-->
-        <!-- 添加mysql驱动依赖 -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -322,18 +318,6 @@
             <version>${paho.version}</version>
         </dependency>
 
-        <!-- 海康相关jar  -->
-        <!--<dependency>
-            <groupId>com.hikvision.artemis</groupId>
-            <artifactId>artemis-http-client</artifactId>
-            <version>1.0</version>
-        </dependency>-->
-        <!-- 广西相关 -->
-        <!--<dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
-        </dependency>-->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
