@@ -55,7 +55,7 @@ public class FZhKTController {
             scoreModel m = new scoreModel();
             m.setId(toString().valueOf(i + 1));
             m.setMachine_id("PC01");
-            m.setUser_name("张三");
+            m.setUser_name("王五"+toString().valueOf(i + 1));
             m.setStudent_num("1100");
             m.setTemplate_id("任务单或试卷id");
             m.setTemplate_name("任务单或试卷名");
