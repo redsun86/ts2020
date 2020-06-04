@@ -7,15 +7,17 @@ public class User {
 
     private String userName;
 
-    private String firstName;
+    private String relName;
 
-    private String lastName;
+    private String stNum;
+
+    private String className;
 
     private String password;
 
-    private String email;
+    private String mobile;
 
-	private Integer status;
+    private Short status;
 
     private Date createTime;
 
@@ -25,63 +27,17 @@ public class User {
 
     private Integer updateUser;
 
-    private Integer isAdmin;
+    private Short isAdmin;
 
-    private Integer isDel;
-
-	private String cityCode;
-
-    private Integer permissionId;
+    private Short isDel;
 
     private Date validBeginTime;
 
     private Date validEndTime;
 
-    private String crName;
+    private String groupName;
 
-    private String upName;
-
-    private Date last;
-
-    public Date getLast() {
-        return last;
-    }
-
-    public void setLast(Date last) {
-        this.last = last;
-    }
-
-    public String getCrName() {
-        return crName;
-    }
-
-    public void setCrName(String crName) {
-        this.crName = crName;
-    }
-
-    public String getUpName() {
-        return upName;
-    }
-
-    public void setUpName(String upName) {
-        this.upName = upName;
-    }
-
-    public Date getValidBeginTime() {
-        return validBeginTime;
-    }
-
-    public void setValidBeginTime(Date validBeginTime) {
-        this.validBeginTime = validBeginTime;
-    }
-
-    public Date getValidEndTime() {
-        return validEndTime;
-    }
-
-    public void setValidEndTime(Date validEndTime) {
-        this.validEndTime = validEndTime;
-    }
+    private String roleName;
 
     public Integer getId() {
         return id;
@@ -96,23 +52,31 @@ public class User {
     }
 
     public void setUserName(String userName) {
-        this.userName = userName == null ? null : userName.trim ();
+        this.userName = userName == null ? null : userName.trim();
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getRelName() {
+        return relName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName == null ? null : firstName.trim ();
+    public void setRelName(String relName) {
+        this.relName = relName == null ? null : relName.trim();
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getStNum() {
+        return stNum;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName == null ? null : lastName.trim ();
+    public void setStNum(String stNum) {
+        this.stNum = stNum == null ? null : stNum.trim();
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className == null ? null : className.trim();
     }
 
     public String getPassword() {
@@ -120,24 +84,24 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = password == null ? null : password.trim ();
+        this.password = password == null ? null : password.trim();
     }
 
-    public String getEmail() {
-        return email;
+    public String getMobile() {
+        return mobile;
     }
 
-    public void setEmail(String email) {
-        this.email = email == null ? null : email.trim ();
+    public void setMobile(String mobile) {
+        this.mobile = mobile == null ? null : mobile.trim();
     }
 
-	public Integer getStatus() {
-		return status;
-	}
+    public Short getStatus() {
+        return status;
+    }
 
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
+    public void setStatus(Short status) {
+        this.status = status;
+    }
 
     public Date getCreateTime() {
         return createTime;
@@ -171,36 +135,51 @@ public class User {
         this.updateUser = updateUser;
     }
 
-    public Integer getIsAdmin() {
+    public Short getIsAdmin() {
         return isAdmin;
     }
 
-    public void setIsAdmin(Integer isAdmin) {
+    public void setIsAdmin(Short isAdmin) {
         this.isAdmin = isAdmin;
     }
 
-    public Integer getIsDel() {
+    public Short getIsDel() {
         return isDel;
     }
 
-    public void setIsDel(Integer isDel) {
+    public void setIsDel(Short isDel) {
         this.isDel = isDel;
     }
 
-	public String getCityCode() {
-		return cityCode;
-	}
-
-	public void setCityCode(String cityCode) {
-		this.cityCode = cityCode;
-	}
-
-
-    public Integer getPermissionId() {
-        return permissionId;
+    public Date getValidBeginTime() {
+        return validBeginTime;
     }
 
-    public void setPermissionId(Integer permissionId) {
-        this.permissionId = permissionId;
+    public void setValidBeginTime(Date validBeginTime) {
+        this.validBeginTime = validBeginTime;
+    }
+
+    public Date getValidEndTime() {
+        return validEndTime;
+    }
+
+    public void setValidEndTime(Date validEndTime) {
+        this.validEndTime = validEndTime;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName == null ? null : groupName.trim();
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName == null ? null : roleName.trim();
     }
 }

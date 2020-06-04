@@ -23,13 +23,5 @@ public interface UserService {
      */
     int updatePassword(User record);
 
-    /**
-     * 根据用户账号查询用户
-     *
-     * @param userName
-     * @return
-     */
-    User getUserByName(String userName);
-
 	int update(User user);
 }

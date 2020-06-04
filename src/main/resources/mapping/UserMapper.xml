@@ -1,232 +1,248 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.esst.ts.dao.UserDao">
-    <resultMap id="BaseResultMap" type="com.esst.ts.model.User">
-        <id column="id" property="id" jdbcType="INTEGER"/>
-        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
-        <result column="first_name" property="firstName" jdbcType="VARCHAR"/>
-        <result column="last_name" property="lastName" jdbcType="VARCHAR"/>
-        <result column="password" property="password" jdbcType="VARCHAR"/>
-        <result column="valid_begin_time" property="validBeginTime" jdbcType="TIMESTAMP"/>
-        <result column="valid_end_time" property="validEndTime" jdbcType="TIMESTAMP"/>
-        <result column="email" property="email" jdbcType="VARCHAR"/>
-        <result column="status" property="status" jdbcType="INTEGER"/>
-        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-        <result column="create_user" property="createUser" jdbcType="INTEGER"/>
-        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
-        <result column="update_user" property="updateUser" jdbcType="INTEGER"/>
-        <result column="is_admin" property="isAdmin" jdbcType="INTEGER"/>
-        <result column="is_del" property="isDel" jdbcType="INTEGER"/>
-        <result column="city_code" property="cityCode" jdbcType="VARCHAR"/>
-        <result column="permission_id" property="permissionId" jdbcType="INTEGER"/>
-    </resultMap>
-    <sql id="Base_Column_List">
-    id, user_name, first_name, last_name, password,valid_begin_time,valid_end_time,email, status, create_time,
-    create_user, update_time, update_user,is_admin,is_del
-    </sql>
-    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-        select
-        <include refid="Base_Column_List"/>
-        from user
-        where id = #{id,jdbcType=INTEGER} and is_del!=1
-    </select>
-
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+<mapper namespace="com.esst.ts.dao.UserDao" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.User" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="rel_name" property="relName" jdbcType="VARCHAR" />
+    <result column="st_num" property="stNum" jdbcType="VARCHAR" />
+    <result column="class_name" property="className" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="is_admin" property="isAdmin" jdbcType="SMALLINT" />
+    <result column="is_del" property="isDel" jdbcType="SMALLINT" />
+    <result column="valid_begin_time" property="validBeginTime" jdbcType="TIMESTAMP" />
+    <result column="valid_end_time" property="validEndTime" jdbcType="TIMESTAMP" />
+    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+    <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_name, rel_name, st_num, class_name, password, mobile, status, create_time, 
+    create_user, update_time, update_user, is_admin, is_del, valid_begin_time, valid_end_time, 
+    group_name, role_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from user
-    where id = #{id,jdbcType=INTEGER} and is_del!=1
+    where id = #{id,jdbcType=INTEGER}
   </delete>
-    <insert id="insert" parameterType="com.esst.ts.model.User">
-    insert into user (id, user_name, first_name, 
-      last_name, password, email, 
-      status,create_time,
-      create_user, update_time, update_user,is_admin
+  <insert id="insert" parameterType="com.esst.ts.model.User" >
+    insert into user (id, user_name, rel_name, 
+      st_num, class_name, password, 
+      mobile, status, create_time, 
+      create_user, update_time, update_user, 
+      is_admin, is_del, valid_begin_time, 
+      valid_end_time, group_name, role_name
       )
-    values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{firstName,jdbcType=VARCHAR}, 
-      #{lastName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
-      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+    values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{relName,jdbcType=VARCHAR}, 
+      #{stNum,jdbcType=VARCHAR}, #{className,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{mobile,jdbcType=VARCHAR}, #{status,jdbcType=SMALLINT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{createUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER}, 
-      #{isAdmin,jdbcType=INTEGER}
+      #{isAdmin,jdbcType=SMALLINT}, #{isDel,jdbcType=SMALLINT}, #{validBeginTime,jdbcType=TIMESTAMP}, 
+      #{validEndTime,jdbcType=TIMESTAMP}, #{groupName,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR}
       )
   </insert>
-    <insert id="insertSelective" parameterType="com.esst.ts.model.User">
-        insert into user
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
-            <if test="userName != null">
-                user_name,
-            </if>
-            <if test="firstName != null">
-                first_name,
-            </if>
-            <if test="lastName != null">
-                last_name,
-            </if>
-            <if test="password != null">
-                password,
-            </if>
-            <if test="validBeginTime != null">
-                valid_begin_time,
-            </if>
-            <if test="validEndTime != null">
-                valid_end_time,
-            </if>
-            <if test="email != null">
-                email,
-            </if>
-            <if test="status != null">
-                status,
-            </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
-            <if test="createUser != null">
-                create_user,
-            </if>
-            <if test="updateTime != null">
-                update_time,
-            </if>
-            <if test="updateUser != null">
-                update_user,
-            </if>
-            <if test="isAdmin != null">
-                is_admin,
-            </if>
-            <if test="permissionId != null">
-                permission_id,
-            </if>
-            <if test="cityCode != null">
-                city_code,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=INTEGER},
-            </if>
-            <if test="userName != null">
-                #{userName,jdbcType=VARCHAR},
-            </if>
-            <if test="firstName != null">
-                #{firstName,jdbcType=VARCHAR},
-            </if>
-            <if test="lastName != null">
-                #{lastName,jdbcType=VARCHAR},
-            </if>
-            <if test="password != null">
-                #{password,jdbcType=VARCHAR},
-            </if>
-            <if test="validBeginTime != null">
-                #{validBeginTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="validEndTime != null">
-                #{validEndTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="email != null">
-                #{email,jdbcType=VARCHAR},
-            </if>
-            <if test="status != null">
-                #{status,jdbcType=INTEGER},
-            </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="createUser != null">
-                #{createUser,jdbcType=INTEGER},
-            </if>
-            <if test="updateTime != null">
-                #{updateTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="updateUser != null">
-                #{updateUser,jdbcType=INTEGER},
-            </if>
-            <if test="isAdmin != null">
-                #{isAdmin,jdbcType=INTEGER},
-            </if>
-            <if test="permissionId != null">
-                #{permissionId,jdbcType=INTEGER},
-            </if>
-            <if test="cityCode != null">
-                #{cityCode,jdbcType=VARCHAR},
-            </if>
-        </trim>
-    </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.User">
-        update user
-        <set>
-            <if test="userName != null">
-                user_name = #{userName,jdbcType=VARCHAR},
-            </if>
-            <if test="firstName != null">
-                first_name = #{firstName,jdbcType=VARCHAR},
-            </if>
-            <if test="lastName != null">
-                last_name = #{lastName,jdbcType=VARCHAR},
-            </if>
-            <if test="password != null">
-                password = #{password,jdbcType=VARCHAR},
-            </if>
-            <if test="validBeginTime != null">
-                valid_begin_time =#{validBeginTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="validEndTime != null">
-                valid_end_time = #{validEndTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="email != null">
-                email = #{email,jdbcType=VARCHAR},
-            </if>
-            <if test="status != null">
-                status = #{status,jdbcType=INTEGER},
-            </if>
-            <if test="createTime != null">
-                create_time = #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="createUser != null">
-                create_user = #{createUser,jdbcType=INTEGER},
-            </if>
-            <if test="updateTime != null">
-                update_time = #{updateTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="updateUser != null">
-                update_user = #{updateUser,jdbcType=INTEGER},
-            </if>
-            <if test="isAdmin != null">
-                is_admin = #{isAdmin,jdbcType=INTEGER},
-            </if>
-            <if test="permissionId != null">
-                permission_id = #{permissionId,jdbcType=INTEGER},
-            </if>
-            <if test="cityCode != null">
-                city_code = #{cityCode,jdbcType=INTEGER},
-            </if>
-        </set>
-        where id = #{id,jdbcType=INTEGER}
-    </update>
-    <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.User">
+  <insert id="insertSelective" parameterType="com.esst.ts.model.User" >
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="relName != null" >
+        rel_name,
+      </if>
+      <if test="stNum != null" >
+        st_num,
+      </if>
+      <if test="className != null" >
+        class_name,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="isAdmin != null" >
+        is_admin,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+      <if test="validBeginTime != null" >
+        valid_begin_time,
+      </if>
+      <if test="validEndTime != null" >
+        valid_end_time,
+      </if>
+      <if test="groupName != null" >
+        group_name,
+      </if>
+      <if test="roleName != null" >
+        role_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="relName != null" >
+        #{relName,jdbcType=VARCHAR},
+      </if>
+      <if test="stNum != null" >
+        #{stNum,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="isAdmin != null" >
+        #{isAdmin,jdbcType=SMALLINT},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=SMALLINT},
+      </if>
+      <if test="validBeginTime != null" >
+        #{validBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="validEndTime != null" >
+        #{validEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="groupName != null" >
+        #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null" >
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.User" >
+    update user
+    <set >
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="relName != null" >
+        rel_name = #{relName,jdbcType=VARCHAR},
+      </if>
+      <if test="stNum != null" >
+        st_num = #{stNum,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        class_name = #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="isAdmin != null" >
+        is_admin = #{isAdmin,jdbcType=SMALLINT},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=SMALLINT},
+      </if>
+      <if test="validBeginTime != null" >
+        valid_begin_time = #{validBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="validEndTime != null" >
+        valid_end_time = #{validEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="groupName != null" >
+        group_name = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null" >
+        role_name = #{roleName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.User" >
     update user
     set user_name = #{userName,jdbcType=VARCHAR},
-      first_name = #{firstName,jdbcType=VARCHAR},
-      last_name = #{lastName,jdbcType=VARCHAR},
+      rel_name = #{relName,jdbcType=VARCHAR},
+      st_num = #{stNum,jdbcType=VARCHAR},
+      class_name = #{className,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
-      email = #{email,jdbcType=VARCHAR},
-      status = #{status,jdbcType=INTEGER},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      status = #{status,jdbcType=SMALLINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=INTEGER},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=INTEGER},
-      is_admin = #{isAdmin,jdbcType=INTEGER}
+      is_admin = #{isAdmin,jdbcType=SMALLINT},
+      is_del = #{isDel,jdbcType=SMALLINT},
+      valid_begin_time = #{validBeginTime,jdbcType=TIMESTAMP},
+      valid_end_time = #{validEndTime,jdbcType=TIMESTAMP},
+      group_name = #{groupName,jdbcType=VARCHAR},
+      role_name = #{roleName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-
-    <select id="getUser" resultMap="BaseResultMap" parameterType="java.lang.String">
-        select
-        <include refid="Base_Column_List"/>
-        from user where BINARY user_name = #{userName,jdbcType=VARCHAR} and password = MD5(#{password,jdbcType=VARCHAR})
-        and is_del=0
-    </select>
-
-    <select id="allUser" resultType="java.util.HashMap">
-        select id from  user where is_del =0
-    </select>
-
 </mapper>
