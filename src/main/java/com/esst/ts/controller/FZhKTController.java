@@ -54,38 +54,42 @@ public class FZhKTController {
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(200);
         //</editor-fold>
+        int total_num;          //总人数
+        int online_num;         //在线人数
         List<scoreModel> datalist = new ArrayList<scoreModel>();
         //<editor-fold desc="实时数据列表赋值：datalist">
 
         //<editor-fold desc="临时数据">
-        List<String> stuLst=new ArrayList<String>();
+        List<String> stuLst = new ArrayList<String>();
         stuLst.add("李智");
         stuLst.add("梁建磊");
         stuLst.add("曹瑞卿");
         stuLst.add("史红阳");
         stuLst.add("专家");
         //</editor-fold>
+        online_num=0;
         for (int i = 0; i < 5; i++) {
             scoreModel m = new scoreModel();
             m.setId(toString().valueOf(i + 1));
             m.setMachine_id("PC01");
             m.setUser_name(stuLst.get(i));
-            m.setStudent_num("STU00"+toString().valueOf(i+1));
+            m.setStudent_num("STU00" + toString().valueOf(i + 1));
             m.setTemplate_id("任务单或试卷id");
             m.setTemplate_name("任务单或试卷名");
             m.setTask_id("任务或试题id");
             m.setTask_name("任务或试题名");
-            int max=80,min=1;
-            int ran2 = (int) (Math.random()*(max-min)+min);
-            double d1=ran2*0.6;
-            double d3=ran2*1.6;
+            int max = 80, min = 1;
+            int ran2 = (int) (Math.random() * (max - min) + min);
+            double d1 = ran2 * 0.6;
+            double d3 = ran2 * 1.6;
             m.setScore(String.format("%.2f", d1));
             m.setTotal_score(toString().valueOf(ran2));
             m.setLearning_time(String.format("%.2f", d3));
 
-            if (ran2>40) {
+            if (ran2 > 40) {
                 m.setStatus("1");
-            }else {
+                online_num++;
+            } else {
                 m.setStatus("0");
             }
             m.setDetailesscore("带排版的详细成绩");
@@ -95,31 +99,18 @@ public class FZhKTController {
         //</editor-fold>
         List<taskModel> tasklist = new ArrayList<taskModel>();
         //<editor-fold desc="任务列表赋值：tasklist">
-
-
-        //<editor-fold desc="临时数据">
-        List<String> tLst=new ArrayList<String>();
-        tLst.add("工况");
-        tLst.add("精馏塔");
-        tLst.add("加料");
-        tLst.add("加热");
-        tLst.add("检查参数");
-        //</editor-fold>
-        for (int i = 0; i < 5; i++) {
+        List<courseTaskModel> m1lst = fzhktService.getCourseTaskLstDemo(1);
+        for (int i = 0; i < m1lst.size(); i++) {
             taskModel m = new taskModel();
-            courseTaskModel m1=fzhktService.getCourseTask("");
-            m.setTask_id(toString().valueOf(i + 1));
-            m.setTask_name(tLst.get(i));
+            m.setTask_id(toString().valueOf(m1lst.get(i).getTask_id()));
+            m.setTask_name(m1lst.get(i).getTask_name());
             tasklist.add(m);
         }
         //</editor-fold>
         //<editor-fold desc="统计数据赋值">
-        int total_num;          //总人数
-        int online_num;         //在线人数
         String class_name;      //班级名称
         String teacher_name;    //教师名称
-        total_num = 37;
-        online_num = 29;
+        total_num = datalist.size();
         class_name = "班级名称";
         teacher_name = "教师名称";
         //</editor-fold>

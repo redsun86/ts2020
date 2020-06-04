@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -15,12 +16,12 @@ public class FZhKTImpl implements FZhKTService {
     private FZhKTMapper FZhKTMapper;
 
     @Override
-    public courseTaskModel getCourseTaskDemo(String courseID) {
-        return FZhKTMapper.getCourseTaskDemo(courseID);
+    public List<courseTaskModel> getCourseTaskLstDemo(int courseID) {
+        return FZhKTMapper.getCourseTaskLstDemo(courseID);
     }
 
     @Override
-    public courseTaskModel getCourseTask(String courseID) {
-        return FZhKTMapper.getCourseTask(courseID);
+    public List<courseTaskModel> getCourseTaskLst(int courseID) {
+        return FZhKTMapper.getCourseTaskLst(courseID);
     }
 }
