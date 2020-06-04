@@ -1,8 +1,10 @@
 package com.esst.ts.controller;
 
 import com.esst.ts.model.Result;
+import com.esst.ts.model.courseTaskModel;
 import com.esst.ts.model.scoreModel;
 import com.esst.ts.model.taskModel;
+import com.esst.ts.service.FZhKTService;
 import com.esst.ts.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,9 @@ import java.util.*;
 @Controller
 @RequestMapping("/web/v1/fang")
 public class FZhKTController {
+    @Resource
+    private FZhKTService fzhktService;
+
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     //@Resource
     //private UserService userService;
@@ -102,6 +107,7 @@ public class FZhKTController {
         //</editor-fold>
         for (int i = 0; i < 5; i++) {
             taskModel m = new taskModel();
+            courseTaskModel m1=fzhktService.getCourseTask("");
             m.setTask_id(toString().valueOf(i + 1));
             m.setTask_name(tLst.get(i));
             tasklist.add(m);
