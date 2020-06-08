@@ -3,7 +3,7 @@ package com.esst.ts.dao;
 import com.esst.ts.model.User;
 import org.apache.ibatis.annotations.Param;
 
-public interface UserDao {
+public interface UserMapper {
     int deleteByPrimaryKey(Integer id);
 
     int insert(User record);
@@ -14,7 +14,10 @@ public interface UserDao {
 
     int updateByPrimaryKeySelective(User record);
 
+    int updateByPrimaryKeyWithBLOBs(User record);
+
     int updateByPrimaryKey(User record);
 
     User getUser(@Param("userName") String userName, @Param("password") String password);
+
 }

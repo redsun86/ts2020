@@ -39,6 +39,8 @@ public class User {
 
     private String roleName;
 
+    private byte[] dogId;
+
     public Integer getId() {
         return id;
     }
@@ -181,5 +183,13 @@ public class User {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName == null ? null : roleName.trim();
+    }
+
+    public byte[] getDogId() {
+        return dogId;
+    }
+
+    public void setDogId(byte[] dogId) {
+        this.dogId = dogId;
     }
 }
