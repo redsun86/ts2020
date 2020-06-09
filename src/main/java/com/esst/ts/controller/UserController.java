@@ -6,6 +6,7 @@ import com.esst.ts.model.User;
 import com.esst.ts.service.UserService;
 import com.esst.ts.service.UserTokenService;
 import com.esst.ts.model.UserToken;
+import com.esst.ts.utils.MD5Code;
 import com.esst.ts.utils.UniqueKeyGenerator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -21,9 +22,7 @@ import org.springframework.web.servlet.support.RequestContext;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 用户模块
@@ -115,5 +114,129 @@ public class UserController {
         return r;
     }
 
+    /**
+     * 用户列表接口
+     *
+     * @param user_id 教师ID
+     */
+    @ResponseBody
+    @RequestMapping("/userList")
+    public Result userList(@RequestParam(value = "user_id",required = true) Integer user_id,
+                           @RequestParam(value="token",required = true) String strToken,
+                           HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        List<User> userList = userService.getUserListByTeacherId(user_id);
+        Result r = new Result();
+        //<editor-fold desc="返回参数初始化">
+        r.setMsg(requestContext.getMessage("OK"));
+        r.setCode(200);
+        //</editor-fold>
+        List<User> datalist = new ArrayList<User>();
+        //<editor-fold desc="实时数据列表赋值：datalist">
+        for (User user : userList) {
+            User m = new User();
+            m.setId(user.getId());
+            m.setUserName(user.getUserName());
+            m.setStNum(user.getStNum());
+            m.setRelName(user.getRelName());
+            m.setStatus(user.getStatus());
+            m.setCreateTime(user.getCreateTime());
+            m.setCreateUser(user.getCreateUser());
+            m.setClassName(user.getClassName());
+            m.setMobile(user.getMobile());
+            m.setGroupName(user.getGroupName());
+            m.setRoleName(user.getRoleName());
+            datalist.add(m);
+        }
+        //</editor-fold>
+        Map<String, Object> UserListMap = new HashMap<>();
+        UserListMap.put("datalist", datalist);
+        r.setData(UserListMap);
+        return r;
+    }
 
+    /**
+     * 删除我的学员信息
+     *
+     * @param id 学员ID
+     */
+    @ResponseBody
+    @RequestMapping("/delstudents")
+    public Result delstudents(@RequestParam(value = "id",required = true) String id,
+                              @RequestParam(value="token",required = true) String strToken,
+                              HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        if(id.contains(",")){
+            Result r = new Result();
+            int j=0;
+            String [] str=id.split(",");
+            for(int i=0;i<str.length;i++){
+                int result = userService.delete(Integer.valueOf(str[i]));
+                if(result>0){
+                    j++;
+                }
+            }
+            if(j==str.length){
+                r.setMsg(requestContext.getMessage("OK"));
+                r.setCode(200);
+                r.setData("");
+                return r;
+            }
+            else
+            {
+                if(j>0){
+                    r.setMsg(requestContext.getMessage("OK"));
+                    r.setCode(201);
+                    r.setData("部分数据尚未删除，请检查数据或联系管理员！");
+                }else
+                {
+                    r.setMsg(requestContext.getMessage("Err"));
+                    r.setCode(100);
+                    r.setData("删除失败");
+                }
+                return r;
+            }
+        }else{
+            int result = userService.delete(Integer.valueOf(id));
+            Result r = new Result();
+            if(result>0){
+                r.setMsg(requestContext.getMessage("OK"));
+                r.setCode(200);
+                r.setData("");
+            }else
+            {
+                r.setMsg(requestContext.getMessage("Err"));
+                r.setCode(100);
+                r.setData("删除失败");
+            }
+            return r;
+        }
+    }
+
+    /**
+     * 重置当前选中学员的密码
+     *
+     * @param id 学员ID
+     */
+    @ResponseBody
+    @RequestMapping("/resetstudentspwd")
+    public Result resetstudentspwd(@RequestParam(value = "id",required = true) String id,
+                                   @RequestParam(value="token",required = true) String strToken,
+                                   HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        int result = userService.updateUserPwd(Integer.parseInt(id), MD5Code.encodeByMD5("000000"));
+        Result r = new Result();
+        if(result>0){
+            r.setMsg(requestContext.getMessage("OK"));
+            r.setCode(200);
+            r.setData("密码重置成功");
+
+        }else
+        {
+            r.setMsg(requestContext.getMessage("Err"));
+            r.setCode(100);
+            r.setData("重置密码失败");
+        }
+        return r;
+    }
 }
