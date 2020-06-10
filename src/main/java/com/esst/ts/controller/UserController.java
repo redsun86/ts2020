@@ -55,21 +55,11 @@ public class UserController {
         Result r = new Result();
         if (user == null) {
             r.setMsg(requestContext.getMessage("zhmmcw"));
-            r.setCode(Constants.OTHER_ERROR_CODE_ERRROR);
-            return r;
-        }
-        if (user.getIsDel() == 1) {
-            r.setMsg(requestContext.getMessage("gyhysc"));
-            r.setCode(Constants.LOGIN_INVALID_CODE_ERRROR);
-            return r;
-        }
-        if (user.getStatus() == 0) {
-            r.setMsg(requestContext.getMessage("ndzhwjh"));
-            r.setCode(Constants.LOGIN_INVALID_CODE_ERRROR);
+            r.setCode(Result.PASSWORD_ERROR);
             return r;
         }
         r.setMsg(requestContext.getMessage("qqcg"));
-        r.setCode(0);
+        r.setCode(Result.SUCCESS);
 
         // 新增tocken表数据
         String strToken = UniqueKeyGenerator.generateToken();
