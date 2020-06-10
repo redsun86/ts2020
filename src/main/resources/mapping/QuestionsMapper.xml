@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.QuestionsMapper" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.Questions" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="exame_id" property="exameId" jdbcType="INTEGER" />
+    <result column="operate_id" property="operateId" jdbcType="INTEGER" />
+    <result column="trouble_id" property="troubleId" jdbcType="INTEGER" />
+    <result column="style_id" property="styleId" jdbcType="INTEGER" />
+    <result column="proportion" property="proportion" jdbcType="INTEGER" />
+    <result column="time_limit" property="timeLimit" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, exame_id, operate_id, trouble_id, style_id, proportion, time_limit
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from questions
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from questions
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.esst.ts.model.Questions" >
+    insert into questions (id, exame_id, operate_id, 
+      trouble_id, style_id, proportion, 
+      time_limit)
+    values (#{id,jdbcType=INTEGER}, #{exameId,jdbcType=INTEGER}, #{operateId,jdbcType=INTEGER}, 
+      #{troubleId,jdbcType=INTEGER}, #{styleId,jdbcType=INTEGER}, #{proportion,jdbcType=INTEGER}, 
+      #{timeLimit,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.esst.ts.model.Questions" >
+    insert into questions
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="exameId != null" >
+        exame_id,
+      </if>
+      <if test="operateId != null" >
+        operate_id,
+      </if>
+      <if test="troubleId != null" >
+        trouble_id,
+      </if>
+      <if test="styleId != null" >
+        style_id,
+      </if>
+      <if test="proportion != null" >
+        proportion,
+      </if>
+      <if test="timeLimit != null" >
+        time_limit,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="exameId != null" >
+        #{exameId,jdbcType=INTEGER},
+      </if>
+      <if test="operateId != null" >
+        #{operateId,jdbcType=INTEGER},
+      </if>
+      <if test="troubleId != null" >
+        #{troubleId,jdbcType=INTEGER},
+      </if>
+      <if test="styleId != null" >
+        #{styleId,jdbcType=INTEGER},
+      </if>
+      <if test="proportion != null" >
+        #{proportion,jdbcType=INTEGER},
+      </if>
+      <if test="timeLimit != null" >
+        #{timeLimit,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.Questions" >
+    update questions
+    <set >
+      <if test="exameId != null" >
+        exame_id = #{exameId,jdbcType=INTEGER},
+      </if>
+      <if test="operateId != null" >
+        operate_id = #{operateId,jdbcType=INTEGER},
+      </if>
+      <if test="troubleId != null" >
+        trouble_id = #{troubleId,jdbcType=INTEGER},
+      </if>
+      <if test="styleId != null" >
+        style_id = #{styleId,jdbcType=INTEGER},
+      </if>
+      <if test="proportion != null" >
+        proportion = #{proportion,jdbcType=INTEGER},
+      </if>
+      <if test="timeLimit != null" >
+        time_limit = #{timeLimit,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.Questions" >
+    update questions
+    set exame_id = #{exameId,jdbcType=INTEGER},
+      operate_id = #{operateId,jdbcType=INTEGER},
+      trouble_id = #{troubleId,jdbcType=INTEGER},
+      style_id = #{styleId,jdbcType=INTEGER},
+      proportion = #{proportion,jdbcType=INTEGER},
+      time_limit = #{timeLimit,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

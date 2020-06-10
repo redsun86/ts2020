@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.TroubleMapper" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.Trouble" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="trouble_name" property="troubleName" jdbcType="VARCHAR" />
+    <result column="technology" property="technology" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.esst.ts.model.Trouble" extends="BaseResultMap" >
+    <result column="trouble_code" property="troubleCode" jdbcType="VARBINARY" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, trouble_name, technology
+  </sql>
+  <sql id="Blob_Column_List" >
+    trouble_code
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from trouble
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from trouble
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.esst.ts.model.Trouble" >
+    insert into trouble (id, trouble_name, technology, 
+      trouble_code)
+    values (#{id,jdbcType=INTEGER}, #{troubleName,jdbcType=VARCHAR}, #{technology,jdbcType=INTEGER}, 
+      #{troubleCode,jdbcType=VARBINARY})
+  </insert>
+  <insert id="insertSelective" parameterType="com.esst.ts.model.Trouble" >
+    insert into trouble
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="troubleName != null" >
+        trouble_name,
+      </if>
+      <if test="technology != null" >
+        technology,
+      </if>
+      <if test="troubleCode != null" >
+        trouble_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="troubleName != null" >
+        #{troubleName,jdbcType=VARCHAR},
+      </if>
+      <if test="technology != null" >
+        #{technology,jdbcType=INTEGER},
+      </if>
+      <if test="troubleCode != null" >
+        #{troubleCode,jdbcType=VARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.Trouble" >
+    update trouble
+    <set >
+      <if test="troubleName != null" >
+        trouble_name = #{troubleName,jdbcType=VARCHAR},
+      </if>
+      <if test="technology != null" >
+        technology = #{technology,jdbcType=INTEGER},
+      </if>
+      <if test="troubleCode != null" >
+        trouble_code = #{troubleCode,jdbcType=VARBINARY},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.esst.ts.model.Trouble" >
+    update trouble
+    set trouble_name = #{troubleName,jdbcType=VARCHAR},
+      technology = #{technology,jdbcType=INTEGER},
+      trouble_code = #{troubleCode,jdbcType=VARBINARY}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.Trouble" >
+    update trouble
+    set trouble_name = #{troubleName,jdbcType=VARCHAR},
+      technology = #{technology,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.TechnologyMapper" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.Technology" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="technology_code" property="technologyCode" jdbcType="VARCHAR" />
+    <result column="technology_zh_name" property="technologyZhName" jdbcType="VARCHAR" />
+    <result column="technology_en_name" property="technologyEnName" jdbcType="VARCHAR" />
+    <result column="style_id" property="styleId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, technology_code, technology_zh_name, technology_en_name, style_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from technology
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from technology
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.esst.ts.model.Technology" >
+    insert into technology (id, technology_code, technology_zh_name, 
+      technology_en_name, style_id)
+    values (#{id,jdbcType=INTEGER}, #{technologyCode,jdbcType=VARCHAR}, #{technologyZhName,jdbcType=VARCHAR}, 
+      #{technologyEnName,jdbcType=VARCHAR}, #{styleId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.esst.ts.model.Technology" >
+    insert into technology
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="technologyCode != null" >
+        technology_code,
+      </if>
+      <if test="technologyZhName != null" >
+        technology_zh_name,
+      </if>
+      <if test="technologyEnName != null" >
+        technology_en_name,
+      </if>
+      <if test="styleId != null" >
+        style_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="technologyCode != null" >
+        #{technologyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="technologyZhName != null" >
+        #{technologyZhName,jdbcType=VARCHAR},
+      </if>
+      <if test="technologyEnName != null" >
+        #{technologyEnName,jdbcType=VARCHAR},
+      </if>
+      <if test="styleId != null" >
+        #{styleId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.Technology" >
+    update technology
+    <set >
+      <if test="technologyCode != null" >
+        technology_code = #{technologyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="technologyZhName != null" >
+        technology_zh_name = #{technologyZhName,jdbcType=VARCHAR},
+      </if>
+      <if test="technologyEnName != null" >
+        technology_en_name = #{technologyEnName,jdbcType=VARCHAR},
+      </if>
+      <if test="styleId != null" >
+        style_id = #{styleId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.Technology" >
+    update technology
+    set technology_code = #{technologyCode,jdbcType=VARCHAR},
+      technology_zh_name = #{technologyZhName,jdbcType=VARCHAR},
+      technology_en_name = #{technologyEnName,jdbcType=VARCHAR},
+      style_id = #{styleId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

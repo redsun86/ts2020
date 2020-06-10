@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.UserLiveMapper" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.UserLive" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="mac_address" property="macAddress" jdbcType="VARCHAR" />
+    <result column="id_address" property="idAddress" jdbcType="VARCHAR" />
+    <result column="task_id" property="taskId" jdbcType="INTEGER" />
+    <result column="operate_id" property="operateId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="current_score" property="currentScore" jdbcType="DOUBLE" />
+    <result column="total_score" property="totalScore" jdbcType="DOUBLE" />
+    <result column="study_duration" property="studyDuration" jdbcType="DOUBLE" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.esst.ts.model.UserLiveWithBLOBs" extends="BaseResultMap" >
+    <result column="score_detail" property="scoreDetail" jdbcType="LONGVARCHAR" />
+    <result column="report" property="report" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, mac_address, id_address, task_id, operate_id, status, current_score, 
+    total_score, study_duration
+  </sql>
+  <sql id="Blob_Column_List" >
+    score_detail, report
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from user_live
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user_live
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.esst.ts.model.UserLiveWithBLOBs" >
+    insert into user_live (id, user_id, mac_address, 
+      id_address, task_id, operate_id, 
+      status, current_score, total_score, 
+      study_duration, score_detail, report
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{macAddress,jdbcType=VARCHAR}, 
+      #{idAddress,jdbcType=VARCHAR}, #{taskId,jdbcType=INTEGER}, #{operateId,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{currentScore,jdbcType=DOUBLE}, #{totalScore,jdbcType=DOUBLE}, 
+      #{studyDuration,jdbcType=DOUBLE}, #{scoreDetail,jdbcType=LONGVARCHAR}, #{report,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.esst.ts.model.UserLiveWithBLOBs" >
+    insert into user_live
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="macAddress != null" >
+        mac_address,
+      </if>
+      <if test="idAddress != null" >
+        id_address,
+      </if>
+      <if test="taskId != null" >
+        task_id,
+      </if>
+      <if test="operateId != null" >
+        operate_id,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="currentScore != null" >
+        current_score,
+      </if>
+      <if test="totalScore != null" >
+        total_score,
+      </if>
+      <if test="studyDuration != null" >
+        study_duration,
+      </if>
+      <if test="scoreDetail != null" >
+        score_detail,
+      </if>
+      <if test="report != null" >
+        report,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="macAddress != null" >
+        #{macAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="idAddress != null" >
+        #{idAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="taskId != null" >
+        #{taskId,jdbcType=INTEGER},
+      </if>
+      <if test="operateId != null" >
+        #{operateId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="currentScore != null" >
+        #{currentScore,jdbcType=DOUBLE},
+      </if>
+      <if test="totalScore != null" >
+        #{totalScore,jdbcType=DOUBLE},
+      </if>
+      <if test="studyDuration != null" >
+        #{studyDuration,jdbcType=DOUBLE},
+      </if>
+      <if test="scoreDetail != null" >
+        #{scoreDetail,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="report != null" >
+        #{report,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.UserLiveWithBLOBs" >
+    update user_live
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="macAddress != null" >
+        mac_address = #{macAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="idAddress != null" >
+        id_address = #{idAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="taskId != null" >
+        task_id = #{taskId,jdbcType=INTEGER},
+      </if>
+      <if test="operateId != null" >
+        operate_id = #{operateId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="currentScore != null" >
+        current_score = #{currentScore,jdbcType=DOUBLE},
+      </if>
+      <if test="totalScore != null" >
+        total_score = #{totalScore,jdbcType=DOUBLE},
+      </if>
+      <if test="studyDuration != null" >
+        study_duration = #{studyDuration,jdbcType=DOUBLE},
+      </if>
+      <if test="scoreDetail != null" >
+        score_detail = #{scoreDetail,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="report != null" >
+        report = #{report,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.esst.ts.model.UserLiveWithBLOBs" >
+    update user_live
+    set user_id = #{userId,jdbcType=INTEGER},
+      mac_address = #{macAddress,jdbcType=VARCHAR},
+      id_address = #{idAddress,jdbcType=VARCHAR},
+      task_id = #{taskId,jdbcType=INTEGER},
+      operate_id = #{operateId,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      current_score = #{currentScore,jdbcType=DOUBLE},
+      total_score = #{totalScore,jdbcType=DOUBLE},
+      study_duration = #{studyDuration,jdbcType=DOUBLE},
+      score_detail = #{scoreDetail,jdbcType=LONGVARCHAR},
+      report = #{report,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.UserLive" >
+    update user_live
+    set user_id = #{userId,jdbcType=INTEGER},
+      mac_address = #{macAddress,jdbcType=VARCHAR},
+      id_address = #{idAddress,jdbcType=VARCHAR},
+      task_id = #{taskId,jdbcType=INTEGER},
+      operate_id = #{operateId,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      current_score = #{currentScore,jdbcType=DOUBLE},
+      total_score = #{totalScore,jdbcType=DOUBLE},
+      study_duration = #{studyDuration,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
