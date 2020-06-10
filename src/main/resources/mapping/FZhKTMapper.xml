@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.esst.ts.dao.FZhKTMapper" >
-  <resultMap id="BaseResultMap" type="com.esst.ts.model.courseTaskModel" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.Task" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="course_id" property="course_id" jdbcType="INTEGER" />
-    <result column="task_id" property="task_id" jdbcType="INTEGER" />
-    <result column="task_name" property="task_name" jdbcType="CHAR" />
-    <result column="isenabled" property="isenabled" jdbcType="INTEGER" />
+    <result column="task_code" property="taskCode" jdbcType="VARCHAR" />
+    <result column="task_name" property="taskName" jdbcType="VARCHAR" />
+    <result column="technology_id" property="technologyId" jdbcType="INTEGER" />
+    <result column="shibiao" property="shibiao" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, course_id, task_id, task_name, isenabled

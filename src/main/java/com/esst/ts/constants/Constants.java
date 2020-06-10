@@ -1,10 +1,12 @@
 package com.esst.ts.constants;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.esst.ts.model.scoreModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
@@ -49,5 +51,5 @@ public class Constants {
         String suffix = request.getRequestURI();
         return url;
     }
-
+    public static Map<String, scoreModel> scoredataDic=new HashMap<String, scoreModel>();
 }

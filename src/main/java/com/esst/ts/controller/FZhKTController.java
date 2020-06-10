@@ -1,11 +1,8 @@
 package com.esst.ts.controller;
 
-import com.esst.ts.model.Result;
-import com.esst.ts.model.courseTaskModel;
-import com.esst.ts.model.scoreModel;
-import com.esst.ts.model.taskModel;
+import com.esst.ts.constants.Constants;
+import com.esst.ts.model.*;
 import com.esst.ts.service.FZhKTService;
-import com.esst.ts.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -17,8 +14,10 @@ import org.springframework.web.servlet.support.RequestContext;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 仿真课堂模块对应的接口；仿真课堂 ==> FangZhenKeTang ==> FZhKT
@@ -56,7 +55,10 @@ public class FZhKTController {
         //</editor-fold>
         int total_num;          //总人数
         int online_num;         //在线人数
-        List<scoreModel> datalist = new ArrayList<scoreModel>();
+        //List<scoreModel> datalist = new ArrayList<scoreModel>();
+
+        List<scoreModel> datalist = new ArrayList(Constants.scoredataDic.values());
+
         //<editor-fold desc="实时数据列表赋值：datalist">
 
         //<editor-fold desc="临时数据">
@@ -70,7 +72,7 @@ public class FZhKTController {
         online_num=0;
         for (int i = 0; i < 5; i++) {
             scoreModel m = new scoreModel();
-            m.setId(toString().valueOf(i + 1));
+            m.setId(toString().valueOf(i + 1+Constants.scoredataDic.values().size()));
             m.setMachine_id("PC01");
             m.setUser_name(stuLst.get(i));
             m.setStudent_num("STU00" + toString().valueOf(i + 1));
@@ -94,16 +96,16 @@ public class FZhKTController {
             }
             m.setDetailesscore("带排版的详细成绩");
             m.setReport_url("www.esonline.com/report.pdf");
-            datalist.add(m);
+            //datalist.add(m);
         }
         //</editor-fold>
         List<taskModel> tasklist = new ArrayList<taskModel>();
         //<editor-fold desc="任务列表赋值：tasklist">
-        List<courseTaskModel> m1lst = fzhktService.getCourseTaskLstDemo(1);
+        List<Task> m1lst = fzhktService.getCourseTaskLst(1);
         for (int i = 0; i < m1lst.size(); i++) {
             taskModel m = new taskModel();
-            m.setTask_id(toString().valueOf(m1lst.get(i).getTask_id()));
-            m.setTask_name(m1lst.get(i).getTask_name());
+            m.setTask_id(toString().valueOf(m1lst.get(i).getId()));
+            m.setTask_name(m1lst.get(i).getTaskName());
             tasklist.add(m);
         }
         //</editor-fold>
@@ -129,23 +131,68 @@ public class FZhKTController {
 
 
     /** 学员端上传成绩接口
-     * @param userId
-     * @param stuNumber
+     * @param score_id
+     * @param stu_number
      * @param request
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/updatescore",method = RequestMethod.GET)
-    public Result updatescore(
-            @RequestParam(value = "score_id",required = false) String userId,
-            @RequestParam(value = "stu_number",required = true) String stuNumber,
-            HttpServletRequest request) {
-        RequestContext requestContext = new RequestContext(request);
+    public Result updatescore(@RequestParam(value="score_id") String score_id,
+                              @RequestParam(value="stu_number") String stu_number,
+                              @RequestParam(value="stu_name") String stu_name,
+                              @RequestParam(value="tasklist_name") String tasklist_name,
+                              @RequestParam(value="task_name") String task_name,
+                              @RequestParam(value="task_score") String task_score,
+                              @RequestParam(value="tasklist_score") String tasklist_score,
+                              @RequestParam(value="train_id") String train_id,
+                              HttpServletRequest request){
+        RequestContext requestcontext=new RequestContext(request);
         Result r = new Result();
-        //<editor-fold desc="返回参数初始化">
-        r.setMsg(requestContext.getMessage("OK"));
-        r.setCode(200);
-        return r;
+        if(Constants.scoredataDic.containsKey(stu_number))
+        {
+            scoreModel m = Constants.scoredataDic.get(stu_number);
+            m.setId(train_id);
+            m.setMachine_id("PC01");
+            m.setUser_name(stu_name);
+            //int id=gettaskidbytaskname(name);
+            m.setStudent_num(stu_number);
+            m.setTemplate_id("任务单或试卷id");
+            m.setTemplate_name(tasklist_name);
+            m.setTask_id("任务或试题id");
+            m.setTask_name(task_name);
+            m.setScore(task_score);
+            m.setTotal_score(tasklist_score);
+            m.setLearning_time("25.6");
+            m.setStatus("1");
+            m.setDetailesscore("带排版的详细成绩");
+            m.setReport_url("www.esonline.com/report.pdf");
+        }
+        else
+        {
+            scoreModel m = new scoreModel();
+            m.setId(train_id);
+            m.setMachine_id("PC01");
+            m.setUser_name(stu_name);
+            m.setStudent_num(stu_number);
+            m.setTemplate_id("任务单或试卷id");
+            m.setTemplate_name(tasklist_name);
+            m.setTask_id("任务或试题id");
+            m.setTask_name(task_name);
+            m.setScore(task_score);
+            m.setTotal_score(tasklist_score);
+            m.setLearning_time("25.6");
+            m.setStatus("1");
+            m.setDetailesscore("带排版的详细成绩");
+            m.setReport_url("www.esonline.com/report.pdf");
+            Constants.scoredataDic.put(stu_number,m);
+        }
+        r.setMsg("更新成功");
+        return  r;
     }
+    Map<String,Integer> taskid_map=new HashMap<String,Integer>();
+ int gettaskidbytaskname(String name) {
 
+     return  1;
+ }
 }

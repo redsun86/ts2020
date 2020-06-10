@@ -1,6 +1,6 @@
 package com.esst.ts.dao;
 
-import com.esst.ts.model.courseTaskModel;
+import com.esst.ts.model.Task;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
@@ -10,10 +10,10 @@ import java.util.List;
 
 @Repository
 public interface FZhKTMapper {
-    List<courseTaskModel> getCourseTaskLstDemo(int courseID);
+    List<Task> getCourseTaskLstDemo(int technology_id);
 
-    @Select("select * from course_task where binary course_id=#{courseID} ")
+    @Select("select * from task where binary technology_id=#{technology_id} ")
     @ResultMap("BaseResultMap")
-    List<courseTaskModel> getCourseTaskLst(@Param("courseID") int courseID);
+    List<Task> getCourseTaskLst(@Param("technology_id") int technology_id);
 
 }
