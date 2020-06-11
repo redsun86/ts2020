@@ -25,10 +25,13 @@ public interface UserMapper {
 
     User getUser(@Param("userName") String userName, @Param("password") String password);
 
-    @Select("select * from user ")
+    @Select("select * from user where id in(select student_id from teacher_student_relation where teacher_id = #{userId}) and is_del=0")
     @ResultMap("BaseResultMap")
-    List<User> getUserLst(@Param("userID") int userID);
+    List<User> getUserLst(@Param("userId") int userId);
 
     @Update("update user set password = #{password} where id = #{userId}")
     int updateUserPwd(@Param("userId") int userId,@Param("password") String password);
+
+    @Update("update user set is_del =1 where id = #{userId}")
+    int deleteuserById(@Param("userId") int userId);
 }
