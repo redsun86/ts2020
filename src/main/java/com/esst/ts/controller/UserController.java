@@ -336,6 +336,10 @@ public class UserController {
         r.setCode(Result.ERROR);
         r.setMsg("请求成功");
         r.setData(url); //把文件访问路径返回前端
+
+        Map a = new HashMap();
+        List list = new ArrayList();
+        a.put("listA", list);
         return r;
     }
 //    public static void main(String[] args) {
