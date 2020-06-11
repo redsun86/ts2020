@@ -7,13 +7,16 @@ import java.io.Serializable;
  */
 public class Result implements Serializable {
 	private static final long serialVersionUID = -7982820491494624333L;
-	// code：
-	// 0 成功
-	// -1通用失败
-	// -2登录验证失败
 
-	public static final int ORDINARY = -1;// 通用异常
-	public static final int NOTLOGIN = -2;// 登录验证失败
+	public static final int SUCCESS = 0;				//请求成功
+	public static final int ERROR = 1;					//请求失败（通用错误）
+	public static final int PARAMETER_ERROR = 2;		//无效参数
+	public static final int TOKEN_ERROR = 3;			//无效token
+	public static final int PERMISSION_ERROR = 4;		//权限错误
+	public static final int SERVICE_ERROR = 5;			//服务器繁忙
+	public static final int USER_NOT_EXIST = 1001;		//该用户不存在
+	public static final int PASSWORD_ERROR = 1002;		//用户密码错误
+
 	private int code;
 	private String msg;
 	private Object data;
@@ -62,11 +65,11 @@ public class Result implements Serializable {
 	}
 
 	public static Result error() {
-		return new Result(ORDINARY);
+		return new Result(ERROR);
 	}
 
 	public static Result error(String msg) {
-		return Result.success(ORDINARY, msg);
+		return Result.success(ERROR, msg);
 	}
 
 	public static Result success(String msg) {
