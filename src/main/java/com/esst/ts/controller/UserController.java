@@ -139,6 +139,7 @@ public class UserController {
             m.setMobile(user.getMobile());
             m.setGroupName(user.getGroupName());
             m.setRoleName(user.getRoleName());
+            m.setOperateMode(user.getOperateMode());
             datalist.add(m);
         }
         //</editor-fold>
@@ -293,7 +294,7 @@ public class UserController {
                                 m.setGroupName(cell.get(j));
                                 break;
                             case 6 :
-                                m.setGroupName(cell.get(j));
+                                m.setOperateMode(cell.get(j));
                                 break;
                             case 7 :
                                 m.setRoleName(cell.get(j));

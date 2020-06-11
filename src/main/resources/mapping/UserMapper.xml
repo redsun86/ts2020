@@ -20,11 +20,13 @@
     <result column="valid_end_time" property="validEndTime" jdbcType="TIMESTAMP" />
     <result column="group_name" property="groupName" jdbcType="VARCHAR" />
     <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+    <result column="dog_id" property="dogId" jdbcType="VARBINARY" />
+    <result column="operate_mode" property="operateMode" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, user_name, rel_name, st_num, class_name, password, mobile, status, create_time, 
     create_user, update_time, update_user, is_admin, is_del, valid_begin_time, valid_end_time, 
-    group_name, role_name
+    group_name, role_name,dog_id,operate_mode
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -42,14 +44,15 @@
       mobile, status, create_time, 
       create_user, update_time, update_user, 
       is_admin, is_del, valid_begin_time, 
-      valid_end_time, group_name, role_name
+      valid_end_time, group_name, role_name,dog_id,operate_mode
       )
     values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{relName,jdbcType=VARCHAR}, 
       #{stNum,jdbcType=VARCHAR}, #{className,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{mobile,jdbcType=VARCHAR}, #{status,jdbcType=SMALLINT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{createUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER}, 
       #{isAdmin,jdbcType=SMALLINT}, #{isDel,jdbcType=SMALLINT}, #{validBeginTime,jdbcType=TIMESTAMP}, 
-      #{validEndTime,jdbcType=TIMESTAMP}, #{groupName,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR}
+      #{validEndTime,jdbcType=TIMESTAMP}, #{groupName,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR},
+      #{dogId,jdbcType=VARBINARY}, #{operateMode,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.esst.ts.model.User" >
@@ -109,6 +112,12 @@
       <if test="roleName != null" >
         role_name,
       </if>
+      <if test="dogId != null" >
+        dog_id,
+      </if>
+      <if test="operateMode != null" >
+        operate_mode,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -165,6 +174,12 @@
       <if test="roleName != null" >
         #{roleName,jdbcType=VARCHAR},
       </if>
+      <if test="dogId != null" >
+        #{dogId,jdbcType=VARBINARY},
+      </if>
+      <if test="operateMode != null" >
+        #{operateMode,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.User" >
@@ -220,6 +235,12 @@
       </if>
       <if test="roleName != null" >
         role_name = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="dogId != null" >
+        dogId = #{dogId,jdbcType=VARCHAR},
+      </if>
+      <if test="operateMode != null" >
+        operateMode = #{operateMode,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
