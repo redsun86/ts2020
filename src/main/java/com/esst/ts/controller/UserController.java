@@ -46,25 +46,47 @@ public class UserController {
      * 登录接口
      *
      * @param userName 用户名称
-     * @param password 用户密码
+     * @param passWord 用户密码
      */
     @ResponseBody
     @RequestMapping("/userLogin")
     public Result userLogin(@RequestParam(value = "userName") String userName,
-                            @RequestParam(value = "password") String password,
+                            @RequestParam(value = "passWord") String passWord,
+                            @RequestParam(value = "type") Integer type,
                             HttpServletRequest request) {
 
         RequestContext requestContext = new RequestContext(request);
-        User user = userService.getUserByNameAndPassword(userName, password);
         Result r = new Result();
-        if (user == null) {
-            r.setMsg(requestContext.getMessage("zhmmcw"));
-            r.setCode(Result.PASSWORD_ERROR);
-            return r;
+        User user;
+        if(type==0){
+            //教师登录
+            user = userService.loginByTeacher(userName,MD5Code.encodeByMD5(passWord));
+            if(user ==null){
+                r.setMsg("Err");
+                r.setCode(201);
+                r.setData("用户名或密码错误");
+                return r;
+            }
+            else{
+                r.setMsg("OK");
+                r.setCode(200);
+            }
         }
-        r.setMsg(requestContext.getMessage("qqcg"));
-        r.setCode(Result.SUCCESS);
-
+        else
+        {
+            //学员登录
+            user = userService.loginByStudent(userName,passWord);
+            if(user==null){
+                r.setMsg("Err");
+                r.setCode(201);
+                r.setData("登录名或学号错误");
+                return r;
+            }
+            else{
+                r.setMsg("OK");
+                r.setCode(200);
+            }
+        }
         // 新增tocken表数据
         String strToken = UniqueKeyGenerator.generateToken();
         UserToken userToken = userTokenService.getUserTokenByUserId(user.getId(), 1);
@@ -83,6 +105,14 @@ public class UserController {
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("token", strToken);
         userMap.put("userId", user.getId());
+        userMap.put("userName", user.getUserName());
+        userMap.put("relName", user.getRelName());
+        userMap.put("stnum", user.getStNum());
+        userMap.put("className", user.getClassName());
+        userMap.put("mobile", user.getMobile());
+        userMap.put("groupName", user.getGroupName());
+        userMap.put("roleName", user.getRoleName());
+        userMap.put("operateMode", user.getOperateMode());
         r.setData(userMap);
         return r;
     }

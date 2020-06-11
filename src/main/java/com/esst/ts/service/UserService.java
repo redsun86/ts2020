@@ -7,16 +7,6 @@ import java.util.List;
 public interface UserService {
 
     User getUserById(Integer userId);
-
-    /**
-     * 根据用户账号密码查询用户
-     *
-     * @param userName
-     * @param password
-     * @return
-     */
-    User getUserByNameAndPassword(String userName, String password);
-
     /**
      * 更新密码
      *
@@ -34,4 +24,8 @@ public interface UserService {
     List<User> getUserListByTeacherId(Integer userID);
 
     int insert(User record);
+
+    User loginByTeacher(String userName, String passWord);
+
+    User loginByStudent(String trueName, String num);
 }
