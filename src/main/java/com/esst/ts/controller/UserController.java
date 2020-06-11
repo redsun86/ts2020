@@ -1,6 +1,7 @@
 package com.esst.ts.controller;
 
 import com.esst.ts.constants.Constants;
+import com.esst.ts.model.Product;
 import com.esst.ts.model.Result;
 import com.esst.ts.model.User;
 import com.esst.ts.service.UserService;
@@ -336,10 +337,6 @@ public class UserController {
         r.setCode(Result.ERROR);
         r.setMsg("请求成功");
         r.setData(url); //把文件访问路径返回前端
-
-        Map a = new HashMap();
-        List list = new ArrayList();
-        a.put("listA", list);
         return r;
     }
 //    public static void main(String[] args) {
