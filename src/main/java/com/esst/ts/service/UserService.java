@@ -32,4 +32,6 @@ public interface UserService {
     int delete(Integer Id);
 
     List<User> getUserListByTeacherId(Integer userID);
+
+    int insert(User record);
 }

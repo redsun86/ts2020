@@ -6,8 +6,10 @@ import com.esst.ts.model.User;
 import com.esst.ts.service.UserService;
 import com.esst.ts.service.UserTokenService;
 import com.esst.ts.model.UserToken;
+import com.esst.ts.utils.ExcelUtils;
 import com.esst.ts.utils.MD5Code;
 import com.esst.ts.utils.UniqueKeyGenerator;
+import com.esst.ts.utils.WriteLogUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.RequestContext;
 
 import javax.annotation.Resource;
@@ -228,5 +231,97 @@ public class UserController {
             r.setData("重置密码失败");
         }
         return r;
+    }
+
+    /**
+     * 导入学员接口
+     *
+     */
+    @RequestMapping("/importstudentsinfo")
+    @ResponseBody
+    public Result importstudentsinfo(@RequestParam("file") MultipartFile file,
+                                     HttpServletRequest request) throws Exception {
+        RequestContext requestContext = new RequestContext(request);
+        String contents="";
+        String UserAccount="";
+        Result r = new Result();
+        //解析excel文件
+        List<ArrayList<String>> row = ExcelUtils.analysis(file);
+        if(row.size()>0){
+            User m = new User();
+            //验证excel是否合法化
+            for (int i = 0;i<row.size();i++){
+                List<String> cell = row.get(i);
+                for (int j = 0;j<cell.size();j++){
+                    if(j<=2){
+                        if(j==0){
+                            //判断当前行的第一列学号是否重名
+                            if(UserAccount.indexOf(cell.get(j))!=-1){
+                                contents+="第"+i+"行的第"+j+"列已存在相同值";
+                            }
+                            UserAccount+=cell.get(j)+",";
+                        }
+                        if(cell.get(j).length()==0){
+                            contents+="第"+i+"行的第"+j+"列为空";
+                        }
+                    }
+                }
+            }
+            if(contents.length()==0){
+                //插入数据库数据
+                for (int i = 0;i<row.size();i++){
+                    List<String> cell = row.get(i);
+                    for (int j = 0;j<cell.size();j++){
+                        //获取用户实体
+                        switch (j){
+                            case 0 :
+                                m.setStNum(cell.get(j));
+                                break;
+                            case 1 :
+                                m.setRelName(cell.get(j));
+                                break;
+                            case 2 :
+                                m.setClassName(cell.get(j));
+                                break;
+                            case 3 :
+                                m.setUserName(cell.get(j));
+                                break;
+                            case 4 :
+                                m.setMobile(cell.get(j));
+                                break;
+                            case 5 :
+                                m.setGroupName(cell.get(j));
+                                break;
+                            case 6 :
+                                m.setGroupName(cell.get(j));
+                                break;
+                            case 7 :
+                                m.setRoleName(cell.get(j));
+                                break;
+                        }
+                    }
+                    int result=userService.insert(m);
+                    if(result>0){
+
+                    }
+                }
+                r.setMsg(requestContext.getMessage("OK"));
+                r.setCode(200);
+                r.setData("导入学员成功");
+            }
+            else
+            {
+                String filepath= WriteLogUtils.writeToResource(contents);
+                r.setMsg(requestContext.getMessage("Err"));
+                r.setCode(202);
+                r.setData("文件内容不符合要求，详情请查看日志"+filepath);
+            }
+        }
+        else {
+            r.setMsg(requestContext.getMessage("Err"));
+            r.setCode(201);
+            r.setData("文件为空");
+        }
+        return  r;
     }
 }

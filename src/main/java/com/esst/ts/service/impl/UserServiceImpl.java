@@ -50,4 +50,9 @@ public class UserServiceImpl implements UserService {
     public List<User> getUserListByTeacherId(Integer userID) {
         return userMapper.getUserLst(userID);
     }
+
+    @Override
+    public int insert(User record) {
+        return userMapper.insert(record);
+    }
 }
