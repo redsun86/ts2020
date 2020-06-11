@@ -33,5 +33,5 @@ public interface UserMapper {
     int updateUserPwd(@Param("userId") int userId,@Param("password") String password);
 
     @Update("update user set is_del =1 where id = #{userId}")
-    int deleteuserById(@Param("userId") int userId);
+    int deleteUserById(@Param("userId") int userId);
 }
