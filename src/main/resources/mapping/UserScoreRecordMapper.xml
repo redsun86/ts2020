@@ -7,8 +7,8 @@
     <result column="task_id" property="taskId" jdbcType="INTEGER" />
     <result column="operate_id" property="operateId" jdbcType="INTEGER" />
     <result column="score" property="score" jdbcType="DOUBLE" />
-    <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
-    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="begin_time" property="beginTime" jdbcType="BIGINT" />
+    <result column="end_time" property="endTime" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, user_id, task_id, operate_id, score, begin_time, end_time
@@ -28,8 +28,8 @@
       operate_id, score, begin_time, 
       end_time)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, 
-      #{operateId,jdbcType=INTEGER}, #{score,jdbcType=DOUBLE}, #{beginTime,jdbcType=TIMESTAMP}, 
-      #{endTime,jdbcType=TIMESTAMP})
+      #{operateId,jdbcType=INTEGER}, #{score,jdbcType=DOUBLE}, #{beginTime,jdbcType=BIGINT},
+      #{endTime,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.esst.ts.model.UserScoreRecord" >
     insert into user_score_record
@@ -73,10 +73,10 @@
         #{score,jdbcType=DOUBLE},
       </if>
       <if test="beginTime != null" >
-        #{beginTime,jdbcType=TIMESTAMP},
+        #{beginTime,jdbcType=BIGINT},
       </if>
       <if test="endTime != null" >
-        #{endTime,jdbcType=TIMESTAMP},
+        #{endTime,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -96,10 +96,10 @@
         score = #{score,jdbcType=DOUBLE},
       </if>
       <if test="beginTime != null" >
-        begin_time = #{beginTime,jdbcType=TIMESTAMP},
+        begin_time = #{beginTime,jdbcType=BIGINT},
       </if>
       <if test="endTime != null" >
-        end_time = #{endTime,jdbcType=TIMESTAMP},
+        end_time = #{endTime,jdbcType=BIGINT},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -110,8 +110,8 @@
       task_id = #{taskId,jdbcType=INTEGER},
       operate_id = #{operateId,jdbcType=INTEGER},
       score = #{score,jdbcType=DOUBLE},
-      begin_time = #{beginTime,jdbcType=TIMESTAMP},
-      end_time = #{endTime,jdbcType=TIMESTAMP}
+      begin_time = #{beginTime,jdbcType=BIGINT},
+      end_time = #{endTime,jdbcType=BIGINT}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
