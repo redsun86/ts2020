@@ -7,10 +7,7 @@ import com.esst.ts.model.User;
 import com.esst.ts.service.UserService;
 import com.esst.ts.service.UserTokenService;
 import com.esst.ts.model.UserToken;
-import com.esst.ts.utils.ExcelUtils;
-import com.esst.ts.utils.MD5Code;
-import com.esst.ts.utils.UniqueKeyGenerator;
-import com.esst.ts.utils.WriteLogUtils;
+import com.esst.ts.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -26,6 +23,9 @@ import org.springframework.web.servlet.support.RequestContext;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.*;
 
 /**
@@ -91,13 +91,13 @@ public class UserController {
      * 登出接口  修改Token 状态
      */
     @ResponseBody
-    @RequestMapping("/logout")
+    @RequestMapping("/logOut")
     @ApiOperation(value = "登出接口", httpMethod = "POST", response = Result.class, notes = "登出接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户id", required = true, dataType = "int"),
             @ApiImplicitParam(name = "token", value = "用户token", required = true, dataType = "String"),
     })
-    public Result logout(@RequestParam(value = "userId") int userId,
+    public Result logOut(@RequestParam(value = "userId") int userId,
                          @RequestParam(value = "token") String token,
                          HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
@@ -156,8 +156,8 @@ public class UserController {
      * @param id 学员ID
      */
     @ResponseBody
-    @RequestMapping("/delstudents")
-    public Result delstudents(@RequestParam(value = "id",required = true) String id,
+    @RequestMapping("/delStudents")
+    public Result delStudents(@RequestParam(value = "id",required = true) String id,
                               @RequestParam(value="token",required = true) String strToken,
                               HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
@@ -214,8 +214,8 @@ public class UserController {
      * @param id 学员ID
      */
     @ResponseBody
-    @RequestMapping("/resetstudentspwd")
-    public Result resetstudentspwd(@RequestParam(value = "id",required = true) String id,
+    @RequestMapping("/resetStudentsPwd")
+    public Result resetStudentsPwd(@RequestParam(value = "id",required = true) String id,
                                    @RequestParam(value="token",required = true) String strToken,
                                    HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
@@ -239,9 +239,9 @@ public class UserController {
      * 导入学员接口
      *
      */
-    @RequestMapping("/importstudentsinfo")
+    @RequestMapping("/importStudentsInfo")
     @ResponseBody
-    public Result importstudentsinfo(@RequestParam("file") MultipartFile file,
+    public Result importStudentsInfo(@RequestParam("file") MultipartFile file,
                                      HttpServletRequest request) throws Exception {
         RequestContext requestContext = new RequestContext(request);
         String contents="";
@@ -313,10 +313,20 @@ public class UserController {
             }
             else
             {
-                String filepath= WriteLogUtils.writeToResource(contents);
+                String num = UUID.randomUUID().toString();  //生成一个随机数用作用户名
+                String pathName = Constants.UPLOAD_PIC_URL + "/" + num + ".txt";  //生成文件存储在服务器的完整路径 如 /upload/3355d8d7-51c2-488a-80f4-ea97b2e93a30.jpg
+                String path = request.getSession().getServletContext().getRealPath("/") + pathName;  //服务器绝对路径用于生成文件
+                FileUtils.makefile(path); //空白文件生成
+                // 做写文件操作 。。。。
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path)));
+                writer.write(contents.toString());
+                writer.flush();
+                writer.close();
+                String url = Constants.getIpAddress(request);  //获取服务器访问ip和端口 例如：http://127.0.0.1:8080/
+                url += pathName;  //文件最终访问路径 如：http://127.0.0.1:8080/upload/3355d8d7-51c2-488a-80f4-ea97b2e93a30.jpg
                 r.setMsg(requestContext.getMessage("Err"));
                 r.setCode(202);
-                r.setData("文件内容不符合要求，详情请查看日志"+filepath);
+                r.setData("文件内容不符合要求，详情请查看日志"+url);
             }
         }
         else {
