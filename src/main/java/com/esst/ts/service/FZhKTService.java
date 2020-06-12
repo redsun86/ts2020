@@ -1,6 +1,6 @@
 package com.esst.ts.service;
 
-import com.esst.ts.model.Task;
+import com.esst.ts.model.*;
 
 import java.util.List;
 
@@ -8,5 +8,7 @@ public interface FZhKTService {
 
     List<Task> getCourseTaskLst(int courseID);
     List<Task> getCourseTaskLstDemo(int courseID);
-    //boolean updatescore(UserLive score);
+    boolean inserUserLiveWithBLOBS(UserLiveWithBLOBs score);
+    boolean insertUserLiveDataWithBLOBS(UserLiveDataWithBLOBs score);
+    boolean insertUserScoreRecore(UserScoreRecord score);
 }
