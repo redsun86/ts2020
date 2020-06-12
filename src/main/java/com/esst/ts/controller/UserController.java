@@ -1,14 +1,15 @@
 package com.esst.ts.controller;
 
 import com.esst.ts.constants.Constants;
-import com.esst.ts.model.Product;
 import com.esst.ts.model.Result;
 import com.esst.ts.model.User;
+import com.esst.ts.model.UserToken;
 import com.esst.ts.service.UserService;
 import com.esst.ts.service.UserTokenService;
-import com.esst.ts.model.UserToken;
-import com.esst.ts.utils.*;
-import io.swagger.annotations.Api;
+import com.esst.ts.utils.ExcelUtils;
+import com.esst.ts.utils.FileUtils;
+import com.esst.ts.utils.MD5Code;
+import com.esst.ts.utils.UniqueKeyGenerator;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -58,31 +59,27 @@ public class UserController {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
         User user;
-        if(type==0){
+        if (type == 0) {
             //教师登录
-            user = userService.loginByTeacher(userName,MD5Code.encodeByMD5(passWord));
-            if(user ==null){
+            user = userService.loginByTeacher(userName, MD5Code.encodeByMD5(passWord));
+            if (user == null) {
                 r.setMsg("Err");
                 r.setCode(201);
                 r.setData("用户名或密码错误");
                 return r;
-            }
-            else{
+            } else {
                 r.setMsg("OK");
                 r.setCode(200);
             }
-        }
-        else
-        {
+        } else {
             //学员登录
-            user = userService.loginByStudent(userName,passWord);
-            if(user==null){
+            user = userService.loginByStudent(userName, passWord);
+            if (user == null) {
                 r.setMsg("Err");
                 r.setCode(201);
                 r.setData("登录名或学号错误");
                 return r;
-            }
-            else{
+            } else {
                 r.setMsg("OK");
                 r.setCode(200);
             }
@@ -145,8 +142,8 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping("/userList")
-    public Result userList(@RequestParam(value = "user_id",required = true) Integer user_id,
-                           @RequestParam(value="token",required = true) String strToken,
+    public Result userList(@RequestParam(value = "user_id", required = true) Integer user_id,
+                           @RequestParam(value = "token", required = true) String strToken,
                            HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         List<User> userList = userService.getUserListByTeacherId(user_id);
@@ -187,49 +184,45 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping("/delStudents")
-    public Result delStudents(@RequestParam(value = "id",required = true) String id,
-                              @RequestParam(value="token",required = true) String strToken,
+    public Result delStudents(@RequestParam(value = "id", required = true) String id,
+                              @RequestParam(value = "token", required = true) String strToken,
                               HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
-        if(id.contains(",")){
+        if (id.contains(",")) {
             Result r = new Result();
-            int j=0;
-            String [] str=id.split(",");
-            for(int i=0;i<str.length;i++){
+            int j = 0;
+            String[] str = id.split(",");
+            for (int i = 0; i < str.length; i++) {
                 int result = userService.delete(Integer.valueOf(str[i]));
-                if(result>0){
+                if (result > 0) {
                     j++;
                 }
             }
-            if(j==str.length){
+            if (j == str.length) {
                 r.setMsg(requestContext.getMessage("OK"));
                 r.setCode(200);
                 r.setData("");
                 return r;
-            }
-            else
-            {
-                if(j>0){
+            } else {
+                if (j > 0) {
                     r.setMsg(requestContext.getMessage("OK"));
                     r.setCode(201);
                     r.setData("部分数据尚未删除，请检查数据或联系管理员！");
-                }else
-                {
+                } else {
                     r.setMsg(requestContext.getMessage("Err"));
                     r.setCode(100);
                     r.setData("删除失败");
                 }
                 return r;
             }
-        }else{
+        } else {
             int result = userService.delete(Integer.valueOf(id));
             Result r = new Result();
-            if(result>0){
+            if (result > 0) {
                 r.setMsg(requestContext.getMessage("OK"));
                 r.setCode(200);
                 r.setData("");
-            }else
-            {
+            } else {
                 r.setMsg(requestContext.getMessage("Err"));
                 r.setCode(100);
                 r.setData("删除失败");
@@ -245,19 +238,18 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping("/resetStudentsPwd")
-    public Result resetStudentsPwd(@RequestParam(value = "id",required = true) String id,
-                                   @RequestParam(value="token",required = true) String strToken,
+    public Result resetStudentsPwd(@RequestParam(value = "id", required = true) String id,
+                                   @RequestParam(value = "token", required = true) String strToken,
                                    HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         int result = userService.updateUserPwd(Integer.parseInt(id), MD5Code.encodeByMD5("000000"));
         Result r = new Result();
-        if(result>0){
+        if (result > 0) {
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(200);
             r.setData("密码重置成功");
 
-        }else
-        {
+        } else {
             r.setMsg(requestContext.getMessage("Err"));
             r.setCode(100);
             r.setData("重置密码失败");
@@ -267,82 +259,79 @@ public class UserController {
 
     /**
      * 导入学员接口
-     *
      */
     @RequestMapping("/importStudentsInfo")
     @ResponseBody
     public Result importStudentsInfo(@RequestParam("file") MultipartFile file,
                                      HttpServletRequest request) throws Exception {
         RequestContext requestContext = new RequestContext(request);
-        String contents="";
-        String UserAccount="";
+        String contents = "";
+        String UserAccount = "";
         Result r = new Result();
         //解析excel文件
         List<ArrayList<String>> row = ExcelUtils.analysis(file);
-        if(row.size()>0){
+        if (row.size() > 0) {
             User m = new User();
             //验证excel是否合法化
-            for (int i = 0;i<row.size();i++){
+            for (int i = 0; i < row.size(); i++) {
                 List<String> cell = row.get(i);
-                for (int j = 0;j<cell.size();j++){
-                    if(j<=2){
-                        if(j==0){
+                for (int j = 0; j < cell.size(); j++) {
+                    if (j <= 2) {
+                        if (j == 0) {
                             //判断当前行的第一列学号是否重名
-                            if(UserAccount.indexOf(cell.get(j))!=-1){
-                                contents+="第"+i+"行的第"+j+"列已存在相同值";
+                            if (UserAccount.indexOf(cell.get(j)) != -1) {
+                                contents += "第" + i + "行的第" + j + "列已存在相同值";
                             }
-                            UserAccount+=cell.get(j)+",";
+                            UserAccount += cell.get(j) + ",";
                         }
-                        if(cell.get(j).length()==0){
-                            contents+="第"+i+"行的第"+j+"列为空";
+                        if (cell.get(j).length() == 0) {
+                            contents += "第" + i + "行的第" + j + "列为空";
                         }
                     }
                 }
             }
-            if(contents.length()==0){
+            if (contents.length() == 0) {
                 //插入数据库数据
-                for (int i = 0;i<row.size();i++){
+                for (int i = 0; i < row.size(); i++) {
                     List<String> cell = row.get(i);
-                    for (int j = 0;j<cell.size();j++){
+                    for (int j = 0; j < cell.size(); j++) {
                         //获取用户实体
-                        switch (j){
-                            case 0 :
+                        switch (j) {
+                            case 0:
                                 m.setStNum(cell.get(j));
                                 break;
-                            case 1 :
+                            case 1:
                                 m.setRelName(cell.get(j));
                                 break;
-                            case 2 :
+                            case 2:
                                 m.setClassName(cell.get(j));
                                 break;
-                            case 3 :
+                            case 3:
                                 m.setUserName(cell.get(j));
                                 break;
-                            case 4 :
+                            case 4:
                                 m.setMobile(cell.get(j));
                                 break;
-                            case 5 :
+                            case 5:
                                 m.setGroupName(cell.get(j));
                                 break;
-                            case 6 :
+                            case 6:
                                 m.setOperateMode(cell.get(j));
                                 break;
-                            case 7 :
+                            case 7:
                                 m.setRoleName(cell.get(j));
                                 break;
                         }
                     }
-                    int result=userService.insert(m);
-                    if(result>0){
+                    int result = userService.insert(m);
+                    if (result > 0) {
 
                     }
                 }
                 r.setMsg(requestContext.getMessage("OK"));
                 r.setCode(200);
                 r.setData("导入学员成功");
-            }
-            else
-            {
+            } else {
                 String num = UUID.randomUUID().toString();  //生成一个随机数用作用户名
                 String pathName = Constants.UPLOAD_PIC_URL + "/" + num + ".txt";  //生成文件存储在服务器的完整路径 如 /upload/3355d8d7-51c2-488a-80f4-ea97b2e93a30.jpg
                 String path = request.getSession().getServletContext().getRealPath("/") + pathName;  //服务器绝对路径用于生成文件
@@ -356,14 +345,13 @@ public class UserController {
                 url += pathName;  //文件最终访问路径 如：http://127.0.0.1:8080/upload/3355d8d7-51c2-488a-80f4-ea97b2e93a30.jpg
                 r.setMsg(requestContext.getMessage("Err"));
                 r.setCode(202);
-                r.setData("文件内容不符合要求，详情请查看日志"+url);
+                r.setData("文件内容不符合要求，详情请查看日志" + url);
             }
-        }
-        else {
+        } else {
             r.setMsg(requestContext.getMessage("Err"));
             r.setCode(201);
             r.setData("文件为空");
         }
-        return  r;
+        return r;
     }
 }

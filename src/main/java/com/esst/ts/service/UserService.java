@@ -7,6 +7,7 @@ import java.util.List;
 public interface UserService {
 
     User getUserById(Integer userId);
+
     /**
      * 更新密码
      *
@@ -15,9 +16,9 @@ public interface UserService {
      */
     int updatePassword(User record);
 
-	int update(User user);
+    int update(User user);
 
-    int updateUserPwd(Integer userId,String password);
+    int updateUserPwd(Integer userId, String password);
 
     int delete(Integer Id);
 
