@@ -1,6 +1,7 @@
 package com.esst.ts.service;
 
 import com.esst.ts.model.User;
+import com.esst.ts.model.TeacherStudentRelation;
 
 import java.util.List;
 
@@ -29,4 +30,8 @@ public interface UserService {
     User loginByTeacher(String userName, String passWord);
 
     User loginByStudent(String trueName, String num);
+
+    User getUserByNum(String num);
+
+    int insert(TeacherStudentRelation record);
 }

@@ -30,7 +30,7 @@ public class ExcelUtils {
             }
 
             //获取第一张工作表
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = workbook.getSheetAt(1);
             //从第二行开始获取
             for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
                 //循环获取工作表的每一行

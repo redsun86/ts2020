@@ -2,6 +2,7 @@ package com.esst.ts.controller;
 
 import com.esst.ts.constants.Constants;
 import com.esst.ts.model.Result;
+import com.esst.ts.model.TeacherStudentRelation;
 import com.esst.ts.model.User;
 import com.esst.ts.model.UserToken;
 import com.esst.ts.service.UserService;
@@ -130,8 +131,9 @@ public class UserController {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
         userTokenService.invalidToken(userId, 1); // 登出成功删除用户的token
-        r.setMsg(requestContext.getMessage("qqcg"));
+        r.setMsg("OK");
         r.setCode(0);
+        r.setData("退出成功");
         return r;
     }
 
@@ -266,7 +268,8 @@ public class UserController {
                                      HttpServletRequest request) throws Exception {
         RequestContext requestContext = new RequestContext(request);
         String contents = "";
-        String UserAccount = "";
+        String NumAccount = "";
+        String LoginAccount = "";
         Result r = new Result();
         //解析excel文件
         List<ArrayList<String>> row = ExcelUtils.analysis(file);
@@ -276,16 +279,25 @@ public class UserController {
             for (int i = 0; i < row.size(); i++) {
                 List<String> cell = row.get(i);
                 for (int j = 0; j < cell.size(); j++) {
-                    if (j <= 2) {
+                    Integer h = i + 1;
+                    Integer l = j + 1;
+                    if (j <= 3) {
                         if (j == 0) {
                             //判断当前行的第一列学号是否重名
-                            if (UserAccount.indexOf(cell.get(j)) != -1) {
-                                contents += "第" + i + "行的第" + j + "列已存在相同值";
+                            if (NumAccount.indexOf(cell.get(j)) != -1) {
+                                contents += "第" + h + "行的第" + l + "列已存在相同值\r\n";
                             }
-                            UserAccount += cell.get(j) + ",";
+                            NumAccount += cell.get(j) + ",";
                         }
                         if (cell.get(j).length() == 0) {
-                            contents += "第" + i + "行的第" + j + "列为空";
+                            contents += "第" + h + "行的第" + l + "列为空\r\n";
+                        }
+                        if (j == 3) {
+                            //判断当前行的第一列学号是否重名
+                            if (LoginAccount.indexOf(cell.get(j)) != -1) {
+                                contents += "第" + h + "行的第" + l + "列已存在相同值\r\n";
+                            }
+                            LoginAccount += cell.get(j) + ",";
                         }
                     }
                 }
@@ -323,9 +335,23 @@ public class UserController {
                                 break;
                         }
                     }
-                    int result = userService.insert(m);
-                    if (result > 0) {
-
+                    m.setPassword(MD5Code.encodeByMD5("000000"));
+                    m.setStatus(Short.parseShort("0"));
+                    m.setCreateUser(1);
+                    m.setIsDel(Short.parseShort("0"));
+                    m.setIsAdmin(Short.parseShort("0"));
+                    //查询当前学号是否存在
+                    User newUser = userService.getUserByNum(m.getStNum());
+                    if (newUser == null) {
+                        int result = userService.insert(m);
+                        if (result > 0) {
+                            //查询插入的用户ID
+                            User user = userService.getUserByNum(m.getStNum());
+                            TeacherStudentRelation teacherStudentRelation = new TeacherStudentRelation();
+                            teacherStudentRelation.setStudentId(user.getId());
+                            teacherStudentRelation.setTeacherId(1);
+                            userService.insert(teacherStudentRelation);
+                        }
                     }
                 }
                 r.setMsg(requestContext.getMessage("OK"));

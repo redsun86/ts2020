@@ -39,14 +39,14 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.esst.ts.model.User" >
-    insert into user (id, user_name, rel_name, 
+    insert into user (user_name, rel_name,
       st_num, class_name, password, 
       mobile, status, create_time, 
       create_user, update_time, update_user, 
       is_admin, is_del, valid_begin_time, 
       valid_end_time, group_name, role_name,dog_id,operate_mode
       )
-    values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{relName,jdbcType=VARCHAR}, 
+    values (#{userName,jdbcType=VARCHAR}, #{relName,jdbcType=VARCHAR},
       #{stNum,jdbcType=VARCHAR}, #{className,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{mobile,jdbcType=VARCHAR}, #{status,jdbcType=SMALLINT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{createUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER}, 

@@ -20,9 +20,9 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.esst.ts.model.TeacherStudentRelation" >
-    insert into teacher_student_relation (id, student_id, teacher_id
+    insert into teacher_student_relation (student_id, teacher_id
       )
-    values (#{id,jdbcType=INTEGER}, #{studentId,jdbcType=INTEGER}, #{teacherId,jdbcType=INTEGER}
+    values (#{studentId,jdbcType=INTEGER}, #{teacherId,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.esst.ts.model.TeacherStudentRelation" >

@@ -1,6 +1,8 @@
 package com.esst.ts.service.impl;
 
+import com.esst.ts.dao.TeacherStudentRelationMapper;
 import com.esst.ts.dao.UserMapper;
+import com.esst.ts.model.TeacherStudentRelation;
 import com.esst.ts.model.User;
 import com.esst.ts.service.UserService;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,9 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
 
+    @Resource
+    private TeacherStudentRelationMapper teacherStudentRelationMapper;
+
     @Override
     public User getUserById(Integer userId) {
         return userMapper.selectByPrimaryKey(userId);
@@ -29,6 +34,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public User loginByStudent(String trueName, String num) {
         return userMapper.loginByStudent(trueName, num);
+    }
+
+    @Override
+    public User getUserByNum(String num) {
+        return userMapper.selectByNum(num);
+    }
+
+    @Override
+    public int insert(TeacherStudentRelation record) {
+        return teacherStudentRelationMapper.insert(record);
     }
 
     @Override
