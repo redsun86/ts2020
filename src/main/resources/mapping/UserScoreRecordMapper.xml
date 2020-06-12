@@ -7,6 +7,7 @@
     <result column="task_id" property="taskId" jdbcType="INTEGER" />
     <result column="operate_id" property="operateId" jdbcType="INTEGER" />
     <result column="score" property="score" jdbcType="DOUBLE" />
+    <result column="total_score" property="totalScore" jdbcType="DOUBLE" />
     <result column="begin_time" property="beginTime" jdbcType="BIGINT" />
     <result column="end_time" property="endTime" jdbcType="BIGINT" />
   </resultMap>
@@ -14,7 +15,7 @@
     id, user_id, task_id, operate_id, score, total_score, begin_time, end_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from user_score_record
     where id = #{id,jdbcType=INTEGER}
@@ -24,12 +25,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.esst.ts.model.UserScoreRecord" >
-    insert into user_score_record (id, user_id, task_id, 
-      operate_id, score, total_score, 
+    insert into user_score_record (id, user_id, task_id,
+      operate_id, score, total_score,
       begin_time, end_time)
-    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, 
-      #{operateId,jdbcType=INTEGER}, #{score,jdbcType=DOUBLE}, #{beginTime,jdbcType=BIGINT},
-      #{endTime,jdbcType=BIGINT})
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER},
+      #{operateId,jdbcType=INTEGER}, #{score,jdbcType=DOUBLE}, #{totalScore,jdbcType=DOUBLE},
+      #{beginTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.esst.ts.model.UserScoreRecord" >
     insert into user_score_record
@@ -119,6 +120,7 @@
       task_id = #{taskId,jdbcType=INTEGER},
       operate_id = #{operateId,jdbcType=INTEGER},
       score = #{score,jdbcType=DOUBLE},
+      total_score = #{totalScore,jdbcType=DOUBLE},
       begin_time = #{beginTime,jdbcType=BIGINT},
       end_time = #{endTime,jdbcType=BIGINT}
     where id = #{id,jdbcType=INTEGER}

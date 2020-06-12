@@ -1,7 +1,5 @@
 package com.esst.ts.model;
 
-import java.util.Date;
-
 public class UserScoreRecord {
     private Integer id;
 
@@ -12,6 +10,8 @@ public class UserScoreRecord {
     private Integer operateId;
 
     private Double score;
+
+    private Double totalScore;
 
     private Long beginTime;
 

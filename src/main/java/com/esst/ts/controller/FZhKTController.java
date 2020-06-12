@@ -234,7 +234,8 @@ public class FZhKTController {
             usrScore.setTotalScore(total_score);
             Date date = new Date();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-            usrScore.setBeginTime(date);
+            long begintime=123456;
+            //usrScore.setBeginTime(begintime);
             fzhktService.insertUserScoreRecore(usrScore);
             //user_live_data
             UserLiveDataWithBLOBs uldscore = new UserLiveDataWithBLOBs();
@@ -258,7 +259,8 @@ public class FZhKTController {
             usrScore.setTotalScore(total_score);
             Date date = new Date();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-            usrScore.setBeginTime(date);
+            long begintime=123456;
+            //usrScore.setBeginTime(begintime);
             fzhktService.insertUserScoreRecore(usrScore);
         } else if (client_status == 2) {
 
