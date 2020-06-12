@@ -2,27 +2,16 @@ package com.esst.ts.controller;
 
 import com.esst.ts.constants.Constants;
 import com.esst.ts.model.Result;
-import com.esst.ts.model.User;
-import com.esst.ts.model.UserToken;
-import com.esst.ts.service.UserService;
-import com.esst.ts.service.UserTokenService;
-import com.esst.ts.utils.*;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.esst.ts.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.RequestContext;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.*;
+import java.util.UUID;
 
 /**
  * 测试
