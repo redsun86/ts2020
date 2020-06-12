@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int updateUserPwd(Integer userId, String password) {
-        return userMapper.updateUserPwd(userId,password);
+        return userMapper.updateUserPwd(userId, password);
     }
 
     @Override
