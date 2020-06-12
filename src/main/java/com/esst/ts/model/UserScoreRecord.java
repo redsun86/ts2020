@@ -13,6 +13,8 @@ public class UserScoreRecord {
 
     private Double score;
 
+    private Double totalScore;
+
     private Date beginTime;
 
     private Date endTime;
@@ -55,6 +57,14 @@ public class UserScoreRecord {
 
     public void setScore(Double score) {
         this.score = score;
+    }
+
+    public Double getTotalScore() {
+        return totalScore;
+    }
+
+    public void setTotalScore(Double totalScore) {
+        this.totalScore = totalScore;
     }
 
     public Date getBeginTime() {

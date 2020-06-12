@@ -17,10 +17,4 @@ public interface UserLiveMapper {
     int updateByPrimaryKeyWithBLOBs(UserLiveWithBLOBs record);
 
     int updateByPrimaryKey(UserLive record);
-    /*
-学员端上传成绩
-*/
-    //@Insert("Insert into UserLive (UDS_UserID) value (1)")
-    //@ResultMap("BaseResultMap")
-    //boolean updatescore(UserLive rescord);
 }

@@ -14,14 +14,11 @@ import org.springframework.web.servlet.support.RequestContext;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 仿真课堂模块对应的接口；仿真课堂 ==> FangZhenKeTang ==> FZhKT
- *
  */
 @Controller
 @RequestMapping("/web/v1/fang")
@@ -33,7 +30,9 @@ public class FZhKTController {
     //@Resource
     //private UserService userService;
 
-    /** 实时数据列表接口
+    /**
+     * 实时数据列表接口
+     *
      * @param userId
      * @param templateId
      * @param strToken
@@ -41,11 +40,11 @@ public class FZhKTController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/realtimedata",method = RequestMethod.GET)
+    @RequestMapping(value = "/realtimedata", method = RequestMethod.GET)
     public Result realtimedata(
-            @RequestParam(value = "user_id",required = false) String userId,
-            @RequestParam(value = "template_id",required = false) String templateId,
-            @RequestParam(value="token",required = true) String strToken,
+            @RequestParam(value = "user_id", required = false) String userId,
+            @RequestParam(value = "template_id", required = false) String templateId,
+            @RequestParam(value = "token", required = true) String strToken,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
@@ -69,10 +68,10 @@ public class FZhKTController {
         stuLst.add("史红阳");
         stuLst.add("专家");
         //</editor-fold>
-        online_num=0;
+        online_num = 0;
         for (int i = 0; i < 5; i++) {
             scoreModel m = new scoreModel();
-            m.setId(toString().valueOf(i + 1+Constants.scoredataDic.values().size()));
+            m.setId(toString().valueOf(i + 1 + Constants.scoredataDic.values().size()));
             m.setMachine_id("PC01");
             m.setUser_name(stuLst.get(i));
             m.setStudent_num("STU00" + toString().valueOf(i + 1));
@@ -130,69 +129,148 @@ public class FZhKTController {
     }
 
 
-    /** 学员端上传成绩接口
+//    /** 学员端上传成绩接口
+//     * @param score_id
+//     * @param request
+//     * @return client_status 0开始，中间1，结束2
+//     */
+//    @ResponseBody
+//    @RequestMapping(value = "/updatescore",method = RequestMethod.GET)
+////    public Result updatescore(@RequestParam(value="score_id") String score_id,
+////                              @RequestParam(value="stu_number") String stu_number,
+////                              @RequestParam(value="stu_name") String stu_name,
+////                              @RequestParam(value="tasklist_name") String tasklist_name,
+////                              @RequestParam(value="task_name") String task_name,
+////                              @RequestParam(value="task_score") String task_score,
+////                              @RequestParam(value="tasklist_score") String tasklist_score,
+////                              @RequestParam(value="train_id") String train_id,
+////                              HttpServletRequest request){
+//    public Result updatescore(@RequestParam(value="score_id") String score_id,
+//                              @RequestParam(value="user_id") String user_id,
+//                              @RequestParam(value="ip_adress") String id_adress,
+//                              @RequestParam(value="task_id") String task_id,
+//                              @RequestParam(value="operate_id") String operate_id,
+//                              @RequestParam(value="status") String status,
+//                              @RequestParam(value="current_score") String current_score,
+//                              @RequestParam(value="total_score") String total_score,
+//                              @RequestParam(value="study_duration") String study_duration,
+//                              @RequestParam(value="score_detail") String score_detail,
+//                              @RequestParam(value="client_status") String client_status,
+//                              HttpServletRequest request){
+//        RequestContext requestcontext=new RequestContext(request);
+//        Result r = new Result();
+//        if(Constants.scoredataDic.containsKey(stu_number))
+//        {
+//            scoreModel m = Constants.scoredataDic.get(stu_number);
+//            m.setId(train_id);
+//            m.setMachine_id("PC01");
+//            m.setUser_name(stu_name);
+//            //int id=gettaskidbytaskname(name);
+//            m.setStudent_num(stu_number);
+//            m.setTemplate_id("任务单或试卷id");
+//            m.setTemplate_name(tasklist_name);
+//            m.setTask_id("任务或试题id");
+//            m.setTask_name(task_name);
+//            m.setScore(task_score);
+//            m.setTotal_score(tasklist_score);
+//            m.setLearning_time("25.6");
+//            m.setStatus("1");
+//            m.setDetailesscore("带排版的详细成绩");
+//            m.setReport_url("www.esonline.com/report.pdf");
+//        }
+//        else
+//        {
+//            scoreModel m = new scoreModel();
+//            m.setId(train_id);
+//            m.setMachine_id("PC01");
+//            m.setUser_name(stu_name);
+//            m.setStudent_num(stu_number);
+//            m.setTemplate_id("任务单或试卷id");
+//            m.setTemplate_name(tasklist_name);
+//            m.setTask_id("任务或试题id");
+//            m.setTask_name(task_name);
+//            m.setScore(task_score);
+//            m.setTotal_score(tasklist_score);
+//            m.setLearning_time("25.6");
+//            m.setStatus("1");
+//            m.setDetailesscore("带排版的详细成绩");
+//            m.setReport_url("www.esonline.com/report.pdf");
+//            Constants.scoredataDic.put(stu_number,m);
+//        }
+//        r.setMsg("更新成功");
+//        return  r;
+//    }
+
+    /**
+     * 学员端上传成绩接口
+     *
      * @param score_id
-     * @param stu_number
      * @param request
-     * @return
+     * @return client_status 0开始，中间1，结束2
      */
     @ResponseBody
-    @RequestMapping(value = "/updatescore",method = RequestMethod.GET)
-    public Result updatescore(@RequestParam(value="score_id") String score_id,
-                              @RequestParam(value="stu_number") String stu_number,
-                              @RequestParam(value="stu_name") String stu_name,
-                              @RequestParam(value="tasklist_name") String tasklist_name,
-                              @RequestParam(value="task_name") String task_name,
-                              @RequestParam(value="task_score") String task_score,
-                              @RequestParam(value="tasklist_score") String tasklist_score,
-                              @RequestParam(value="train_id") String train_id,
-                              HttpServletRequest request){
-        RequestContext requestcontext=new RequestContext(request);
+    @RequestMapping(value = "/updatescore", method = RequestMethod.GET)
+    public Result updatescore(@RequestParam(value = "score_id") String score_id,
+                              @RequestParam(value = "user_id") int user_id,
+                              @RequestParam(value = "ip_adress") String id_adress,
+                              @RequestParam(value = "task_id") int task_id,
+                              @RequestParam(value = "operate_id") int operate_id,
+                              @RequestParam(value = "status") String status,
+                              @RequestParam(value = "current_score") double current_score,
+                              @RequestParam(value = "total_score") double total_score,
+                              @RequestParam(value = "score_detail") String score_detail,
+                              @RequestParam(value = "client_status") int client_status,
+                              @RequestParam(value = "token", required = true) String strToken,
+                              HttpServletRequest request) {
+        RequestContext requestcontext = new RequestContext(request);
         Result r = new Result();
-        if(Constants.scoredataDic.containsKey(stu_number))
-        {
-            scoreModel m = Constants.scoredataDic.get(stu_number);
-            m.setId(train_id);
-            m.setMachine_id("PC01");
-            m.setUser_name(stu_name);
-            //int id=gettaskidbytaskname(name);
-            m.setStudent_num(stu_number);
-            m.setTemplate_id("任务单或试卷id");
-            m.setTemplate_name(tasklist_name);
-            m.setTask_id("任务或试题id");
-            m.setTask_name(task_name);
-            m.setScore(task_score);
-            m.setTotal_score(tasklist_score);
-            m.setLearning_time("25.6");
-            m.setStatus("1");
-            m.setDetailesscore("带排版的详细成绩");
-            m.setReport_url("www.esonline.com/report.pdf");
-        }
-        else
-        {
-            scoreModel m = new scoreModel();
-            m.setId(train_id);
-            m.setMachine_id("PC01");
-            m.setUser_name(stu_name);
-            m.setStudent_num(stu_number);
-            m.setTemplate_id("任务单或试卷id");
-            m.setTemplate_name(tasklist_name);
-            m.setTask_id("任务或试题id");
-            m.setTask_name(task_name);
-            m.setScore(task_score);
-            m.setTotal_score(tasklist_score);
-            m.setLearning_time("25.6");
-            m.setStatus("1");
-            m.setDetailesscore("带排版的详细成绩");
-            m.setReport_url("www.esonline.com/report.pdf");
-            Constants.scoredataDic.put(stu_number,m);
+        if (client_status == 0) {//第一次传成绩
+            //user_score_recored插入数据
+            UserScoreRecord usrScore = new UserScoreRecord();
+            usrScore.setUserId(user_id);
+            usrScore.setTaskId(task_id);
+            usrScore.setOperateId(operate_id);
+            usrScore.setScore(current_score);
+            usrScore.setTotalScore(total_score);
+            Date date = new Date();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+            usrScore.setBeginTime(date);
+            fzhktService.insertUserScoreRecore(usrScore);
+            //user_live_data
+            UserLiveDataWithBLOBs uldscore = new UserLiveDataWithBLOBs();
+            uldscore.setUserId(user_id);
+            uldscore.setIdAddress(id_adress);
+            uldscore.setTaskId(task_id);
+            uldscore.setOperateId(operate_id);
+            uldscore.setCurrentScore(current_score);
+            uldscore.setTotalScore(total_score);
+            uldscore.setScoreDetail(score_detail);
+            uldscore.setUpdatetime(new Date());
+            fzhktService.insertUserLiveDataWithBLOBS(uldscore);
+
+        } else if (client_status == 1) {
+
+            UserScoreRecord usrScore = new UserScoreRecord();
+            usrScore.setUserId(user_id);
+            usrScore.setTaskId(task_id);
+            usrScore.setOperateId(operate_id);
+            usrScore.setScore(current_score);
+            usrScore.setTotalScore(total_score);
+            Date date = new Date();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+            usrScore.setBeginTime(date);
+            fzhktService.insertUserScoreRecore(usrScore);
+        } else if (client_status == 2) {
+
         }
         r.setMsg("更新成功");
-        return  r;
+        return r;
     }
-    Map<String,Integer> taskid_map=new HashMap<String,Integer>();
- int gettaskidbytaskname(String name) {
 
-     return  1;
- }
+    Map<String, Integer> taskid_map = new HashMap<String, Integer>();
+
+    int gettaskidbytaskname(String name) {
+
+        return 1;
+    }
 }

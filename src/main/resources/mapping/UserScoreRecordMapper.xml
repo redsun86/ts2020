@@ -7,11 +7,12 @@
     <result column="task_id" property="taskId" jdbcType="INTEGER" />
     <result column="operate_id" property="operateId" jdbcType="INTEGER" />
     <result column="score" property="score" jdbcType="DOUBLE" />
+    <result column="total_score" property="totalScore" jdbcType="DOUBLE" />
     <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
     <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_id, task_id, operate_id, score, begin_time, end_time
+    id, user_id, task_id, operate_id, score, total_score, begin_time, end_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -25,11 +26,11 @@
   </delete>
   <insert id="insert" parameterType="com.esst.ts.model.UserScoreRecord" >
     insert into user_score_record (id, user_id, task_id, 
-      operate_id, score, begin_time, 
-      end_time)
+      operate_id, score, total_score, 
+      begin_time, end_time)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, 
-      #{operateId,jdbcType=INTEGER}, #{score,jdbcType=DOUBLE}, #{beginTime,jdbcType=TIMESTAMP}, 
-      #{endTime,jdbcType=TIMESTAMP})
+      #{operateId,jdbcType=INTEGER}, #{score,jdbcType=DOUBLE}, #{totalScore,jdbcType=DOUBLE}, 
+      #{beginTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.esst.ts.model.UserScoreRecord" >
     insert into user_score_record
@@ -48,6 +49,9 @@
       </if>
       <if test="score != null" >
         score,
+      </if>
+      <if test="totalScore != null" >
+        total_score,
       </if>
       <if test="beginTime != null" >
         begin_time,
@@ -72,6 +76,9 @@
       <if test="score != null" >
         #{score,jdbcType=DOUBLE},
       </if>
+      <if test="totalScore != null" >
+        #{totalScore,jdbcType=DOUBLE},
+      </if>
       <if test="beginTime != null" >
         #{beginTime,jdbcType=TIMESTAMP},
       </if>
@@ -95,6 +102,9 @@
       <if test="score != null" >
         score = #{score,jdbcType=DOUBLE},
       </if>
+      <if test="totalScore != null" >
+        total_score = #{totalScore,jdbcType=DOUBLE},
+      </if>
       <if test="beginTime != null" >
         begin_time = #{beginTime,jdbcType=TIMESTAMP},
       </if>
@@ -110,6 +120,7 @@
       task_id = #{taskId,jdbcType=INTEGER},
       operate_id = #{operateId,jdbcType=INTEGER},
       score = #{score,jdbcType=DOUBLE},
+      total_score = #{totalScore,jdbcType=DOUBLE},
       begin_time = #{beginTime,jdbcType=TIMESTAMP},
       end_time = #{endTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
