@@ -23,12 +23,21 @@ public interface UserMapper {
 
     int updateByPrimaryKey(User record);
 
-    User getUser(@Param("userName") String userName, @Param("password") String password);
-
-    @Select("select * from user ")
+    @Select("select * from user where user_name = #{userName} and password = #{passWord} and is_del=0")
     @ResultMap("BaseResultMap")
-    List<User> getUserLst(@Param("userID") int userID);
+    User loginByTeacher(@Param("userName") String userName, @Param("passWord") String passWord);
+
+    @Select("select * from user where rel_name = #{trueName} and st_num = #{num} and is_del=0")
+    @ResultMap("BaseResultMap")
+    User loginByStudent(@Param("trueName") String trueName, @Param("num") String num);
+
+    @Select("select * from user where id in(select student_id from teacher_student_relation where teacher_id = #{userId}) and is_del=0")
+    @ResultMap("BaseResultMap")
+    List<User> getUserLst(@Param("userId") int userId);
 
     @Update("update user set password = #{password} where id = #{userId}")
     int updateUserPwd(@Param("userId") int userId,@Param("password") String password);
+
+    @Update("update user set is_del =1 where id = #{userId}")
+    int deleteUserById(@Param("userId") int userId);
 }

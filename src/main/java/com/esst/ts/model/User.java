@@ -41,6 +41,8 @@ public class User {
 
     private byte[] dogId;
 
+    private String operateMode;
+
     public Integer getId() {
         return id;
     }
@@ -192,4 +194,13 @@ public class User {
     public void setDogId(byte[] dogId) {
         this.dogId = dogId;
     }
+
+    public String getOperateMode() {
+        return operateMode;
+    }
+
+    public void setOperateMode(String operateMode) {
+        this.operateMode = operateMode == null ? null : operateMode.trim();
+    }
+
 }

@@ -22,8 +22,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByNameAndPassword(String userName, String password) {
-        return userMapper.getUser(userName, password);
+    public User loginByTeacher(String userName, String passWord) {
+        return userMapper.loginByTeacher(userName, passWord);
+    }
+
+    @Override
+    public User loginByStudent(String trueName, String num) {
+        return userMapper.loginByStudent(trueName, num);
     }
 
     @Override
@@ -38,16 +43,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int updateUserPwd(Integer userId, String password) {
-        return userMapper.updateUserPwd(userId,password);
+        return userMapper.updateUserPwd(userId, password);
     }
 
     @Override
     public int delete(Integer Id) {
-        return userMapper.deleteByPrimaryKey(Id);
+        return userMapper.deleteUserById(Id);
     }
 
     @Override
     public List<User> getUserListByTeacherId(Integer userID) {
         return userMapper.getUserLst(userID);
     }
+
+    @Override
+    public int insert(User record) {
+        return userMapper.insert(record);
+    }
+
 }

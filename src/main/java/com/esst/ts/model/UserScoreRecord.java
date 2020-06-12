@@ -13,9 +13,9 @@ public class UserScoreRecord {
 
     private Double score;
 
-    private Date beginTime;
+    private Long beginTime;
 
-    private Date endTime;
+    private Long endTime;
 
     public Integer getId() {
         return id;
@@ -57,19 +57,19 @@ public class UserScoreRecord {
         this.score = score;
     }
 
-    public Date getBeginTime() {
+    public Long getBeginTime() {
         return beginTime;
     }
 
-    public void setBeginTime(Date beginTime) {
+    public void setBeginTime(Long beginTime) {
         this.beginTime = beginTime;
     }
 
-    public Date getEndTime() {
+    public Long getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public void setEndTime(Long endTime) {
         this.endTime = endTime;
     }
 }
