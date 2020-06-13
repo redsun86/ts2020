@@ -23,9 +23,9 @@ public interface UserMapper {
 
     int updateByPrimaryKey(User record);
 
-    @Select("select * from user where st_num = #{num} ")
+    @Select("select * from user where st_num = #{num} and id in(select student_id from teacher_student_relation where teacher_id = #{userId})")
     @ResultMap("BaseResultMap")
-    User selectByNum(@Param("num") String num);
+    User selectByNum(@Param("num") String num,@Param("userId") int userId);
 
     @Select("select * from user where user_name = #{userName} and password = #{passWord} and is_del=0")
     @ResultMap("BaseResultMap")
@@ -44,4 +44,9 @@ public interface UserMapper {
 
     @Update("update user set is_del =1 where id = #{userId}")
     int deleteUserById(@Param("userId") int userId);
+
+    @Select("select * from user order by id DESC limit 1")
+    @ResultMap("BaseResultMap")
+    User selectLastRecord();
+
 }

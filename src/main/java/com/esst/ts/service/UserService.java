@@ -31,7 +31,19 @@ public interface UserService {
 
     User loginByStudent(String trueName, String num);
 
-    User getUserByNum(String num);
+    /**
+     * 根据学号判断当前教师是否已经导入该学号
+     * @param num
+     * @param userId
+     * @return
+     */
+    User getUserByNum(String num,Integer userId);
+
+    /**
+     * 获取刚创建的学员ID
+     * @return
+     */
+    User getUserLastRecord();
 
     int insert(TeacherStudentRelation record);
 }

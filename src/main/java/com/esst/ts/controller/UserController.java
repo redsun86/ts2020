@@ -140,15 +140,15 @@ public class UserController {
     /**
      * 用户列表接口
      *
-     * @param user_id 教师ID
+     * @param userId 教师ID
      */
     @ResponseBody
     @RequestMapping("/userList")
-    public Result userList(@RequestParam(value = "user_id", required = true) Integer user_id,
+    public Result userList(@RequestParam(value = "userId", required = true) Integer userId,
                            @RequestParam(value = "token", required = true) String strToken,
                            HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
-        List<User> userList = userService.getUserListByTeacherId(user_id);
+        List<User> userList = userService.getUserListByTeacherId(userId);
         Result r = new Result();
         //<editor-fold desc="返回参数初始化">
         r.setMsg(requestContext.getMessage("OK"));
@@ -265,6 +265,7 @@ public class UserController {
     @RequestMapping("/importStudentsInfo")
     @ResponseBody
     public Result importStudentsInfo(@RequestParam("file") MultipartFile file,
+                                     @RequestParam(value = "userId", required = true) Integer userId,
                                      HttpServletRequest request) throws Exception {
         RequestContext requestContext = new RequestContext(request);
         String contents = "";
@@ -293,7 +294,7 @@ public class UserController {
                             contents += "第" + h + "行的第" + l + "列为空\r\n";
                         }
                         if (j == 3) {
-                            //判断当前行的第一列学号是否重名
+                            //判断当前行的第四列账号是否重名
                             if (LoginAccount.indexOf(cell.get(j)) != -1) {
                                 contents += "第" + h + "行的第" + l + "列已存在相同值\r\n";
                             }
@@ -340,13 +341,13 @@ public class UserController {
                     m.setCreateUser(1);
                     m.setIsDel(Short.parseShort("0"));
                     m.setIsAdmin(Short.parseShort("0"));
-                    //查询当前学号是否存在
-                    User newUser = userService.getUserByNum(m.getStNum());
+                    //查询当前教师师傅已导入该学号
+                    User newUser = userService.getUserByNum(m.getStNum(),userId);
                     if (newUser == null) {
                         int result = userService.insert(m);
                         if (result > 0) {
-                            //查询插入的用户ID
-                            User user = userService.getUserByNum(m.getStNum());
+                            //查询刚刚添加的学员ID
+                            User user = userService.getUserLastRecord();
                             TeacherStudentRelation teacherStudentRelation = new TeacherStudentRelation();
                             teacherStudentRelation.setStudentId(user.getId());
                             teacherStudentRelation.setTeacherId(1);
