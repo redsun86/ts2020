@@ -194,8 +194,8 @@ public class UserController {
             Result r = new Result();
             int j = 0;
             String[] str = id.split(",");
-            for (int i = 0; i < str.length; i++) {
-                int result = userService.delete(Integer.valueOf(str[i]));
+            for (String s : str) {
+                int result = userService.delete(Integer.valueOf(s));
                 if (result > 0) {
                     j++;
                 }
@@ -268,9 +268,9 @@ public class UserController {
                                      @RequestParam(value = "userId", required = true) Integer userId,
                                      HttpServletRequest request) throws Exception {
         RequestContext requestContext = new RequestContext(request);
-        String contents = "";
-        String NumAccount = "";
-        String LoginAccount = "";
+        StringBuilder contents = new StringBuilder();
+        StringBuilder NumAccount = new StringBuilder();
+        StringBuilder LoginAccount = new StringBuilder();
         Result r = new Result();
         //解析excel文件
         List<ArrayList<String>> row = ExcelUtils.analysis(file);
@@ -280,33 +280,32 @@ public class UserController {
             for (int i = 0; i < row.size(); i++) {
                 List<String> cell = row.get(i);
                 for (int j = 0; j < cell.size(); j++) {
-                    Integer h = i + 1;
-                    Integer l = j + 1;
+                    int h = i + 1;
+                    int l = j + 1;
                     if (j <= 3) {
                         if (j == 0) {
                             //判断当前行的第一列学号是否重名
-                            if (NumAccount.indexOf(cell.get(j)) != -1) {
-                                contents += "第" + h + "行的第" + l + "列已存在相同值\r\n";
+                            if (NumAccount.toString().contains(cell.get(j))) {
+                                contents.append("第").append(h).append("行的第").append(l).append("列已存在相同值\r\n");
                             }
-                            NumAccount += cell.get(j) + ",";
+                            NumAccount.append(cell.get(j)).append(",");
                         }
                         if (cell.get(j).length() == 0) {
-                            contents += "第" + h + "行的第" + l + "列为空\r\n";
+                            contents.append("第").append(h).append("行的第").append(l).append("列为空\r\n");
                         }
                         if (j == 3) {
                             //判断当前行的第四列账号是否重名
-                            if (LoginAccount.indexOf(cell.get(j)) != -1) {
-                                contents += "第" + h + "行的第" + l + "列已存在相同值\r\n";
+                            if (LoginAccount.toString().contains(cell.get(j))) {
+                                contents.append("第").append(h).append("行的第").append(l).append("列已存在相同值\r\n");
                             }
-                            LoginAccount += cell.get(j) + ",";
+                            LoginAccount.append(cell.get(j)).append(",");
                         }
                     }
                 }
             }
             if (contents.length() == 0) {
                 //插入数据库数据
-                for (int i = 0; i < row.size(); i++) {
-                    List<String> cell = row.get(i);
+                for (List<String> cell : row) {
                     for (int j = 0; j < cell.size(); j++) {
                         //获取用户实体
                         switch (j) {
@@ -342,7 +341,7 @@ public class UserController {
                     m.setIsDel(Short.parseShort("0"));
                     m.setIsAdmin(Short.parseShort("0"));
                     //查询当前教师师傅已导入该学号
-                    User newUser = userService.getUserByNum(m.getStNum(),userId);
+                    User newUser = userService.getUserByNum(m.getStNum(), userId);
                     if (newUser == null) {
                         int result = userService.insert(m);
                         if (result > 0) {
@@ -365,7 +364,7 @@ public class UserController {
                 FileUtils.makefile(path); //空白文件生成
                 // 做写文件操作 。。。。
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path)));
-                writer.write(contents.toString());
+                writer.write(contents.toString().toString());
                 writer.flush();
                 writer.close();
                 String url = Constants.getIpAddress(request);  //获取服务器访问ip和端口 例如：http://127.0.0.1:8080/
