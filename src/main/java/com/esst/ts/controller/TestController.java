@@ -1,7 +1,10 @@
 package com.esst.ts.controller;
 
 import com.esst.ts.constants.Constants;
+import com.esst.ts.model.Product;
 import com.esst.ts.model.Result;
+import com.esst.ts.model.Task;
+import com.esst.ts.model.Technology;
 import com.esst.ts.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 测试
@@ -40,7 +43,27 @@ public class TestController {
         r.setData(url); //把文件访问路径返回前端
         return r;
     }
+
     public static void main(String[] args) {
-        System.out.println(UUID.randomUUID().toString());
+        List<Task> taskList = new ArrayList<>(); //数据库查出的list
+        List<Technology> tList = new ArrayList<>(); //数据库查出的list
+
+        Map<String, List<Task>> map = new HashMap<>();
+        for (int i = 0; i < taskList.size(); i++) {
+            Task task = taskList.get(i);
+            int id = task.getTechnologyId();
+            if (map.containsKey(id)) {
+                map.get(id).add(task);
+            } else {
+                List<Task> dataList = new ArrayList<>();
+                dataList.add(task);
+                //id为key,相同id的person的List为value
+                map.put(id + "", dataList);
+            }
+        }
+        for (Technology t : tList) {
+            map.get(t.getId());
+            //t.setTaskList();
+        }
     }
 }
