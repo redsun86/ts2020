@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.esst.ts.dao.userLoginLogMapper" >
-  <resultMap id="BaseResultMap" type="com.esst.ts.model.userLoginLog" >
+<mapper namespace="com.esst.ts.dao.UserLoginLogMapper" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.UserLoginLog" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="BIGINT" />
@@ -20,13 +20,13 @@
     delete from user_login_log
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.esst.ts.model.userLoginLog" >
+  <insert id="insert" parameterType="com.esst.ts.model.UserLoginLog" >
     insert into user_login_log (id, user_id, create_time, 
       status)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{createTime,jdbcType=BIGINT}, 
       #{status,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.esst.ts.model.userLoginLog" >
+  <insert id="insertSelective" parameterType="com.esst.ts.model.UserLoginLog" >
     insert into user_login_log
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -57,7 +57,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.userLoginLog" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.UserLoginLog" >
     update user_login_log
     <set >
       <if test="userId != null" >
@@ -72,7 +72,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.userLoginLog" >
+  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.UserLoginLog" >
     update user_login_log
     set user_id = #{userId,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=BIGINT},
