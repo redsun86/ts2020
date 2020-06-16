@@ -1,5 +1,6 @@
 package com.esst.ts.constants;
 
+import com.esst.ts.model.UserScoreRecord;
 import com.esst.ts.model.scoreModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -43,4 +44,5 @@ public class Constants {
         return url;
     }
     public static Map<String, scoreModel> scoredataDic=new HashMap<String, scoreModel>();
+    public static HashMap<Integer, UserScoreRecord> userscorerecord_map=new HashMap<Integer, UserScoreRecord>();
 }

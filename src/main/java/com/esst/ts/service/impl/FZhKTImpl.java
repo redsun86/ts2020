@@ -1,8 +1,6 @@
 package com.esst.ts.service.impl;
 
-import com.esst.ts.dao.UserLiveDataMapper;
-import com.esst.ts.dao.UserLiveMapper;
-import com.esst.ts.dao.UserScoreRecordMapper;
+import com.esst.ts.dao.*;
 import com.esst.ts.model.*;
 import com.esst.ts.service.FZhKTService;
 import org.springframework.stereotype.Service;
@@ -22,16 +20,23 @@ public class FZhKTImpl implements FZhKTService {
     private UserLiveMapper userliveScore;
     @Resource
     private UserLiveDataMapper userlivedata;
-    @Resource
-    private UserScoreRecordMapper userScoreRecord;
-    @Override
-    public List<Task> getCourseTaskLst(int courseID) {
-        return FZhKTMapper.getCourseTaskLst(courseID);
-    }
 
     @Override
-    public List<Task> getCourseTaskLstDemo(int courseID) {
-        return FZhKTMapper.getCourseTaskLstDemo(courseID);
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Resource
+    private UserScoreRecordMapper userScoreRecord;
+    @Resource
+    private TaskMapper task;
+    @Resource
+    private OperateMapper operate;
+    @Resource
+    private  UserMapper user;
+    @Override
+    public List<Task> getCourseTaskLst(int courseID) {
+        return FZhKTMapper.getCourseTaskLstBytechId(courseID);
     }
 
     @Override
@@ -47,8 +52,53 @@ public class FZhKTImpl implements FZhKTService {
     }
 
     @Override
-    public boolean insertUserScoreRecore(UserScoreRecord score) {
-        userScoreRecord.insert(score);
-        return false;
+    public int insertUserScoreRecore(UserScoreRecord score) {
+        return userScoreRecord.insert(score);
+    }
+
+    @Override
+    public int updateUserScoreRecored(UserScoreRecord usr) {
+
+        return userScoreRecord.updateByPrimaryKey(usr);
+    }
+
+    @Override
+    public List<UserScoreRecord> getUserScoreRecore(int userid, int taskid, int operateid) {
+        return  userScoreRecord.getUserScoreRecore( userid,  taskid, operateid);
+    }
+
+    public FZhKTImpl() {
+        super();
+    }
+
+    @Override
+    public List<UserLiveData> getUserLiveDataList()
+    {
+       return  userlivedata.getUserLiveDataDistinct();
+    }
+
+    @Override
+    public List<UserLive> getUserLiveList() {
+        return userliveScore.geUserLiveDistinct();
+    }
+
+    @Override
+    public List<Task> getTaskListAll() {
+        return FZhKTMapper.gteTaskListAll();
+    }
+
+    @Override
+    public List<Operate> getOprateList() {
+        return operate.getOperateListAll();
+    }
+
+    @Override
+    public List<User> getUserListAll() {
+        return user.getUserListAll();
+    }
+
+    @Override
+    public List<scoreModel> getscoreModelList(String user_id, String template_id) {
+        return FZhKTMapper.getscoreModelList(user_id,template_id);
     }
 }

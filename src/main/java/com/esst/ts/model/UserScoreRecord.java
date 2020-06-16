@@ -17,6 +17,8 @@ public class UserScoreRecord {
 
     private Long endTime;
 
+    private Integer studyType;
+
     public Integer getId() {
         return id;
     }
@@ -79,5 +81,13 @@ public class UserScoreRecord {
 
     public void setEndTime(Long endTime) {
         this.endTime = endTime;
+    }
+
+    public Integer getStudyType() {
+        return studyType;
+    }
+
+    public void setStudyType(Integer studyType) {
+        this.studyType = studyType;
     }
 }

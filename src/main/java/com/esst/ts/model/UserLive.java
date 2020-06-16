@@ -25,6 +25,8 @@ public class UserLive {
 
     private Date updatetime;
 
+    private Integer studyType;
+
     public Integer getId() {
         return id;
     }
@@ -111,5 +113,13 @@ public class UserLive {
 
     public void setUpdatetime(Date updatetime) {
         this.updatetime = updatetime;
+    }
+
+    public Integer getStudyType() {
+        return studyType;
+    }
+
+    public void setStudyType(Integer studyType) {
+        this.studyType = studyType;
     }
 }

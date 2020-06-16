@@ -13,6 +13,7 @@
     <result column="total_score" property="totalScore" jdbcType="DOUBLE" />
     <result column="study_duration" property="studyDuration" jdbcType="DOUBLE" />
     <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="study_type" property="studyType" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.esst.ts.model.UserLiveDataWithBLOBs" extends="BaseResultMap" >
     <result column="score_detail" property="scoreDetail" jdbcType="LONGVARCHAR" />
@@ -20,7 +21,7 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, user_id, mac_address, id_address, task_id, operate_id, status, current_score, 
-    total_score, study_duration, updatetime
+    total_score, study_duration, updatetime, study_type
   </sql>
   <sql id="Blob_Column_List" >
     score_detail, report
@@ -41,13 +42,13 @@
     insert into user_live_data (id, user_id, mac_address, 
       id_address, task_id, operate_id, 
       status, current_score, total_score, 
-      study_duration, updatetime, score_detail, 
-      report)
+      study_duration, updatetime, study_type, 
+      score_detail, report)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{macAddress,jdbcType=VARCHAR}, 
       #{idAddress,jdbcType=VARCHAR}, #{taskId,jdbcType=INTEGER}, #{operateId,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{currentScore,jdbcType=DOUBLE}, #{totalScore,jdbcType=DOUBLE}, 
-      #{studyDuration,jdbcType=DOUBLE}, #{updatetime,jdbcType=TIMESTAMP}, #{scoreDetail,jdbcType=LONGVARCHAR}, 
-      #{report,jdbcType=LONGVARCHAR})
+      #{studyDuration,jdbcType=DOUBLE}, #{updatetime,jdbcType=TIMESTAMP}, #{studyType,jdbcType=INTEGER}, 
+      #{scoreDetail,jdbcType=LONGVARCHAR}, #{report,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.esst.ts.model.UserLiveDataWithBLOBs" >
     insert into user_live_data
@@ -84,6 +85,9 @@
       </if>
       <if test="updatetime != null" >
         updatetime,
+      </if>
+      <if test="studyType != null" >
+        study_type,
       </if>
       <if test="scoreDetail != null" >
         score_detail,
@@ -126,6 +130,9 @@
       <if test="updatetime != null" >
         #{updatetime,jdbcType=TIMESTAMP},
       </if>
+      <if test="studyType != null" >
+        #{studyType,jdbcType=INTEGER},
+      </if>
       <if test="scoreDetail != null" >
         #{scoreDetail,jdbcType=LONGVARCHAR},
       </if>
@@ -167,6 +174,9 @@
       <if test="updatetime != null" >
         updatetime = #{updatetime,jdbcType=TIMESTAMP},
       </if>
+      <if test="studyType != null" >
+        study_type = #{studyType,jdbcType=INTEGER},
+      </if>
       <if test="scoreDetail != null" >
         score_detail = #{scoreDetail,jdbcType=LONGVARCHAR},
       </if>
@@ -188,6 +198,7 @@
       total_score = #{totalScore,jdbcType=DOUBLE},
       study_duration = #{studyDuration,jdbcType=DOUBLE},
       updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      study_type = #{studyType,jdbcType=INTEGER},
       score_detail = #{scoreDetail,jdbcType=LONGVARCHAR},
       report = #{report,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
@@ -203,7 +214,8 @@
       current_score = #{currentScore,jdbcType=DOUBLE},
       total_score = #{totalScore,jdbcType=DOUBLE},
       study_duration = #{studyDuration,jdbcType=DOUBLE},
-      updatetime = #{updatetime,jdbcType=TIMESTAMP}
+      updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      study_type = #{studyType,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

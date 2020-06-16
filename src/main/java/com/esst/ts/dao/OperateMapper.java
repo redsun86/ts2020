@@ -1,6 +1,10 @@
 package com.esst.ts.dao;
 
 import com.esst.ts.model.Operate;
+import org.apache.ibatis.annotations.ResultMap;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 public interface OperateMapper {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +18,8 @@ public interface OperateMapper {
     int updateByPrimaryKeySelective(Operate record);
 
     int updateByPrimaryKey(Operate record);
+
+    @Select("select * from operate")
+    @ResultMap("BaseResultMap")
+    List<Operate> getOperateListAll();
 }

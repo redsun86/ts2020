@@ -15,6 +15,19 @@ public class scoreModel {
     private String detailesscore;//":"带排版的详细成绩",
     private String report_url;//":"www.esonline.com/report.pdf"
 
+    public int getStydy_type() {
+        return stydy_type;
+    }
+
+    public void setStydy_type(int stydy_type) {
+        this.stydy_type = stydy_type;
+    }
+
+    public scoreModel() {
+        super();
+    }
+
+    private  int stydy_type;
     public String getId() {
         return id;
     }
