@@ -1,6 +1,6 @@
 package com.esst.ts.model;
 
-public class userLoginLog {
+public class UserLoginLog {
     private Integer id;
 
     private Integer userId;
