@@ -210,6 +210,7 @@ public class FZhKTController {
             usrScore.setOperateId(operate_id);
             usrScore.setScore(current_score);
             usrScore.setTotalScore(total_score);
+            usrScore.setStudyType(study_type);
             Date date = new Date();
             usrScore.setBeginTime(date.getTime());
             fzhktService.insertUserScoreRecore(usrScore);
@@ -224,6 +225,7 @@ public class FZhKTController {
             uldscore.setScoreDetail(score_detail);
             uldscore.setStudyDuration(0.00);
             uldscore.setUpdatetime(new Date());
+            uldscore.setStudyType(study_type);
             fzhktService.insertUserLiveDataWithBLOBS(uldscore);
 
             Constants.userscorerecord_map.put(user_id, usrScore);
@@ -244,6 +246,7 @@ public class FZhKTController {
             uldscore.setCurrentScore(current_score);
             uldscore.setTotalScore(total_score);
             uldscore.setScoreDetail(score_detail);
+            uldscore.setStudyType(study_type);
             uldscore.setUpdatetime(new Date());
             //计算培训时长
             double duration = new Date().getTime() - usrecord.getBeginTime();
@@ -262,6 +265,7 @@ public class FZhKTController {
             ulscore.setCurrentScore(current_score);
             ulscore.setTotalScore(total_score);
             ulscore.setScoreDetail(score_detail);
+            ulscore.setStudyType(study_type);
             ulscore.setUpdatetime(new Date());
             //计算培训时长
             double duration = new Date().getTime() - usrecord.getBeginTime();
