@@ -7,6 +7,17 @@
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="create_user" property="createUser" jdbcType="INTEGER" />
   </resultMap>
+
+  <resultMap id="BasePOJOResultMap" type="com.esst.ts.model.ExamPOJO">
+    <id column="exam_id" property="id" jdbcType="INTEGER"/>
+    <result column="exam_name" property="examName" jdbcType="VARCHAR"/>
+    <result column="status" property="status" jdbcType="INTEGER"/>
+    <result column="status_name" property="statusName" jdbcType="VARCHAR"/>
+    <result column="create_user" property="createUser" jdbcType="INTEGER"/>
+    <result column="user_count" property="userCount" jdbcType="INTEGER"/>
+    <result column="exam_attribute" property="examAttribute" jdbcType="INTEGER"/>
+    <result column="edit_info" property="editInfo" jdbcType="VARCHAR"/>
+  </resultMap>
   <sql id="Base_Column_List" >
     id, exam_name, status, create_user
   </sql>
@@ -21,10 +32,10 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.esst.ts.model.Exam" >
-    insert into exam (id, exam_name, status, 
-      create_user)
-    values (#{id,jdbcType=INTEGER}, #{examName,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
-      #{createUser,jdbcType=INTEGER})
+    insert into exam (id, exam_name, exam_attribute,
+      status, create_user)
+    values (#{id,jdbcType=INTEGER}, #{examName,jdbcType=VARCHAR}, #{examAttribute,jdbcType=INTEGER},
+      #{status,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.esst.ts.model.Exam" >
     insert into exam
@@ -62,6 +73,9 @@
     <set >
       <if test="examName != null" >
         exam_name = #{examName,jdbcType=VARCHAR},
+      </if>
+      <if test="examAttribute != null" >
+        exam_attribute = #{examAttribute,jdbcType=INTEGER},
       </if>
       <if test="status != null" >
         status = #{status,jdbcType=INTEGER},

@@ -1,17 +1,19 @@
 package com.esst.ts.controller;
 
 import com.esst.ts.model.*;
+import com.esst.ts.service.ExamService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.RequestContext;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * 策略库；策略==》strategy
@@ -21,6 +23,17 @@ import java.util.Map;
 @Controller
 @RequestMapping("/web/v1/strategy")
 public class StrategyController {
+    @Resource
+    private ExamService ExamService;
+    @Resource
+    private com.esst.ts.service.QuestionsService QuestionsService;
+    @Resource
+    private com.esst.ts.service.TechnologyService TechnologyService;
+    @Resource
+    private com.esst.ts.service.TroubleService TroubleService;
+    @Resource
+    private com.esst.ts.service.StyleService StyleService;
+
     private final Logger log = LoggerFactory.getLogger(UserController.class);
 
     //  1、策略库数据更新接口
@@ -227,17 +240,10 @@ public class StrategyController {
         //</editor-fold>
 
         //<editor-fold desc="业务操作并赋值">
+
         Map<String, Object> responseDataMap = new HashMap<>();
-        List<ExamPOJO> questLst = new ArrayList<ExamPOJO>();
-        for (int i = 1; i < 3; i++) {
-            ExamPOJO mod = new ExamPOJO();
-            mod.setId(i);
-            mod.setExamName("试卷名称" + toString().valueOf(i));
-            mod.setCreateUser(i);
-            mod.setStatus(i);
-            mod.setUserCount(20);
-            questLst.add(mod);
-        }
+        //List<ExamPOJO> questLst = new ArrayList<ExamPOJO>();
+        List<ExamPOJO> questLst = ExamService.GetList(1);
         responseDataMap.put("datalist", questLst);
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
@@ -257,7 +263,7 @@ public class StrategyController {
     @RequestMapping(value = "/editexam", method = RequestMethod.POST)
     public Result editexam(
             @RequestParam(value = "token", required = true) String strToken,
-            @ModelAttribute("reqMod") ExamPOJO reqMod,
+            @ModelAttribute("reqMod") Exam reqMod,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
@@ -268,10 +274,24 @@ public class StrategyController {
 
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
-        r.setMsg(requestContext.getMessage("OK"));
-        r.setCode(Result.SUCCESS);
-        responseDataMap.put("token", strToken);
-        responseDataMap.put("respMsg", "执行成功");
+
+        int rowsCount= 0;
+        try {
+            if(reqMod.getId()==null) {
+                rowsCount = ExamService.insert(reqMod);
+            }else{
+                rowsCount = ExamService.update(reqMod);
+            }
+        } catch (Exception e) {
+            //            e.printStackTrace();
+            responseDataMap.put("respMsg",e.getMessage());
+        }
+        if(rowsCount>0) {
+            r.setMsg(requestContext.getMessage("OK"));
+            r.setCode(Result.SUCCESS);
+            responseDataMap.put("token", strToken);
+            responseDataMap.put("respMsg", "执行成功");
+        }
         responseDataMap.put("requestModel", reqMod);
         r.setData(responseDataMap);
         //</editor-fold>
@@ -288,6 +308,7 @@ public class StrategyController {
     @ResponseBody
     @RequestMapping(value = "/deleteexam", method = RequestMethod.GET)
     public Result deleteexam(
+            @RequestParam(value = "id", required = false) Integer Id,
             @RequestParam(value = "token", required = true) String strToken,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
@@ -301,9 +322,19 @@ public class StrategyController {
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
 
-        r.setMsg(requestContext.getMessage("OK"));
-        r.setCode(Result.SUCCESS);
-        responseDataMap.put("respMsg", "执行成功，已删除");
+        int rowsCount= 0;
+        try {
+            rowsCount = ExamService.deleteWithId(Id);
+        } catch (Exception e) {
+            //            e.printStackTrace();
+        }
+        if(rowsCount>0) {
+            r.setMsg(requestContext.getMessage("OK"));
+            r.setCode(Result.SUCCESS);
+            responseDataMap.put("respMsg", "执行成功，已删除");
+        }else{
+            responseDataMap.put("respMsg", "执行失败，请求的数据不存在");
+        }
         r.setData(responseDataMap);
         //</editor-fold>
         return r;
@@ -320,7 +351,7 @@ public class StrategyController {
     @RequestMapping(value = "/getquestionslist", method = RequestMethod.GET)
     public Result getquestionslist(
             @RequestParam(value = "token", required = true) String strToken,
-            @RequestParam(value = "exameId", required = false) String exameId,
+            @RequestParam(value = "exame_id", required = false) Integer exameId,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
@@ -331,23 +362,8 @@ public class StrategyController {
 
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
-        List<QuestionsPOJO> questLst = new ArrayList<QuestionsPOJO>();
-        for (int i = 1; i < 3; i++) {
-            QuestionsPOJO mod = new QuestionsPOJO();
-            mod.setId(i);
-            mod.setExameId(i);
-            mod.setExameName("试卷名称" + toString().valueOf(i));
-            mod.setOperateId(i);
-            mod.setOperateName("[工艺/单元]名称" + toString().valueOf(i));
-            mod.setTroubleId(i);
-            mod.setTroubleName("事故策略" + toString().valueOf(i));
-            mod.setStyleId(i);
-            mod.setStyleName("DCS风格" + toString().valueOf(i));
-            mod.setProportion(20);
-            mod.setTimeLimit(20);
-            mod.setTimeScale(100);
-            questLst.add(mod);
-        }
+        //List<QuestionsPOJO> questLst = new ArrayList<QuestionsPOJO>();
+        List<QuestionsPOJO> questLst = QuestionsService.GetList(exameId);
         responseDataMap.put("datalist", questLst);
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
@@ -374,17 +390,7 @@ public class StrategyController {
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
-        List<TechnologyPOJO> techLst = new ArrayList<TechnologyPOJO>();
-        for (int i = 1; i < 3; i++) {
-            TechnologyPOJO mod = new TechnologyPOJO();
-            mod.setId(i);
-            mod.setProduct_id(i);
-            mod.setStyle_id("");
-            mod.setTechnology_code("");
-            mod.setTechnology_en_name("");
-            mod.setTechnology_zh_name("工艺/单元" + toString().valueOf(i));
-            techLst.add(mod);
-        }
+        List<Technology> techLst =TechnologyService.GetList() ;
         responseDataMap.put("datalist", techLst);
         r.setData(responseDataMap);
         //</editor-fold>
@@ -401,7 +407,7 @@ public class StrategyController {
     @ResponseBody
     @RequestMapping(value = "/gettroublelist", method = RequestMethod.GET)
     public Result gettroublelist(
-            @RequestParam(value = "technology_id", required = false) String technologyId,
+            @RequestParam(value = "technology_id", required = false) Integer technologyId,
             @RequestParam(value = "token", required = true) String strToken,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
@@ -410,15 +416,7 @@ public class StrategyController {
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
-        List<Trouble> techLst = new ArrayList<Trouble>();
-        for (int i = 1; i < 3; i++) {
-            Trouble mod = new Trouble();
-            mod.setId(i);
-//            mod.setTroubleCode("");
-            mod.setTroubleName("事故策略" + toString().valueOf(i));
-            mod.setTechnology(i);
-            techLst.add(mod);
-        }
+        List<Trouble> techLst = TroubleService.GetList(technologyId) ;
         responseDataMap.put("datalist", techLst);
         r.setData(responseDataMap);
         //</editor-fold>
@@ -447,8 +445,8 @@ public class StrategyController {
         for (int i = 1; i < 3; i++) {
             TimeScalePOJO mod = new TimeScalePOJO();
             mod.setId(i);
-            mod.setTimescaleCode("运行时标编号" + toString().valueOf(i));
-            mod.setTimescaleName("运行时标" + toString().valueOf(i));
+            mod.setTimescaleCode(toString().valueOf(i));
+            mod.setTimescaleName(toString().valueOf(i*100));
             techLst.add(mod);
         }
         responseDataMap.put("datalist", techLst);
@@ -475,15 +473,7 @@ public class StrategyController {
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
-        List<Style> techLst = new ArrayList<Style>();
-        for (int i = 1; i < 3; i++) {
-            Style mod = new Style();
-            mod.setId(i);
-            //  mod.setTroubleCode("");
-            mod.setStyleCode("DCS风格编号" + toString().valueOf(i));
-            mod.setStyleName("DCS风格" + toString().valueOf(i));
-            techLst.add(mod);
-        }
+        List<Style> techLst = StyleService.GetList() ;
         responseDataMap.put("datalist", techLst);
         r.setData(responseDataMap);
         //</editor-fold>
@@ -512,10 +502,23 @@ public class StrategyController {
 
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
-        r.setMsg(requestContext.getMessage("OK"));
-        r.setCode(Result.SUCCESS);
-        responseDataMap.put("token", strToken);
-        responseDataMap.put("respMsg", "执行成功");
+        int rowsCount= 0;
+        try {
+            if(reqMod.getId()==null) {
+                rowsCount = QuestionsService.insert(reqMod);
+            }else{
+                rowsCount = QuestionsService.update(reqMod);
+            }
+        } catch (Exception e) {
+            //            e.printStackTrace();
+            responseDataMap.put("respMsg",e.getMessage());
+        }
+        if(rowsCount>0) {
+            r.setMsg(requestContext.getMessage("OK"));
+            r.setCode(Result.SUCCESS);
+            responseDataMap.put("token", strToken);
+            responseDataMap.put("respMsg", "执行成功");
+        }
         responseDataMap.put("requestModel", reqMod);
         r.setData(responseDataMap);
         //</editor-fold>
@@ -532,7 +535,7 @@ public class StrategyController {
     @ResponseBody
     @RequestMapping(value = "/deletequestions", method = RequestMethod.GET)
     public Result deletequestions(
-            @RequestParam(value = "id", required = true) String Id,
+            @RequestParam(value = "id", required = true) Integer Id,
             @RequestParam(value = "token", required = true) String strToken,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
@@ -546,12 +549,153 @@ public class StrategyController {
 
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
-
-        r.setMsg(requestContext.getMessage("OK"));
-        r.setCode(Result.SUCCESS);
-        responseDataMap.put("respMsg", "执行成功，已删除");
+        int rowsCount= 0;
+        try {
+            rowsCount = QuestionsService.deleteWithId(Id);
+        } catch (Exception e) {
+            //            e.printStackTrace();
+        }
+        if(rowsCount>0) {
+            r.setMsg(requestContext.getMessage("OK"));
+            r.setCode(Result.SUCCESS);
+            responseDataMap.put("respMsg", "执行成功，已删除");
+        }else{
+            responseDataMap.put("respMsg", "执行失败，请求的数据不存在");
+        }
         r.setData(responseDataMap);
         //</editor-fold>
         return r;
     }
+
+
+    /**
+     * 测试接口
+     *
+     * @param strToken
+     * @param request
+     * @return 返回特殊格式的JSON数据
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getdatalist", method = RequestMethod.GET)
+    public Result getdatalist(
+            @RequestParam(value = "token", required = true) String strToken,
+            HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+
+        //<editor-fold desc="返回参数初始化">
+        r.setMsg(requestContext.getMessage("OK"));
+        r.setCode(Result.SUCCESS);
+        //</editor-fold>
+
+        //<editor-fold desc="业务操作并赋值">
+        Map<String, Object> responseDataMap = new HashMap<>();
+
+        Map<String, Object> productlistMap = new HashMap<>();
+        Map<String, Object> teclistMap = new HashMap<>();
+        Map<String, Object> tasklistMap = new HashMap<>();
+
+        List<Product> proLst = new ArrayList<Product>();
+        for (int i = 1; i < 3; i++) {
+            Product mod = new Product();
+            mod.setId(i);
+            mod.setProductCode("产品编号" + toString().valueOf(i));
+            mod.setProductName("产品名称" + toString().valueOf(i));
+            mod.setProductName2("产品显示名称" + toString().valueOf(i));
+            proLst.add(mod);
+        }
+        for (Product pmod : proLst) {
+            List<String> opmod = new ArrayList<>();
+            opmod.add("工况1");
+            opmod.add("工况2");
+            tasklistMap.put("任务单1", opmod);
+            tasklistMap.put("任务单2", opmod);
+            teclistMap.put("工艺单元", tasklistMap);
+            productlistMap.put(pmod.getProductName(), teclistMap);
+        }
+
+
+        //<editor-fold desc="demo">
+        List<Task> taskList = new ArrayList<>(); //数据库查出的list
+        List<Technology> tList = new ArrayList<>(); //数据库查出的list
+        Map<String, List<Task>> map = new HashMap<>();
+        for (int i = 0; i < taskList.size(); i++) {
+            Task task = taskList.get(i);
+            int id = task.getTechnologyId();
+            if (map.containsKey(id)) {
+                map.get(id).add(task);
+            } else {
+                List<Task> dataList = new ArrayList<>();
+                dataList.add(task);
+                //id为key,相同id的person的List为value
+                map.put(id + "", dataList);
+            }
+        }
+        for (Technology t : tList) {
+            map.get(t.getId());
+            //t.setTaskList();
+        }
+        //</editor-fold>
+        responseDataMap.put("datalist", proLst);
+        responseDataMap.put("productcount", "[产品]数量2");
+        responseDataMap.put("technologycount", "[工艺/单元]数量7");
+        responseDataMap.put("taskcount", "[任务单]数量7");
+        Product pm = firstOrDefault(proLst, n -> n.getId().equals(1));
+        List<Product> newLst = where(proLst, n -> n.getId() == 1);
+        productlistMap.put("测试pm", pm);
+        productlistMap.put("测试newLst", newLst);
+        r.setData(productlistMap);
+        //</editor-fold>
+
+        return r;
+    }
+
+    /**
+     * 返回符合条件的第一条数据
+     * 示例：
+     * Student stu=null;
+     * stu=ListHelper.firstOrDefault(students,n->n.getId().equals(1));
+     */
+    //example ListHelper.firstOrDefault(students, n -> n.getAge()==12)
+    public static <T> T firstOrDefault(List<T> list, Predicate<? super T> predicate) {
+        if (list != null) {
+            Optional<T> first = list.stream().filter(predicate).findFirst();
+            if (first.isPresent()) {
+                return first.get();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 返回符合条件的集合
+     * 示例：
+     * List<Student> stus=new ArrayList<>();
+     * stus=ListHelper.where(students,n->n.getId()>1);
+     */
+    //example ListHelper.where(students, n -> n.getAge() >12)
+    public static <T> List<T> where(List<T> list, Predicate<? super T> predicate) {
+        if (list != null) {
+            return list.stream().filter(predicate).collect(Collectors.toList());
+        }
+        return null;
+    }
+
+    /**
+     * 返回指定列的集合
+     * 示例：
+     * List<Integer> ids=new ArrayList<>();
+     * ids=ListHelper.select(students,n->n.getId());
+     */
+    //example ListHelper.select(students, n -> n.getAge())
+    public static <T, E> List<E> select(List<T> list, Function<? super T, E> express) {
+        List<E> eList = new ArrayList<>();
+        for (T t : list) {
+            E e = express.apply(t);
+            eList.add(e);
+        }
+        return eList;
+    }
+
+
 }

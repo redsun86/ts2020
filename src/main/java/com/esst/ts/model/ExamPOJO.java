@@ -9,8 +9,11 @@ public class ExamPOJO {
     private Integer id;//` int(11) NOT NULL AUTO_INCREMENT COMMENT '递增主键',
     private String examName;//` varchar(32) DEFAULT NULL COMMENT '试卷名称',
     private Integer status;//` int(1) DEFAULT NULL COMMENT '试卷状态（发布/未发布）',
+    private String statusName;//` int(1) DEFAULT NULL COMMENT '试卷状态（发布/未发布）',
     private Integer createUser;//` int(11) NOT NULL COMMENT '试卷创建者的userid',
     private Integer userCount;//学员人数
+    private Integer examAttribute;
+    private String editInfo;
 
     public Integer getId() {
         return id;
@@ -36,6 +39,14 @@ public class ExamPOJO {
         this.status = status;
     }
 
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
     public Integer getCreateUser() {
         return createUser;
     }
@@ -50,5 +61,21 @@ public class ExamPOJO {
 
     public void setUserCount(Integer userCount) {
         this.userCount = userCount;
+    }
+
+    public Integer getExamAttribute() {
+        return examAttribute;
+    }
+
+    public void setExamAttribute(Integer examAttribute) {
+        this.examAttribute = examAttribute;
+    }
+
+    public String getEditInfo() {
+        return editInfo;
+    }
+
+    public void setEditInfo(String editInfo) {
+        this.editInfo = editInfo;
     }
 }
