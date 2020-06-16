@@ -7,10 +7,7 @@ import com.esst.ts.model.User;
 import com.esst.ts.model.UserToken;
 import com.esst.ts.service.UserService;
 import com.esst.ts.service.UserTokenService;
-import com.esst.ts.utils.ExcelUtils;
-import com.esst.ts.utils.FileUtils;
-import com.esst.ts.utils.MD5Code;
-import com.esst.ts.utils.UniqueKeyGenerator;
+import com.esst.ts.utils.*;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -187,6 +184,7 @@ public class UserController {
     @ResponseBody
     @RequestMapping("/delStudents")
     public Result delStudents(@RequestParam(value = "id", required = true) String id,
+                              @RequestParam(value = "userId", required = true) Integer userId,
                               @RequestParam(value = "token", required = true) String strToken,
                               HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
@@ -195,7 +193,7 @@ public class UserController {
             int j = 0;
             String[] str = id.split(",");
             for (String s : str) {
-                int result = userService.delete(Integer.valueOf(s));
+                int result = userService.delete(Integer.valueOf(s),userId);
                 if (result > 0) {
                     j++;
                 }
@@ -203,7 +201,7 @@ public class UserController {
             if (j == str.length) {
                 r.setMsg(requestContext.getMessage("OK"));
                 r.setCode(200);
-                r.setData("");
+                r.setData("删除成功");
                 return r;
             } else {
                 if (j > 0) {
@@ -218,12 +216,12 @@ public class UserController {
                 return r;
             }
         } else {
-            int result = userService.delete(Integer.valueOf(id));
+            int result = userService.delete(Integer.valueOf(id),userId);
             Result r = new Result();
             if (result > 0) {
                 r.setMsg(requestContext.getMessage("OK"));
                 r.setCode(200);
-                r.setData("");
+                r.setData("删除成功");
             } else {
                 r.setMsg(requestContext.getMessage("Err"));
                 r.setCode(100);
@@ -266,6 +264,7 @@ public class UserController {
     @ResponseBody
     public Result importStudentsInfo(@RequestParam("file") MultipartFile file,
                                      @RequestParam(value = "userId", required = true) Integer userId,
+                                     @RequestParam(value = "token", required = true) String strToken,
                                      HttpServletRequest request) throws Exception {
         RequestContext requestContext = new RequestContext(request);
         StringBuilder contents = new StringBuilder();
@@ -337,10 +336,11 @@ public class UserController {
                     }
                     m.setPassword(MD5Code.encodeByMD5("000000"));
                     m.setStatus(Short.parseShort("0"));
-                    m.setCreateUser(1);
+                    m.setCreateTime(DateUtils.stringToDate(DateUtils.getDate()));
+                    m.setCreateUser(userId);
                     m.setIsDel(Short.parseShort("0"));
                     m.setIsAdmin(Short.parseShort("0"));
-                    //查询当前教师师傅已导入该学号
+                    //查询当前教师傅已导入该学号
                     User newUser = userService.getUserByNum(m.getStNum(), userId);
                     if (newUser == null) {
                         int result = userService.insert(m);
@@ -349,7 +349,7 @@ public class UserController {
                             User user = userService.getUserLastRecord();
                             TeacherStudentRelation teacherStudentRelation = new TeacherStudentRelation();
                             teacherStudentRelation.setStudentId(user.getId());
-                            teacherStudentRelation.setTeacherId(1);
+                            teacherStudentRelation.setTeacherId(userId);
                             userService.insert(teacherStudentRelation);
                         }
                     }
