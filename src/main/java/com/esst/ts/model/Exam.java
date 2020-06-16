@@ -5,6 +5,8 @@ public class Exam {
 
     private String examName;
 
+    private Integer examAttribute;
+
     private Integer status;
 
     private Integer createUser;
@@ -23,6 +25,14 @@ public class Exam {
 
     public void setExamName(String examName) {
         this.examName = examName == null ? null : examName.trim();
+    }
+
+    public Integer getExamAttribute() {
+        return examAttribute;
+    }
+
+    public void setExamAttribute(Integer examAttribute) {
+        this.examAttribute = examAttribute;
     }
 
     public Integer getStatus() {

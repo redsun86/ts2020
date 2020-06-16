@@ -21,7 +21,7 @@ public interface UserService {
 
     int updateUserPwd(Integer userId, String password);
 
-    int delete(Integer Id);
+    int delete(Integer Id,Integer userId);
 
     List<User> getUserListByTeacherId(Integer userID);
 

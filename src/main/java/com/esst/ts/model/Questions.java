@@ -15,6 +15,10 @@ public class Questions {
 
     private Integer timeLimit;
 
+    private Integer timeScale;
+
+    private Integer isDeleted;
+
     public Integer getId() {
         return id;
     }
@@ -69,5 +73,21 @@ public class Questions {
 
     public void setTimeLimit(Integer timeLimit) {
         this.timeLimit = timeLimit;
+    }
+
+    public Integer getTimeScale() {
+        return timeScale;
+    }
+
+    public void setTimeScale(Integer timeScale) {
+        this.timeScale = timeScale;
+    }
+
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

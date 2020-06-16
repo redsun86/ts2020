@@ -8,23 +8,17 @@ public class QuestionsPOJO {
     private Integer id;//` int(11) NOT NULL AUTO_INCREMENT,
     private Integer exameId;//` int(11) NOT NULL COMMENT '所属试卷id',
     private String exameName;//` varchar(32) DEFAULT NULL COMMENT '试卷名称',
-    private Integer operateId;//` int(11) DEFAULT NULL COMMENT '工况id。根据业务逻辑此字段为[工艺/单元]id',
-    private String operateName;//` varchar(32) DEFAULT NULL COMMENT '工艺中文名',
+    private Integer technologyId;//`technology_id` int(11) DEFAULT NULL COMMENT '工况所属的工艺'
+    private String technologyName;//` varchar(32) DEFAULT NULL COMMENT '工艺中文名',
+    private Integer operateId;//` int(11) DEFAULT NULL COMMENT '工况id',
+    private String operateName;//` varchar(32) DEFAULT NULL COMMENT '工况名'
     private Integer troubleId;//` int(11) DEFAULT NULL,
-    private String troubleName;//` varchar(32) DEFAULT NULL COMMENT '事故名称',
+    private String troubleName;//` varchar(32) DEFAULT NULL COMMENT '事故名称',,
     private Integer styleId;//` int(11) DEFAULT NULL COMMENT '风格id',
     private String styleName;//` varchar(32) DEFAULT NULL COMMENT '风格名称',
     private Integer proportion;//` int(11) DEFAULT NULL COMMENT '得分所占比重',
     private Integer timeLimit;//` int(11) DEFAULT NULL COMMENT '答题时间限制',
     private Integer timeScale;//运行时标
-
-    public Integer getTimeScale() {
-        return timeScale;
-    }
-
-    public void setTimeScale(Integer timeScale) {
-        this.timeScale = timeScale;
-    }
 
     public Integer getId() {
         return id;
@@ -48,6 +42,22 @@ public class QuestionsPOJO {
 
     public void setExameName(String exameName) {
         this.exameName = exameName;
+    }
+
+    public Integer getTechnologyId() {
+        return technologyId;
+    }
+
+    public void setTechnologyId(Integer technologyId) {
+        this.technologyId = technologyId;
+    }
+
+    public String getTechnologyName() {
+        return technologyName;
+    }
+
+    public void setTechnologyName(String technologyName) {
+        this.technologyName = technologyName;
     }
 
     public Integer getOperateId() {
@@ -112,5 +122,13 @@ public class QuestionsPOJO {
 
     public void setTimeLimit(Integer timeLimit) {
         this.timeLimit = timeLimit;
+    }
+
+    public Integer getTimeScale() {
+        return timeScale;
+    }
+
+    public void setTimeScale(Integer timeScale) {
+        this.timeScale = timeScale;
     }
 }
