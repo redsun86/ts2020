@@ -33,6 +33,8 @@ public class StrategyController {
     private com.esst.ts.service.TroubleService TroubleService;
     @Resource
     private com.esst.ts.service.StyleService StyleService;
+    @Resource
+    private com.esst.ts.service.ExamUserRelationService ExamUserRelationService;
 
     private final Logger log = LoggerFactory.getLogger(UserController.class);
 
@@ -567,6 +569,89 @@ public class StrategyController {
         return r;
     }
 
+
+    //  15、获取指定试卷的考生列表
+
+    /**
+     * @param strToken
+     * @param request
+     * @return 获取试卷的考生列表；对应接口文档《TS2020接口文档 ---- 策略库模块》 getexamuserlist
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getexamuserlist", method = RequestMethod.GET)
+    public Result getexamuserlist(
+            @RequestParam(value = "token", required = true) String strToken,
+            @RequestParam(value = "exame_id", required = false) Integer exameId,
+            HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        //<editor-fold desc="返回参数初始化">
+        r.setMsg(requestContext.getMessage("请求失败"));
+        r.setCode(Result.ERROR);
+        //</editor-fold>
+
+        //<editor-fold desc="业务操作并赋值">
+        Map<String, Object> responseDataMap = new HashMap<>();
+        List<ExamUserRelation> questLst = ExamUserRelationService.GetList(exameId);
+        responseDataMap.put("datalist", questLst);
+        r.setMsg(requestContext.getMessage("OK"));
+        r.setCode(Result.SUCCESS);
+        r.setData(responseDataMap);
+        //</editor-fold>
+        return r;
+    }
+
+    //  16、增加/删除试卷的考生列表
+
+    /**
+     * @param strToken
+     * @param request
+     * @return 执行结果；对应接口文档《TS2020接口文档 ---- 策略库模块》 editexamuser
+     */
+    @ResponseBody
+    @RequestMapping(value = "/editexamuser", method = RequestMethod.POST)
+    public Result editexamuser(
+            @RequestParam(value = "token", required = true) String strToken,
+            @RequestParam(value = "exameId", required = false) Integer exameId,
+            @RequestParam(value = "userIds", required = false) String userIds,
+            HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        //<editor-fold desc="返回参数初始化">
+        r.setMsg(requestContext.getMessage("请求失败"));
+        r.setCode(Result.ERROR);
+        //</editor-fold>
+
+        //<editor-fold desc="业务操作并赋值">
+        Map<String, Object> responseDataMap = new HashMap<>();
+        int rowsCount = 0;
+        try {
+            rowsCount = ExamUserRelationService.deleteWithExameId(exameId);
+            if (userIds != null && userIds != "") {
+                String[] userIdlst = userIds.split("\\，");
+                for (String userId : userIdlst) {
+                    ExamUserRelation reqMode = new ExamUserRelation();
+                    reqMode.setExamId(exameId);
+                    reqMode.setUserId(Integer.valueOf(userId));
+                    ExamUserRelationService.insert(reqMode);
+                }
+                responseDataMap.put("userIdlst", userIdlst);
+            }
+        } catch (Exception e) {
+            //            e.printStackTrace();
+            responseDataMap.put("respMsg", e.getMessage());
+        }
+        if (rowsCount > 0) {
+            r.setMsg(requestContext.getMessage("OK"));
+            r.setCode(Result.SUCCESS);
+            responseDataMap.put("token", strToken);
+            responseDataMap.put("respMsg", "执行成功");
+        }
+        responseDataMap.put("requestModel", userIds);
+        r.setData(responseDataMap);
+        //</editor-fold>
+        return r;
+    }
 
     /**
      * 测试接口
