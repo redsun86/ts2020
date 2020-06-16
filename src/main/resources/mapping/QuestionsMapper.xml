@@ -100,29 +100,29 @@
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.Questions">
         update questions
-        <set >
-            <if test="exameId != null" >
+        <set>
+            <if test="exameId != null">
                 exame_id = #{exameId,jdbcType=INTEGER},
             </if>
-            <if test="operateId != null" >
+            <if test="operateId != null">
                 operate_id = #{operateId,jdbcType=INTEGER},
             </if>
-            <if test="troubleId != null" >
+            <if test="troubleId != null">
                 trouble_id = #{troubleId,jdbcType=INTEGER},
             </if>
-            <if test="styleId != null" >
+            <if test="styleId != null">
                 style_id = #{styleId,jdbcType=INTEGER},
             </if>
-            <if test="proportion != null" >
+            <if test="proportion != null">
                 proportion = #{proportion,jdbcType=INTEGER},
             </if>
-            <if test="timeLimit != null" >
+            <if test="timeLimit != null">
                 time_limit = #{timeLimit,jdbcType=INTEGER},
             </if>
-            <if test="timeScale != null" >
+            <if test="timeScale != null">
                 time_scale = #{timeScale,jdbcType=INTEGER},
             </if>
-            <if test="isDeleted != null" >
+            <if test="isDeleted != null">
                 is_deleted = #{isDeleted,jdbcType=INTEGER},
             </if>
         </set>

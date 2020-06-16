@@ -275,18 +275,18 @@ public class StrategyController {
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
 
-        int rowsCount= 0;
+        int rowsCount = 0;
         try {
-            if(reqMod.getId()==null) {
+            if (reqMod.getId() == null) {
                 rowsCount = ExamService.insert(reqMod);
-            }else{
+            } else {
                 rowsCount = ExamService.update(reqMod);
             }
         } catch (Exception e) {
             //            e.printStackTrace();
-            responseDataMap.put("respMsg",e.getMessage());
+            responseDataMap.put("respMsg", e.getMessage());
         }
-        if(rowsCount>0) {
+        if (rowsCount > 0) {
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
             responseDataMap.put("token", strToken);
@@ -322,17 +322,17 @@ public class StrategyController {
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
 
-        int rowsCount= 0;
+        int rowsCount = 0;
         try {
             rowsCount = ExamService.deleteWithId(Id);
         } catch (Exception e) {
             //            e.printStackTrace();
         }
-        if(rowsCount>0) {
+        if (rowsCount > 0) {
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
             responseDataMap.put("respMsg", "执行成功，已删除");
-        }else{
+        } else {
             responseDataMap.put("respMsg", "执行失败，请求的数据不存在");
         }
         r.setData(responseDataMap);
@@ -390,7 +390,7 @@ public class StrategyController {
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
-        List<Technology> techLst =TechnologyService.GetList() ;
+        List<Technology> techLst = TechnologyService.GetList();
         responseDataMap.put("datalist", techLst);
         r.setData(responseDataMap);
         //</editor-fold>
@@ -416,7 +416,7 @@ public class StrategyController {
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
-        List<Trouble> techLst = TroubleService.GetList(technologyId) ;
+        List<Trouble> techLst = TroubleService.GetList(technologyId);
         responseDataMap.put("datalist", techLst);
         r.setData(responseDataMap);
         //</editor-fold>
@@ -446,7 +446,7 @@ public class StrategyController {
             TimeScalePOJO mod = new TimeScalePOJO();
             mod.setId(i);
             mod.setTimescaleCode(toString().valueOf(i));
-            mod.setTimescaleName(toString().valueOf(i*100));
+            mod.setTimescaleName(toString().valueOf(i * 100));
             techLst.add(mod);
         }
         responseDataMap.put("datalist", techLst);
@@ -473,7 +473,7 @@ public class StrategyController {
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
-        List<Style> techLst = StyleService.GetList() ;
+        List<Style> techLst = StyleService.GetList();
         responseDataMap.put("datalist", techLst);
         r.setData(responseDataMap);
         //</editor-fold>
@@ -502,18 +502,18 @@ public class StrategyController {
 
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
-        int rowsCount= 0;
+        int rowsCount = 0;
         try {
-            if(reqMod.getId()==null) {
+            if (reqMod.getId() == null) {
                 rowsCount = QuestionsService.insert(reqMod);
-            }else{
+            } else {
                 rowsCount = QuestionsService.update(reqMod);
             }
         } catch (Exception e) {
             //            e.printStackTrace();
-            responseDataMap.put("respMsg",e.getMessage());
+            responseDataMap.put("respMsg", e.getMessage());
         }
-        if(rowsCount>0) {
+        if (rowsCount > 0) {
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
             responseDataMap.put("token", strToken);
@@ -549,17 +549,17 @@ public class StrategyController {
 
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
-        int rowsCount= 0;
+        int rowsCount = 0;
         try {
             rowsCount = QuestionsService.deleteWithId(Id);
         } catch (Exception e) {
             //            e.printStackTrace();
         }
-        if(rowsCount>0) {
+        if (rowsCount > 0) {
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
             responseDataMap.put("respMsg", "执行成功，已删除");
-        }else{
+        } else {
             responseDataMap.put("respMsg", "执行失败，请求的数据不存在");
         }
         r.setData(responseDataMap);

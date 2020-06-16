@@ -32,6 +32,7 @@ public class QuestionsImpl implements QuestionsService {
     public int deleteWithId(int id) {
         return QuestionsMapper.deleteWithId(id);
     }
+
     @Override
     public List<QuestionsPOJO> GetList(int exameId) {
         return QuestionsMapper.GetList(exameId);

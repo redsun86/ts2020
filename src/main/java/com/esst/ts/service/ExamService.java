@@ -11,7 +11,10 @@ import java.util.List;
 public interface ExamService {
 
     int insert(Exam mod);
+
     int update(Exam mod);
+
     int deleteWithId(int id);
+
     List<ExamPOJO> GetList(int status);
 }
