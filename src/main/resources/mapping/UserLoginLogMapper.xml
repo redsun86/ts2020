@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.esst.ts.model.UserLoginLog" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="user_id" property="userId" jdbcType="INTEGER" />
-    <result column="create_time" property="createTime" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
@@ -21,10 +21,8 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.esst.ts.model.UserLoginLog" >
-    insert into user_login_log (id, user_id, create_time, 
-      status)
-    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{createTime,jdbcType=BIGINT}, 
-      #{status,jdbcType=INTEGER})
+    insert into user_login_log (user_id,create_time,status)
+    values (#{userId,jdbcType=INTEGER},#{createTime,jdbcType=TIMESTAMP},#{status,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.esst.ts.model.UserLoginLog" >
     insert into user_login_log
@@ -50,7 +48,7 @@
         #{userId,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
-        #{createTime,jdbcType=BIGINT},
+        #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
@@ -64,7 +62,7 @@
         user_id = #{userId,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=BIGINT},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="status != null" >
         status = #{status,jdbcType=INTEGER},
@@ -75,7 +73,7 @@
   <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.UserLoginLog" >
     update user_login_log
     set user_id = #{userId,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>

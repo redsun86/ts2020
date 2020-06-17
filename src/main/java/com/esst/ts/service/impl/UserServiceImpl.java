@@ -1,9 +1,11 @@
 package com.esst.ts.service.impl;
 
 import com.esst.ts.dao.TeacherStudentRelationMapper;
+import com.esst.ts.dao.UserLoginLogMapper;
 import com.esst.ts.dao.UserMapper;
 import com.esst.ts.model.TeacherStudentRelation;
 import com.esst.ts.model.User;
+import com.esst.ts.model.UserLoginLog;
 import com.esst.ts.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private TeacherStudentRelationMapper teacherStudentRelationMapper;
+
+    @Resource
+    private UserLoginLogMapper userLoginLogMapper;
 
     @Override
     public User getUserById(Integer userId) {
@@ -49,6 +54,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public int insert(TeacherStudentRelation record) {
         return teacherStudentRelationMapper.insert(record);
+    }
+
+    @Override
+    public int insert(UserLoginLog record) {
+        return userLoginLogMapper.insert(record);
     }
 
     @Override

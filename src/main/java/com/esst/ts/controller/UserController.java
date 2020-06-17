@@ -1,10 +1,7 @@
 package com.esst.ts.controller;
 
 import com.esst.ts.constants.Constants;
-import com.esst.ts.model.Result;
-import com.esst.ts.model.TeacherStudentRelation;
-import com.esst.ts.model.User;
-import com.esst.ts.model.UserToken;
+import com.esst.ts.model.*;
 import com.esst.ts.service.UserService;
 import com.esst.ts.service.UserTokenService;
 import com.esst.ts.utils.*;
@@ -25,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -42,6 +41,31 @@ public class UserController {
     private UserTokenService userTokenService;
 
     /**
+     * 判断当前学员是否在线
+     *
+     * @param userId 用户ID
+     */
+    @ResponseBody
+    @RequestMapping("/checkLogin")
+    public Result checkLogin(@RequestParam(value = "userId") Integer userId,
+                              @RequestParam(value = "token") String token,
+                            HttpServletRequest request){
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        UserToken userToken = userTokenService.checkUserTokenIsLogin(userId,token);
+        if (userToken != null) {
+            r.setMsg("OK");
+            r.setCode(0);
+            r.setData("当前用户在线");
+        } else {
+            r.setMsg("OK");
+            r.setCode(1);
+            r.setData("当前用户离线");
+        }
+        return r;
+    }
+
+    /**
      * 登录接口
      *
      * @param userName 用户名称
@@ -52,7 +76,7 @@ public class UserController {
     public Result userLogin(@RequestParam(value = "userName") String userName,
                             @RequestParam(value = "passWord") String passWord,
                             @RequestParam(value = "type") Integer type,
-                            HttpServletRequest request) {
+                            HttpServletRequest request) throws ParseException {
 
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
@@ -66,8 +90,20 @@ public class UserController {
                 r.setData("用户名或密码错误");
                 return r;
             } else {
-                r.setMsg("OK");
-                r.setCode(200);
+                //记录教师登录日志
+                UserLoginLog userLoginLogModel = new UserLoginLog();
+                userLoginLogModel.setUserId(user.getId());
+                userLoginLogModel.setCreateTime(DateUtils.stringToDate());
+                userLoginLogModel.setStatus(1);
+                int j = userService.insert(userLoginLogModel);
+                if (j > 0) {
+                    r.setMsg("OK");
+                    r.setCode(200);
+                } else {
+                    r.setMsg("Err");
+                    r.setCode(201);
+                    r.setData("登录失败");
+                }
             }
         } else {
             //学员登录
@@ -78,8 +114,20 @@ public class UserController {
                 r.setData("登录名或学号错误");
                 return r;
             } else {
-                r.setMsg("OK");
-                r.setCode(200);
+                //记录学员登录日志
+                UserLoginLog userLoginLogModel = new UserLoginLog();
+                userLoginLogModel.setUserId(user.getId());
+                userLoginLogModel.setCreateTime(DateUtils.stringToDate());
+                userLoginLogModel.setStatus(1);
+                int j = userService.insert(userLoginLogModel);
+                if (j > 0) {
+                    r.setMsg("OK");
+                    r.setCode(200);
+                } else {
+                    r.setMsg("Err");
+                    r.setCode(201);
+                    r.setData("登录失败");
+                }
             }
         }
         // 新增tocken表数据
@@ -124,13 +172,27 @@ public class UserController {
     })
     public Result logOut(@RequestParam(value = "userId") int userId,
                          @RequestParam(value = "token") String token,
-                         HttpServletRequest request) {
+                         HttpServletRequest request) throws ParseException {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
-        userTokenService.invalidToken(userId, 1); // 登出成功删除用户的token
-        r.setMsg("OK");
-        r.setCode(0);
-        r.setData("退出成功");
+        Integer result=userTokenService.invalidToken(userId, 1); // 登出成功删除用户的token
+        if(result>0){
+            //记录登出日志
+            UserLoginLog userLoginLogModel = new UserLoginLog();
+            userLoginLogModel.setUserId(userId);
+            userLoginLogModel.setCreateTime(DateUtils.stringToDate());
+            userLoginLogModel.setStatus(2);
+            int j = userService.insert(userLoginLogModel);
+            if (j > 0) {
+                r.setMsg("OK");
+                r.setCode(0);
+                r.setData("退出成功");
+            } else {
+                r.setMsg("Err");
+                r.setCode(201);
+                r.setData("退出失败");
+            }
+        }
         return r;
     }
 
@@ -193,7 +255,7 @@ public class UserController {
             int j = 0;
             String[] str = id.split(",");
             for (String s : str) {
-                int result = userService.delete(Integer.valueOf(s),userId);
+                int result = userService.delete(Integer.valueOf(s), userId);
                 if (result > 0) {
                     j++;
                 }
@@ -216,7 +278,7 @@ public class UserController {
                 return r;
             }
         } else {
-            int result = userService.delete(Integer.valueOf(id),userId);
+            int result = userService.delete(Integer.valueOf(id), userId);
             Result r = new Result();
             if (result > 0) {
                 r.setMsg(requestContext.getMessage("OK"));
@@ -336,7 +398,7 @@ public class UserController {
                     }
                     m.setPassword(MD5Code.encodeByMD5("000000"));
                     m.setStatus(Short.parseShort("0"));
-                    m.setCreateTime(DateUtils.stringToDate(DateUtils.getDate()));
+                    m.setCreateTime(DateUtils.stringToDate());
                     m.setCreateUser(userId);
                     m.setIsDel(Short.parseShort("0"));
                     m.setIsAdmin(Short.parseShort("0"));

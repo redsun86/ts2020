@@ -47,5 +47,12 @@ public interface UserTokenService {
      * @return
      */
     UserToken getUserTokenByUserId(Integer userId, int type);
-
+    /**
+     * 更具用户Id和token判断是否在线
+     *
+     * @param userId
+     * @param token
+     * @return
+     */
+    UserToken checkUserTokenIsLogin(Integer userId,String token);
 }

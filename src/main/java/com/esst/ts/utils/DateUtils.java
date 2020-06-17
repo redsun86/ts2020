@@ -30,7 +30,6 @@ public class DateUtils {
 		return stringTime;
 
 	}
-
 	/**
 	 * 将日期格式转换成yyyy-MM-dd的字符串格式 返回值如：2010.10.06
 	 * 
@@ -124,6 +123,19 @@ public class DateUtils {
 		Date dateTime = formatter.parse( stringTime );
 		return dateTime;
 
+	}
+
+	/**
+	 * 获取当前系统日期时间返回Date
+	 *
+	 *要转换的日期 格式如2010-10-06 08:22:56
+	 * @return
+	 */
+	public static Date stringToDate() throws ParseException {
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		Date newdate=formatter.parse(formatter.format(date));
+		return newdate;
 	}
 
 	/**

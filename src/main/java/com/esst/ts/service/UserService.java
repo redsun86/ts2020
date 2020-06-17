@@ -2,6 +2,7 @@ package com.esst.ts.service;
 
 import com.esst.ts.model.User;
 import com.esst.ts.model.TeacherStudentRelation;
+import com.esst.ts.model.UserLoginLog;
 
 import java.util.List;
 
@@ -46,4 +47,6 @@ public interface UserService {
     User getUserLastRecord();
 
     int insert(TeacherStudentRelation record);
+
+    int insert(UserLoginLog record);
 }

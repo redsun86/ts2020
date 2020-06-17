@@ -1,11 +1,13 @@
 package com.esst.ts.model;
 
+import java.util.Date;
+
 public class UserLoginLog {
     private Integer id;
 
     private Integer userId;
 
-    private Long createTime;
+    private Date createTime;
 
     private Integer status;
 
@@ -25,11 +27,11 @@ public class UserLoginLog {
         this.userId = userId;
     }
 
-    public Long getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Long createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 

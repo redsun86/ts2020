@@ -32,4 +32,8 @@ public interface UserTokenDao {
     @ResultMap("BaseResultMap")
     UserToken getUserToken(@Param("userId") Integer userId, @Param("loginType") int loginType);
 
+    @Select("select * from user_token where user_id=#{userId} and token=#{token} and login_type =1")
+    @ResultMap("BaseResultMap")
+    UserToken checkUserTokenIsLogin(@Param("userId") Integer userId, @Param("token") String token);
+
 }
