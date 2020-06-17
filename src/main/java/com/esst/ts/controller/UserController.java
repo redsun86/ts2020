@@ -213,7 +213,7 @@ public class UserController {
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(200);
         //</editor-fold>
-        List<User> datalist = new ArrayList<User>();
+        List<User> dataList = new ArrayList<User>();
         //<editor-fold desc="实时数据列表赋值：datalist">
         for (User user : userList) {
             User m = new User();
@@ -229,11 +229,11 @@ public class UserController {
             m.setGroupName(user.getGroupName());
             m.setRoleName(user.getRoleName());
             m.setOperateMode(user.getOperateMode());
-            datalist.add(m);
+            dataList.add(m);
         }
         //</editor-fold>
         Map<String, Object> UserListMap = new HashMap<>();
-        UserListMap.put("datalist", datalist);
+        UserListMap.put("datalist", dataList);
         r.setData(UserListMap);
         return r;
     }
