@@ -17,6 +17,17 @@ import java.util.List;
 public class TechnologyImpl implements TechnologyService {
     @Resource
     com.esst.ts.dao.TechnologyMapper TechnologyMapper;
+
+    @Override
+    public List<TechnologyPOJO> GetPojoAllList() {
+        return TechnologyMapper.GetPojoAllList();
+    }
+
+    @Override
+    public List<TechnologyPOJO> GetPojoList(int productId) {
+        return TechnologyMapper.GetPojoList(productId);
+    }
+
     @Override
     public List<Technology> GetList() {
         return TechnologyMapper.GetList();

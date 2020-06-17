@@ -8,11 +8,11 @@ import java.util.List;
  */
 public class TechnologyTaskPOJO {
     private Integer id;//` int(11) NOT NULL AUTO_INCREMENT,
-    private String task_code;//` varchar(32) DEFAULT NULL COMMENT '任务单编号',
-    private String task_name;//` varchar(32) DEFAULT NULL COMMENT '任务单名称',
-    private Integer technology_id;//` int(11) DEFAULT NULL COMMENT '工艺ID',
-    private String shibiao;//` varchar(32) DEFAULT NULL COMMENT '时标（保留字段）',
-    private List<TechnologyTaskOperatePOJO> operate_list;
+    private String taskCode;//` varchar(32) DEFAULT NULL COMMENT '任务单编号',
+    private String taskName;//` varchar(32) DEFAULT NULL COMMENT '任务单名称',
+    private Integer technologyId;//` int(11) DEFAULT NULL COMMENT '工艺ID',
+    private String shiBiao;//` varchar(32) DEFAULT NULL COMMENT '时标（保留字段）',
+    private List<TechnologyTaskOperatePOJO> operateList;
 
     public Integer getId() {
         return id;
@@ -22,43 +22,43 @@ public class TechnologyTaskPOJO {
         this.id = id;
     }
 
-    public String getTask_code() {
-        return task_code;
+    public String getTaskCode() {
+        return taskCode;
     }
 
-    public void setTask_code(String task_code) {
-        this.task_code = task_code;
+    public void setTaskCode(String taskCode) {
+        this.taskCode = taskCode;
     }
 
-    public String getTask_name() {
-        return task_name;
+    public String getTaskName() {
+        return taskName;
     }
 
-    public void setTask_name(String task_name) {
-        this.task_name = task_name;
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 
-    public Integer getTechnology_id() {
-        return technology_id;
+    public Integer getTechnologyId() {
+        return technologyId;
     }
 
-    public void setTechnology_id(Integer technology_id) {
-        this.technology_id = technology_id;
+    public void setTechnologyId(Integer technologyId) {
+        this.technologyId = technologyId;
     }
 
-    public String getShibiao() {
-        return shibiao;
+    public String getShiBiao() {
+        return shiBiao;
     }
 
-    public void setShibiao(String shibiao) {
-        this.shibiao = shibiao;
+    public void setShiBiao(String shiBiao) {
+        this.shiBiao = shiBiao;
     }
 
-    public List<TechnologyTaskOperatePOJO> getOperate_list() {
-        return operate_list;
+    public List<TechnologyTaskOperatePOJO> getOperateList() {
+        return operateList;
     }
 
-    public void setOperate_list(List<TechnologyTaskOperatePOJO> operate_list) {
-        this.operate_list = operate_list;
+    public void setOperateList(List<TechnologyTaskOperatePOJO> operateList) {
+        this.operateList = operateList;
     }
 }

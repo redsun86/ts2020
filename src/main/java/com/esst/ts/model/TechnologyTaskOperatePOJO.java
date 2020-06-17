@@ -6,9 +6,10 @@ package com.esst.ts.model;
  */
 public class TechnologyTaskOperatePOJO {
     private Integer id;//` int(11) NOT NULL AUTO_INCREMENT,
-    private Integer technology_id;//` int(11) DEFAULT NULL COMMENT '所属工艺',
-    private String operate_code;//` varchar(32) DEFAULT NULL COMMENT '工况编号',
-    private String operate_name;//` varchar(32) DEFAULT NULL COMMENT '工况名字',
+    private Integer technologyId;//` int(11) DEFAULT NULL COMMENT '所属工艺',
+    private String operateCode;//` varchar(32) DEFAULT NULL COMMENT '工况编号',
+    private String operateName;//` varchar(32) DEFAULT NULL COMMENT '工况名字',
+    private Integer taskId; // 所属任务单id
 
     public Integer getId() {
         return id;
@@ -18,27 +19,35 @@ public class TechnologyTaskOperatePOJO {
         this.id = id;
     }
 
-    public Integer getTechnology_id() {
-        return technology_id;
+    public Integer getTechnologyId() {
+        return technologyId;
     }
 
-    public void setTechnology_id(Integer technology_id) {
-        this.technology_id = technology_id;
+    public void setTechnologyId(Integer technologyId) {
+        this.technologyId = technologyId;
     }
 
-    public String getOperate_code() {
-        return operate_code;
+    public String getOperateCode() {
+        return operateCode;
     }
 
-    public void setOperate_code(String operate_code) {
-        this.operate_code = operate_code;
+    public void setOperateCode(String operateCode) {
+        this.operateCode = operateCode;
     }
 
-    public String getOperate_name() {
-        return operate_name;
+    public String getOperateName() {
+        return operateName;
     }
 
-    public void setOperate_name(String operate_name) {
-        this.operate_name = operate_name;
+    public void setOperateName(String operateName) {
+        this.operateName = operateName;
+    }
+
+    public Integer getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Integer taskId) {
+        this.taskId = taskId;
     }
 }
