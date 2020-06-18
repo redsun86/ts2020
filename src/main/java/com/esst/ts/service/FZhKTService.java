@@ -24,4 +24,8 @@ public interface FZhKTService {
     List<Task> getTaskListAll();
     List<Operate> getOprateList();
     List<User> getUserListAll();
+
+    UserLiveWithBLOBs updateUserLive(UserLiveWithBLOBs userlive,int client_status);
+
+    List<Exam> getExamListAll();
 }

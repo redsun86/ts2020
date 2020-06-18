@@ -27,6 +27,8 @@ public class UserLiveData {
 
     private Integer studyType;
 
+    private Date startTime;
+
     public Integer getId() {
         return id;
     }
@@ -121,5 +123,13 @@ public class UserLiveData {
 
     public void setStudyType(Integer studyType) {
         this.studyType = studyType;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
     }
 }

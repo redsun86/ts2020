@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -34,6 +35,8 @@ public class FZhKTImpl implements FZhKTService {
     private OperateMapper operate;
     @Resource
     private  UserMapper user;
+    @Resource
+    private  ExamMapper examMapper;
     @Override
     public List<Task> getCourseTaskLst(int courseID) {
         return FZhKTMapper.getCourseTaskLstBytechId(courseID);
@@ -81,7 +84,6 @@ public class FZhKTImpl implements FZhKTService {
     public List<UserLive> getUserLiveList() {
         return userliveScore.geUserLiveDistinct();
     }
-
     @Override
     public List<Task> getTaskListAll() {
         return FZhKTMapper.gteTaskListAll();
@@ -95,6 +97,31 @@ public class FZhKTImpl implements FZhKTService {
     @Override
     public List<User> getUserListAll() {
         return user.getUserListAll();
+    }
+
+    @Override
+    public UserLiveWithBLOBs updateUserLive(UserLiveWithBLOBs userlive,int client_status) {
+        UserLiveWithBLOBs ul=new UserLiveWithBLOBs();
+        ul= userliveScore.getUserLiveByUserTaskType(userlive.getUserId(),userlive.getTaskId(),userlive.getStudyType());
+
+        if(ul!=null) {
+            userlive.setId(ul.getId());
+            if(client_status==1||client_status==2){
+
+                double duration = new Date().getTime() - ul.getStartTime().getTime();
+                userlive.setStudyDuration(duration);
+                userlive.setStartTime(ul.getStartTime());
+            }
+            userliveScore.updateByPrimaryKey(userlive);
+        }else{
+            userliveScore.insert(userlive);
+        }
+        return userlive;
+    }
+    //获取所有试题表
+    @Override
+    public List<Exam> getExamListAll() {
+        return examMapper.getExamListAll();
     }
 
     @Override

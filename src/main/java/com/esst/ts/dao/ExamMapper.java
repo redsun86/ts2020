@@ -32,4 +32,8 @@ public interface ExamMapper {
             "from exam_user_relation group by exam_id) uc on e.id=uc.exam_id where e.`status`=#{status}")
     @ResultMap("BasePOJOResultMap")
     List<ExamPOJO> GetList(@Param("status") int status);
+
+    @Select("select * from exam")
+    @ResultMap("BaseResultMap")
+    List<Exam> getExamListAll();
 }
