@@ -11,6 +11,8 @@ public class UserLoginLog {
 
     private Integer status;
 
+    private Integer isAdmin;
+
     public Integer getId() {
         return id;
     }
@@ -41,5 +43,12 @@ public class UserLoginLog {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+    public Integer getisAdmin() {
+        return isAdmin;
+    }
+
+    public void setisAdmin(Integer isAdmin) {
+        this.isAdmin = isAdmin;
     }
 }

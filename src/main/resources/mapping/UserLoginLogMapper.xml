@@ -6,6 +6,7 @@
     <result column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="is_admin" property="is_admin" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, user_id, create_time, status
@@ -21,8 +22,8 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.esst.ts.model.UserLoginLog" >
-    insert into user_login_log (user_id,create_time,status)
-    values (#{userId,jdbcType=INTEGER},#{createTime,jdbcType=TIMESTAMP},#{status,jdbcType=INTEGER})
+    insert into user_login_log (user_id,create_time,status,is_admin)
+    values (#{userId,jdbcType=INTEGER},#{createTime,jdbcType=TIMESTAMP},#{status,jdbcType=INTEGER},#{isAdmin,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.esst.ts.model.UserLoginLog" >
     insert into user_login_log
@@ -39,6 +40,9 @@
       <if test="status != null" >
         status,
       </if>
+      <if test="isAdmin != null" >
+        is_admin,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -52,6 +56,9 @@
       </if>
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
+      </if>
+      <if test="isAdmin != null" >
+        #{isAdmin,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -67,6 +74,9 @@
       <if test="status != null" >
         status = #{status,jdbcType=INTEGER},
       </if>
+      <if test="isAdmin != null" >
+        is_admin = #{isAdmin,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -74,7 +84,8 @@
     update user_login_log
     set user_id = #{userId,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      status = #{status,jdbcType=INTEGER}
+      status = #{status,jdbcType=INTEGER},
+      is_admin = #{isAdmin,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
