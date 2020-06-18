@@ -233,7 +233,7 @@ public class UserController {
         }
         //</editor-fold>
         Map<String, Object> UserListMap = new HashMap<>();
-        UserListMap.put("datalist", dataList);
+        UserListMap.put("dataList", dataList);
         r.setData(UserListMap);
         return r;
     }
