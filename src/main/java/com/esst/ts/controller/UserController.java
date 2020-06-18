@@ -95,6 +95,7 @@ public class UserController {
                 userLoginLogModel.setUserId(user.getId());
                 userLoginLogModel.setCreateTime(DateUtils.stringToDate());
                 userLoginLogModel.setStatus(1);
+                userLoginLogModel.setisAdmin(1);
                 int j = userService.insert(userLoginLogModel);
                 if (j > 0) {
                     r.setMsg("OK");
@@ -119,6 +120,7 @@ public class UserController {
                 userLoginLogModel.setUserId(user.getId());
                 userLoginLogModel.setCreateTime(DateUtils.stringToDate());
                 userLoginLogModel.setStatus(1);
+                userLoginLogModel.setisAdmin(0);
                 int j = userService.insert(userLoginLogModel);
                 if (j > 0) {
                     r.setMsg("OK");
@@ -177,11 +179,20 @@ public class UserController {
         Result r = new Result();
         Integer result=userTokenService.invalidToken(userId, 1); // 登出成功删除用户的token
         if(result>0){
+            //查询当前用户是教师还是学员
+            User u=userService.getUserById(userId);
             //记录登出日志
             UserLoginLog userLoginLogModel = new UserLoginLog();
             userLoginLogModel.setUserId(userId);
             userLoginLogModel.setCreateTime(DateUtils.stringToDate());
             userLoginLogModel.setStatus(2);
+            if(u.getIsAdmin()==1){
+                //教师
+                userLoginLogModel.setisAdmin(1);
+            }else
+            {
+                userLoginLogModel.setisAdmin(0);
+            }
             int j = userService.insert(userLoginLogModel);
             if (j > 0) {
                 r.setMsg("OK");
