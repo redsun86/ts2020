@@ -36,7 +36,7 @@ public class ExamImpl implements ExamService {
     }
 
     @Override
-    public List<ExamPOJO> GetList(int status) {
-        return ExamMapper.GetList(status);
+    public List<ExamPOJO> GetList(int is_deleted) {
+        return ExamMapper.GetList(is_deleted);
     }
 }

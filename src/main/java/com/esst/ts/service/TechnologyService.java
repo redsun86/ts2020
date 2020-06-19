@@ -14,4 +14,6 @@ public interface TechnologyService {
     List<TechnologyPOJO> GetPojoList(int productId);
 
     List<Technology> GetList();
+    Integer GetTechnologyName(int technologyId);
+
 }

@@ -34,7 +34,7 @@ public class QuestionsImpl implements QuestionsService {
     }
 
     @Override
-    public List<QuestionsPOJO> GetList(int exameId) {
-        return QuestionsMapper.GetList(exameId);
+    public List<QuestionsPOJO> GetList(int is_deleted,int exameId) {
+        return QuestionsMapper.GetList(is_deleted,exameId);
     }
 }

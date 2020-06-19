@@ -36,4 +36,5 @@ public interface ExamMapper {
     @Select("select * from exam")
     @ResultMap("BaseResultMap")
     List<Exam> getExamListAll();
+
 }

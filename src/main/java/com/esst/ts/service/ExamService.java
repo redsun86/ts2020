@@ -16,5 +16,5 @@ public interface ExamService {
 
     int deleteWithId(int id);
 
-    List<ExamPOJO> GetList(int status);
+    List<ExamPOJO> GetList(int is_deleted);
 }

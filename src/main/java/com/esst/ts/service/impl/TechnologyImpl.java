@@ -32,4 +32,9 @@ public class TechnologyImpl implements TechnologyService {
     public List<Technology> GetList() {
         return TechnologyMapper.GetList();
     }
+
+    @Override
+    public Integer GetTechnologyName(int technologyId) {
+        return TechnologyMapper.GetTechnologyName(technologyId);
+    }
 }
