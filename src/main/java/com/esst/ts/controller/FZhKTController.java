@@ -55,110 +55,90 @@ public class FZhKTController {
         //</editor-fold>
         int total_num;          //总人数
         int online_num;         //在线人数
-        //List<scoreModel> datalist = new ArrayList<scoreModel>();
 
-
+        Map<String,String> classnamemap=new HashMap<>();
+        List<taskModel> tasklist = new ArrayList<taskModel>();
+        //<editor-fold desc="获得属于此老师的学生在线人数">
+        List<UserToken> userLoginLogsList=fzhktService.getUserLoginByTeacherID(userId);
+        online_num=userLoginLogsList.size();
+        total_num=fzhktService.getUserLoginLogCountByTeacherID(userId);
+        //</editor-fold>
         List<scoreModel> datalist = new ArrayList();
-        List<UserLiveData> userlivedatelist = fzhktService.getUserLiveDataList();
-        List<UserLive> userLivelist = fzhktService.getUserLiveList();
+
+        List<UserLiveWithBLOBs> userLivelist = fzhktService.getUserLiveByTeacherId(userId);
         List<Task> tasklistsql = fzhktService.getTaskListAll();
         List<Operate> operateList = fzhktService.getOprateList();
         List<User> userList = fzhktService.getUserListAll();
         List<Exam> examList=fzhktService.getExamListAll();
+        List<Questions> questionsList=fzhktService.getQuestionListAll();
+
+        Map<Integer,UserToken> userTokenMap=userLoginLogsList.stream().collect(Collectors.toMap(UserToken::getUserId, Function.identity(), (key1, key2) -> key2));
         Map<Integer, UserLiveData> userlivedate_map = new HashMap<Integer, UserLiveData>();
         Map<Integer, User> userMap = userList.stream().collect(Collectors.toMap(User::getId, Function.identity(), (key1, key2) -> key2));
 
         Map<Integer, Task> task_map = tasklistsql.stream().collect(Collectors.toMap(Task::getId, Function.identity(), (key1, key2) -> key2));
         Map<Integer, Operate> operate_map = operateList.stream().collect(Collectors.toMap(Operate::getId, Function.identity(), (key1, key2) -> key2));
-        Map<Integer, UserLive> userLive_map = userLivelist.stream().collect(Collectors.toMap(UserLive::getId, Function.identity(), (key1, key2) -> key2));
+        Map<Integer, UserLiveWithBLOBs> userLive_map = userLivelist.stream().collect(Collectors.toMap(UserLiveWithBLOBs::getId, Function.identity(), (key1, key2) -> key2));
         Map<Integer,Exam> examMap=examList.stream().collect(Collectors.toMap(Exam::getId, Function.identity(), (key1, key2) -> key2));
-        for (UserLiveData uld : userlivedatelist) {
-            userlivedate_map.put(uld.getId(), uld);
-        }
-        for (UserLive uld : userLivelist) {
+        Map<Integer,Questions> questionsMap=questionsList.stream().collect(Collectors.toMap(Questions::getId, Function.identity(), (key1, key2) -> key2));
+
+        for (UserLiveWithBLOBs uld : userLivelist) {
             scoreModel _score = new scoreModel();
             _score.setId(uld.getId().toString());
             _score.setMachine_id(uld.getMacAddress());
             User user = userMap.get(uld.getUserId());
+            classnamemap.put(user.getClassName(),"");
             _score.setStudent_num(user.getStNum());
             _score.setUser_name(user.getRelName());
+            _score.setScore(uld.getCurrentScore().toString());
+            _score.setTotal_score(uld.getTotalScore().toString());
+            _score.setLearning_time(uld.getStudyDuration().toString());
+            //<editor-fold desc="任务单类型">
             if (uld.getStudyType()==0)
             {
-
                 Task t = task_map.get(uld.getTaskId());
                 _score.setTemplate_id(t.getId().toString());
                 _score.setTemplate_name(t.getTaskName());
                 Operate operate = operate_map.get(uld.getTaskId());
                 _score.setTask_id(operate.getId().toString());
                 _score.setTask_name(operate.getOperateName());
+                taskModel taskModel = new taskModel();
+                taskModel.setTask_id(t.getId().toString());
+                taskModel.setTask_name(t.getTaskName());
+                taskModel.setStudy_type(uld.getStudyType().toString());
+                tasklist.add(taskModel);
                 //</editor-fold>
             }
             else if(uld.getStudyType()==1)
             {
-                //Exam exm=
-                //Questions ques
+                Exam exam=examMap.get(uld.getTaskId());
+                _score.setTemplate_id(exam.getId().toString());
+                _score.setTemplate_name(exam.getExamName());
+                Questions questions=questionsMap.get(uld.getTaskId());
+                _score.setTask_id(questions.getId().toString());
+                _score.setTask_name(operate_map.get(questions.getOperateId()).getOperateName());
+                taskModel taskModel = new taskModel();
+                taskModel.setTask_id(exam.getId().toString());
+                taskModel.setTask_name(exam.getExamName());
+                taskModel.setStudy_type(uld.getStudyType().toString());
+                tasklist.add(taskModel);
             }
-            _score.setScore(uld.getCurrentScore().toString());
-            _score.setTotal_score(uld.getTotalScore().toString());
-            _score.setLearning_time(uld.getStudyDuration().toString());
+            taskModel taskModel = new taskModel();
+            taskModel.setTask_id("1");
+            taskModel.setTask_name("");
+            taskModel.setStudy_type("0");
+            tasklist.add(taskModel);
+            if(uld.getScoreStatues()==0||uld.getScoreStatues()==1)
+            {
+                _score.setStatus("操作中");
+            }
+            if(userTokenMap.get(uld.getUserId())==null)
+            {
+                _score.setStatus("离线");
+            }
+            //</editor-fold>
             datalist.add(_score);
         }
-        //<editor-fold desc="注释掉">
-//        for (UserLiveData uld:userlivedatelist)
-//        {
-//            scoreModel _score=new scoreModel();
-//            _score.setId(uld.getId().toString());
-//            _score.setMachine_id(uld.getMacAddress());
-//            User user=userMap.get(uld.getUserId());
-//            _score.setStudent_num(user.getStNum());
-//            _score.setUser_name(user.getUserName());
-//            //if (uld.getstudyType()==0)
-//            {
-//                Task t=task_map.get(uld.getTaskId());
-//                _score.setTemplate_id(t.getId().toString());
-//                _score.setTemplate_name(t.getTaskName());
-//                Operate operate=operate_map.get(uld.getTaskId());
-//                _score.setTask_id(operate.getId().toString());
-//                _score.setTask_name(operate.getOperateName());
-//            }
-//            //else if(uld.getstudyType()==1)
-//            {
-//
-//            }
-//            _score.setScore(uld.getCurrentScore().toString());
-//            _score.setTotal_score(uld.getTotalScore().toString());
-//            _score.setStatus("0");//状态
-//            _score.setLearning_time(uld.getStudyDuration().toString());
-//            datalist.add(_score);
-//        }
-//        for (UserLive uld : userLivelist) {
-//            scoreModel _score = new scoreModel();
-//            _score.setId(uld.getId().toString());
-//            _score.setMachine_id(uld.getMacAddress());
-//            User user = userMap.get(uld.getUserId());
-//            _score.setStudent_num(user.getStNum());
-//            _score.setUser_name(user.getUserName());
-//            //if (uld.getstudyType()==0)
-//            {
-//
-//                //<editor-fold desc="赋值">
-//                Task t = task_map.get(uld.getTaskId());
-//                _score.setTemplate_id(t.getId().toString());
-//                _score.setTemplate_name(t.getTaskName());
-//                Operate operate = operate_map.get(uld.getTaskId());
-//                _score.setTask_id(operate.getId().toString());
-//                _score.setTask_name(operate.getOperateName());
-//                //</editor-fold>
-//            }
-//            //else if(uld.getstudyType()==1)
-//            {
-//
-//            }
-//            _score.setScore(uld.getCurrentScore().toString());
-//            _score.setTotal_score(uld.getTotalScore().toString());
-//            _score.setLearning_time(uld.getStudyDuration().toString());
-//            datalist.add(_score);
-//        }
         //</editor-fold>
 //        for (Task obj: tasklistsql) {
 //            try {
@@ -171,6 +151,8 @@ public class FZhKTController {
 //        }
 
         //<editor-fold desc="实时数据列表赋值：datalist">
+        //tasklist=tasklist.stream().collect(Collectors.groupingBy(taskModel::getTask_id,taskModel::getStudy_type));
+        tasklist= tasklist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getTask_id() + ";" + o.getStudy_type()))), ArrayList::new));
 
         //<editor-fold desc="临时数据">
         List<String> stuLst = new ArrayList<String>();
@@ -180,23 +162,14 @@ public class FZhKTController {
         stuLst.add("史红阳");
         stuLst.add("专家");
         //</editor-fold>
-        online_num = 0;
 
         //</editor-fold>
-        List<taskModel> tasklist = new ArrayList<taskModel>();
-        //<editor-fold desc="任务列表赋值：tasklist">
-        List<Task> m1lst = fzhktService.getCourseTaskLst(1);
-        for (int i = 0; i < m1lst.size(); i++) {
-            taskModel m = new taskModel();
-            m.setTask_id(toString().valueOf(m1lst.get(i).getId()));
-            m.setTask_name(m1lst.get(i).getTaskName());
-            tasklist.add(m);
-        }
+
+
         //</editor-fold>
         //<editor-fold desc="统计数据赋值">
         String class_name;      //班级名称
         String teacher_name;    //教师名称
-        total_num = datalist.size();
         class_name = "班级名称";
         teacher_name = "教师名称";
         //</editor-fold>
@@ -206,7 +179,7 @@ public class FZhKTController {
         FZhKTMap.put("tasklist", tasklist);
         FZhKTMap.put("total_num", total_num);
         FZhKTMap.put("teacher_name", teacher_name);
-        FZhKTMap.put("class_name", class_name);
+        FZhKTMap.put("class_name", new ArrayList<>(classnamemap.keySet()));
         FZhKTMap.put("online_num", online_num);
         r.setData(FZhKTMap);
         //</editor-fold>
@@ -250,6 +223,7 @@ public class FZhKTController {
         uldscore.setTotalScore(total_score);
         uldscore.setScoreDetail(score_detail);
         uldscore.setStartTime(curretime);
+        uldscore.setScoreStatues(client_status);
         uldscore.setStudyDuration(0.00);
 //        if(client_status==2)
 //        {
@@ -264,6 +238,7 @@ public class FZhKTController {
         UserLiveWithBLOBs userlive = new UserLiveWithBLOBs();
         userlive.setUserId(user_id);
         userlive.setIdAddress(id_adress);
+        userlive.setMacAddress(mac_adress);
         userlive.setTaskId(task_id);
         userlive.setOperateId(operate_id);
         userlive.setCurrentScore(current_score);
@@ -273,8 +248,8 @@ public class FZhKTController {
         userlive.setUpdatetime(curretime);
         userlive.setStartTime(curretime);
         userlive.setStudyDuration(0.00);
-        userlive = fzhktService.updateUserLive(userlive, client_status);
-
+        userlive.setScoreStatues(client_status);
+        userlive = fzhktService.updateUserLive(userlive);
         uldscore.setStudyDuration(userlive.getStudyDuration());
         uldscore.setStartTime(userlive.getStartTime());
         fzhktService.insertUserLiveDataWithBLOBS(uldscore);

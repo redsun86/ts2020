@@ -35,4 +35,10 @@ public interface UserLiveMapper {
     @Select("select * from user_live Where user_id=#{userId} and task_id=#{taskId} and study_type=#{studyType}")
     @ResultMap("ResultMapWithBLOBs")
     UserLiveWithBLOBs getUserLiveByUserTaskType(@Param("userId") Integer userId, @Param("taskId") Integer taskId,@Param("studyType") Integer studyType);
+    @Select("select * from user_live")
+    @ResultMap("ResultMapWithBLOBs")
+    List<UserLiveWithBLOBs> getUserLiveAll();
+    @Select("SELECT u.* FROM user_live u LEFT JOIN teacher_student_relation t ON u.user_id=t.student_id WHERE t.teacher_id=#{teacherId}")
+    @ResultMap("ResultMapWithBLOBs")
+    List<UserLiveWithBLOBs> getUserLiveByTeacherId(@Param("teacherId") String userId);
 }

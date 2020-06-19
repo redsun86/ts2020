@@ -33,4 +33,8 @@ public interface QuestionsMapper {
             "where q.exame_id=#{exameId}")
     @ResultMap("BasePOJOResultMap")
     List<QuestionsPOJO> GetList(@Param("exameId") int exameId);
+
+    @Select("select * from questions")
+    @ResultMap("BaseResultMap")
+    List<Questions> getQuestionAll();
 }

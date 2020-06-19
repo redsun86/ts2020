@@ -37,6 +37,12 @@ public class FZhKTImpl implements FZhKTService {
     private  UserMapper user;
     @Resource
     private  ExamMapper examMapper;
+    @Resource
+    private  QuestionsMapper questionsMapper;
+    @Resource
+    private  UserLoginLogMapper userLoginLogMapper;
+    @Resource
+    private  UserTokenDao userTokenDao;
     @Override
     public List<Task> getCourseTaskLst(int courseID) {
         return FZhKTMapper.getCourseTaskLstBytechId(courseID);
@@ -100,13 +106,13 @@ public class FZhKTImpl implements FZhKTService {
     }
 
     @Override
-    public UserLiveWithBLOBs updateUserLive(UserLiveWithBLOBs userlive,int client_status) {
+    public UserLiveWithBLOBs updateUserLive(UserLiveWithBLOBs userlive) {
         UserLiveWithBLOBs ul=new UserLiveWithBLOBs();
         ul= userliveScore.getUserLiveByUserTaskType(userlive.getUserId(),userlive.getTaskId(),userlive.getStudyType());
 
         if(ul!=null) {
             userlive.setId(ul.getId());
-            if(client_status==1||client_status==2){
+            if(userlive.getScoreStatues()==1||userlive.getScoreStatues()==2){
 
                 double duration = new Date().getTime() - ul.getStartTime().getTime();
                 userlive.setStudyDuration(duration);
@@ -122,6 +128,32 @@ public class FZhKTImpl implements FZhKTService {
     @Override
     public List<Exam> getExamListAll() {
         return examMapper.getExamListAll();
+    }
+
+    @Override
+    public List<Questions> getQuestionListAll() {
+        return questionsMapper.getQuestionAll();
+    }
+
+    @Override
+    public List<UserLiveWithBLOBs> getUserLiveAll() {
+        return userliveScore.getUserLiveAll();
+    }
+
+    @Override
+    public List<UserLiveWithBLOBs> getUserLiveByTeacherId(String userId) {
+        return userliveScore.getUserLiveByTeacherId(userId);
+    }
+
+    @Override
+    public List<UserToken> getUserLoginByTeacherID(String userId) {
+        //return userLoginLogMapper.getUserLoginByTeacherID(userId);
+        return  userTokenDao.getUserLoginByTeacherID(userId);
+    }
+
+    @Override
+    public int getUserLoginLogCountByTeacherID(String userId) {
+        return userLoginLogMapper.getUserLoginLogCountByTeacherID(userId);
     }
 
     @Override

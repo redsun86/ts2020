@@ -29,6 +29,8 @@ public class UserLive {
 
     private Date startTime;
 
+    private Integer scoreStatues;
+
     public Integer getId() {
         return id;
     }
@@ -131,5 +133,13 @@ public class UserLive {
 
     public void setStartTime(Date startTime) {
         this.startTime = startTime;
+    }
+
+    public Integer getScoreStatues() {
+        return scoreStatues;
+    }
+
+    public void setScoreStatues(Integer scoreStatues) {
+        this.scoreStatues = scoreStatues;
     }
 }

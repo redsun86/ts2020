@@ -25,7 +25,17 @@ public interface FZhKTService {
     List<Operate> getOprateList();
     List<User> getUserListAll();
 
-    UserLiveWithBLOBs updateUserLive(UserLiveWithBLOBs userlive,int client_status);
+    UserLiveWithBLOBs updateUserLive(UserLiveWithBLOBs userlive);
 
     List<Exam> getExamListAll();
+
+    List<Questions> getQuestionListAll();
+
+    List<UserLiveWithBLOBs> getUserLiveAll();
+
+    List<UserLiveWithBLOBs> getUserLiveByTeacherId(String userId);
+    //这个函数有待优化20200619
+    List<UserToken> getUserLoginByTeacherID(String userId);
+
+    int getUserLoginLogCountByTeacherID(String userId);
 }
