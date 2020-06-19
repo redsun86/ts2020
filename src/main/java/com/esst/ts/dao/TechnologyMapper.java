@@ -38,4 +38,9 @@ public interface TechnologyMapper {
             "where t.id>0")
     @ResultMap("BaseResultMap")
     List<Technology> GetList();
+
+
+    @Select("select style_id from technology t where t.id=#{technologyId}")
+    int GetTechnologyName(@Param("technologyId") int technologyId);
+
 }

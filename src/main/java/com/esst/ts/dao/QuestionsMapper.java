@@ -30,7 +30,7 @@ public interface QuestionsMapper {
             ",q.proportion,q.time_limit,q.time_scale from questions q LEFT JOIN exam e on q.exame_id=e.id " +
             "LEFT JOIN operate o ON q.operate_id=o.id LEFT JOIN technology t on t.id=o.technology_id " +
             "LEFT JOIN trouble tr on q.trouble_id=tr.id LEFT JOIN style s on q.style_id=s.id " +
-            "where q.exame_id=#{exameId}")
+            "where q.is_deleted=#{is_deleted} and q.exame_id=#{exameId}")
     @ResultMap("BasePOJOResultMap")
-    List<QuestionsPOJO> GetList(@Param("exameId") int exameId);
+    List<QuestionsPOJO> GetList(@Param("is_deleted") int is_deleted,@Param("exameId") int exameId);
 }

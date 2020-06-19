@@ -15,5 +15,5 @@ public interface QuestionsService {
 
     int deleteWithId(int id);
 
-    List<QuestionsPOJO> GetList(int exameId);
+    List<QuestionsPOJO> GetList(int is_deleted,int exameId);
 }
