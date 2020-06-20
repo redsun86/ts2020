@@ -2,14 +2,11 @@ package com.esst.ts.model;
 
 public class Exam {
     private Integer id;
-
     private String examName;
-
     private Integer examAttribute;
-
     private Integer status;
-
     private Integer createUser;
+    private Integer isDeleted;
 
     public Integer getId() {
         return id;
@@ -49,5 +46,13 @@ public class Exam {
 
     public void setCreateUser(Integer createUser) {
         this.createUser = createUser;
+    }
+
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

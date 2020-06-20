@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/web/v1/strategy")
 public class StrategyController {
+    //<editor-fold desc="Service对象初始化">
     @Resource
     private com.esst.ts.service.ProductService ProductService;
     @Resource
@@ -41,9 +42,11 @@ public class StrategyController {
     private com.esst.ts.service.StyleService StyleService;
     @Resource
     private com.esst.ts.service.ExamUserRelationService ExamUserRelationService;
+    @Resource
+    private com.esst.ts.service.UserTaskRelationService UserTaskRelationService;
 
     private final Logger log = LoggerFactory.getLogger(UserController.class);
-
+    //</editor-fold>
     //  1、策略库数据更新接口
 
     /**
@@ -68,7 +71,6 @@ public class StrategyController {
         //</editor-fold>
         return r;
     }
-
     //  2、获取产品列表接口；从任务库数据列表中解析
 
     /**
@@ -162,7 +164,7 @@ public class StrategyController {
         }
         //</editor-fold>
 
-        //<editor-fold desc="工艺/工况、任务单 合并">
+        //<editor-fold desc="工艺/单元、任务单 合并">
         Map<String, List<TechnologyTaskPOJO>> mapTaskPojolst = new HashMap<>();
         for (int i = 0; i < taskPojolst.size(); i++) {
             TechnologyTaskPOJO mod = taskPojolst.get(i);
@@ -185,7 +187,7 @@ public class StrategyController {
         return r;
     }
 
-    //  发布任务
+    //  4、发布任务
 
     /**
      * @param strToken
@@ -197,7 +199,7 @@ public class StrategyController {
     public Result releaseTask(
             @RequestParam(value = "token", required = false) String strToken,
             @RequestParam(value = "userId", required = false) String userId,
-            @RequestParam(value = "taskId", required = false) String taskId,
+            @RequestParam(value = "taskIds", required = false) String taskIds,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
@@ -208,22 +210,77 @@ public class StrategyController {
 
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
-
         int rowsCount = 0;
         try {
-            rowsCount = 1;// ExamService.deleteWithId(Integer.valueOf(Id));
-        } catch (Exception e) {
-        }
-        if (rowsCount > 0) {
+            if (taskIds != null && taskIds != "") {
+                taskIds = taskIds.replaceAll("\\，", "\\,");
+                String[] taskIdlst = taskIds.split("\\，");
+                for (String tId : taskIdlst) {
+                    UserTaskRelation reqMode = new UserTaskRelation();
+                    reqMode.setUserId(Integer.valueOf(userId));
+                    reqMode.setTaskId(Integer.valueOf(tId));
+                    UserTaskRelationService.deleteWithTaskIdUserId(reqMode);
+                    UserTaskRelationService.insert(reqMode);
+                }
+            }
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
+        } catch (Exception e) {
+            //e.printStackTrace();
+            //responseDataMap.put("respMsg", e.getMessage());
         }
         r.setData(responseDataMap);
         //</editor-fold>
         return r;
     }
 
-    //  4、获取已开启的任务单列表数据；同3,根据【是否开启】进行检索
+    //  5、取消发布任务
+
+    /**
+     * @param strToken
+     * @param request
+     * @return 执行结果；对应接口文档《TS2020接口文档 ---- 策略库模块》 unReleaseTask
+     */
+    @ResponseBody
+    @RequestMapping(value = "/unReleaseTask", method = RequestMethod.GET)
+    public Result unReleaseTask(
+            @RequestParam(value = "token", required = false) String strToken,
+            @RequestParam(value = "userId", required = false) String userId,
+            @RequestParam(value = "taskIds", required = false) String taskIds,
+            HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        //<editor-fold desc="返回参数初始化">
+        r.setMsg(requestContext.getMessage("请求失败"));
+        r.setCode(Result.ERROR);
+        //</editor-fold>
+
+        //<editor-fold desc="业务操作并赋值">
+        Map<String, Object> responseDataMap = new HashMap<>();
+        int rowsCount = 0;
+        try {
+            if (taskIds != null && taskIds != "") {
+                taskIds = taskIds.replaceAll("\\，", "\\,");
+                String[] taskIdlst = taskIds.split("\\,");
+                for (String tId : taskIdlst) {
+                    UserTaskRelation reqMode = new UserTaskRelation();
+                    reqMode.setUserId(Integer.valueOf(userId));
+                    reqMode.setTaskId(Integer.valueOf(tId));
+                    UserTaskRelationService.deleteWithTaskIdUserId(reqMode);
+                }
+            }
+            r.setMsg(requestContext.getMessage("OK"));
+            r.setCode(Result.SUCCESS);
+        } catch (Exception e) {
+            //e.printStackTrace();
+            //responseDataMap.put("respMsg", e.getMessage());
+        }
+        r.setData(responseDataMap);
+        //</editor-fold>
+        return r;
+    }
+
+    //  6、获取已开启的任务单列表数据；同3,根据【是否开启】进行检索
 
     /**
      * @param strToken
@@ -235,8 +292,6 @@ public class StrategyController {
     public Result getOpenTaskList(
             @RequestParam(value = "token", required = false) String strToken,
             @RequestParam(value = "userId", required = false) String userId,
-            @RequestParam(value = "productId", required = false) String productId,
-            @RequestParam(value = "technologyName", required = false) String technologyName,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
@@ -244,22 +299,15 @@ public class StrategyController {
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
-        List<TechnologyTaskPOJO> tasklst = new ArrayList<TechnologyTaskPOJO>();
-        for (int ti = 1; ti < 2; ti++) {
-            TechnologyTaskPOJO tmod = new TechnologyTaskPOJO();
-            tmod.setId(ti);
-            tmod.setTaskCode("");
-            tmod.setTaskName("任务单" + toString().valueOf(ti));
-            tmod.setTechnologyId(ti);
-            tasklst.add(tmod);
-        }
-        responseDataMap.put("dataList", tasklst);
+        List<TechnologyTaskPOJO> taskPojolst; //任务单
+        taskPojolst = TaskService.GetPojoAllList();
+        responseDataMap.put("dataList", taskPojolst);
         r.setData(responseDataMap);
         //</editor-fold>
         return r;
     }
 
-    //  获取已开启的工况数据
+    //  7、获取已开启的工况数据
 
     /**
      * @param strToken
@@ -279,34 +327,43 @@ public class StrategyController {
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
-        List<TechnologyPOJO> techLst = new ArrayList<TechnologyPOJO>();
-        for (int i = 1; i < 3; i++) {
-            TechnologyPOJO mod = new TechnologyPOJO();
-            mod.setId(i);
-            mod.setProductId(i);
-            mod.setStyleId("");
-            mod.setTechnologyCode("");
-            mod.setTechnologyEnName("");
-            mod.setTechnologyZhName("工艺/单元" + toString().valueOf(i));
-            List<TechnologyTaskOperatePOJO> operLst = new ArrayList<TechnologyTaskOperatePOJO>();
-            for (int oi = 1; oi < 3; oi++) {
-                TechnologyTaskOperatePOJO omod = new TechnologyTaskOperatePOJO();
-                omod.setId(oi);
-                omod.setOperateCode("");
-                omod.setOperateName("工况" + toString().valueOf(oi));
-                omod.setTechnologyId(oi);
-                operLst.add(omod);
+
+        List<TechnologyPOJO> techPojoLst; //工艺/单元
+        List<TechnologyTaskPOJO> taskPojolst; //任务单
+        List<TechnologyTaskOperatePOJO> operPojoLst; //工况
+
+        //<editor-fold desc="从数据库中读取 工艺/单元、任务单、工况">
+        techPojoLst = TechnologyService.GetPojoAllList();
+        taskPojolst = TaskService.GetPojoAllList();
+        operPojoLst = OperateService.GetPojoAllList();
+        //</editor-fold>
+
+        //<editor-fold desc="工艺/工况、工况 合并">
+        Map<String, List<TechnologyTaskOperatePOJO>> mapOperPojoLst = new HashMap<>();
+        for (int i = 0; i < operPojoLst.size(); i++) {
+            TechnologyTaskOperatePOJO mod = operPojoLst.get(i);
+            int pid = mod.getTechnologyId();
+            if (mapOperPojoLst.containsKey(toString().valueOf(pid))) {
+                mapOperPojoLst.get(toString().valueOf(pid)).add(mod);
+            } else {
+                List<TechnologyTaskOperatePOJO> dlist = new ArrayList<>();
+                dlist.add(mod);
+                mapOperPojoLst.put(toString().valueOf(pid), dlist);
             }
-            mod.setOperateList(operLst);
-            techLst.add(mod);
         }
-        responseDataMap.put("dataList", techLst);
+        for (TechnologyPOJO techPojo : techPojoLst) {
+            techPojo.setOperateList(mapOperPojoLst.get(toString().valueOf(techPojo.getId())));
+        }
+        //</editor-fold>
+
+        responseDataMap.put("dataList", techPojoLst);
         r.setData(responseDataMap);
         //</editor-fold>
         return r;
     }
 
-    //  5、获取试卷库列表数据接口；需要与数据库交互
+
+    //  8、获取试卷库列表数据接口；需要与数据库交互
 
     /**
      * @param strToken
@@ -318,6 +375,7 @@ public class StrategyController {
     public Result getExamList(
             @RequestParam(value = "token", required = false) String strToken,
             @RequestParam(value = "userId", required = false) String userId,
+            @RequestParam(value = "examName", required = false) String examName,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
@@ -328,8 +386,15 @@ public class StrategyController {
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
         //List<ExamPOJO> questLst = new ArrayList<ExamPOJO>();
-        List<ExamPOJO> questLst = ExamService.GetList(0);
-        responseDataMap.put("dataList", questLst);
+        try {
+            Exam reqMod = new Exam();
+            reqMod.setIsDeleted(0);
+            reqMod.setExamName(examName);
+            List<ExamPOJO> questLst = ExamService.GetList(reqMod);
+            responseDataMap.put("dataList", questLst);
+        } catch (Exception e) {
+            responseDataMap.put("respMsg", e.getMessage());
+        }
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
         r.setData(responseDataMap);
@@ -337,7 +402,7 @@ public class StrategyController {
         return r;
     }
 
-    //  6、新增/编辑试卷数据接口；需要与数据库交互
+    //  9、新增/编辑试卷数据接口；需要与数据库交互
 
     /**
      * @param strToken
@@ -363,26 +428,41 @@ public class StrategyController {
 
         int rowsCount = 0;
         try {
+            int allowContinue = 1;
+            Exam reqCheckMod = new Exam();
+            reqCheckMod.setExamName(reqMod.getExamName());
+            List<ExamPOJO> questLst = ExamService.GetList(reqCheckMod);
             if (reqMod.getId() == null) {
-                rowsCount = ExamService.insert(reqMod);
+                allowContinue = questLst.size() == 0 ? 1 : 0;
+            } else {
+                for (ExamPOJO mod : questLst) {
+                    if (!mod.getId().equals(reqMod.getId())) allowContinue = 0;
+                }
+            }
+            if (allowContinue == 0) throw new Exception("试卷名称已存在，请更改后重试");
+            if (reqMod.getId() == null) {
+                Exam respObj = ExamService.getInsertModel(reqMod);
+                responseDataMap.put("reqMod", respObj);
+                rowsCount = respObj.getId();
             } else {
                 rowsCount = ExamService.update(reqMod);
+                responseDataMap.put("reqMod", reqMod);
             }
         } catch (Exception e) {
-            //            e.printStackTrace();
-            //            responseDataMap.put("respMsg", e.getMessage());
+            //e.printStackTrace();
+            r.setMsg(requestContext.getMessage(e.getMessage()));
         }
         if (rowsCount > 0) {
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
-            //            responseDataMap.put("respMsg", "执行成功");
         }
+
         r.setData(responseDataMap);
         //</editor-fold>
         return r;
     }
 
-    //  7、删除试卷数据接口；需要与数据库交互
+    //  10、删除试卷数据接口；需要与数据库交互
 
     /**
      * @param strToken
@@ -422,7 +502,7 @@ public class StrategyController {
     }
 
 
-    //  发布试卷
+    //  11、发布试卷
 
     /**
      * @param strToken
@@ -445,10 +525,9 @@ public class StrategyController {
 
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
-
         int rowsCount = 0;
         try {
-            rowsCount = 1;// ExamService.deleteWithId(Integer.valueOf(Id));
+            rowsCount = ExamService.updateStatus(Integer.valueOf(exameId), 1);
         } catch (Exception e) {
         }
         if (rowsCount > 0) {
@@ -460,7 +539,131 @@ public class StrategyController {
         return r;
     }
 
-    //  8、获取试题列表数据接口；需要与数据库交互
+    //  12、取消发布试卷
+
+    /**
+     * @param strToken
+     * @param request
+     * @return 执行结果；对应接口文档《TS2020接口文档 ---- 策略库模块》 unReleaseExam
+     */
+    @ResponseBody
+    @RequestMapping(value = "/unReleaseExam", method = RequestMethod.GET)
+    public Result unReleaseExam(
+            @RequestParam(value = "token", required = false) String strToken,
+            @RequestParam(value = "userId", required = false) String userId,
+            @RequestParam(value = "exameId", required = false) String exameId,
+            HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        //<editor-fold desc="返回参数初始化">
+        r.setMsg(requestContext.getMessage("请求失败"));
+        r.setCode(Result.ERROR);
+        //</editor-fold>
+
+        //<editor-fold desc="业务操作并赋值">
+        Map<String, Object> responseDataMap = new HashMap<>();
+        int rowsCount = 0;
+        try {
+            rowsCount = ExamService.updateStatus(Integer.valueOf(exameId), 2);
+        } catch (Exception e) {
+        }
+        if (rowsCount > 0) {
+            r.setMsg(requestContext.getMessage("OK"));
+            r.setCode(Result.SUCCESS);
+        }
+        r.setData(responseDataMap);
+        //</editor-fold>
+        return r;
+    }
+
+    //  13、获取指定试卷的考生列表
+
+    /**
+     * @param strToken
+     * @param request
+     * @return 获取试卷的考生列表；对应接口文档《TS2020接口文档 ---- 策略库模块》 getExamuserList
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getExamuserList", method = RequestMethod.GET)
+    public Result getExamuserList(
+            @RequestParam(value = "token", required = false) String strToken,
+            @RequestParam(value = "userId", required = false) String userId,
+            @RequestParam(value = "exameId", required = false) String exameId,
+            HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        //<editor-fold desc="返回参数初始化">
+        r.setMsg(requestContext.getMessage("请求失败"));
+        r.setCode(Result.ERROR);
+        //</editor-fold>
+
+        //<editor-fold desc="业务操作并赋值">
+        Map<String, Object> responseDataMap = new HashMap<>();
+        List<ExamUserRelation> questLst = ExamUserRelationService.GetList(Integer.valueOf(exameId));
+        responseDataMap.put("dataList", questLst);
+        r.setMsg(requestContext.getMessage("OK"));
+        r.setCode(Result.SUCCESS);
+        r.setData(responseDataMap);
+        //</editor-fold>
+        return r;
+    }
+
+    //  14、增加/删除试卷的考生列表
+
+    /**
+     * @param strToken
+     * @param request
+     * @return 执行结果；对应接口文档《TS2020接口文档 ---- 策略库模块》 editExamUser
+     */
+    @ResponseBody
+    @RequestMapping(value = "/editExamUser", method = RequestMethod.POST)
+    public Result editExamUser(
+            @RequestParam(value = "token", required = false) String strToken,
+            @RequestParam(value = "userId", required = false) String userId,
+            @RequestParam(value = "exameId", required = false) String exameId,
+            @RequestParam(value = "userIds", required = false) String userIds,
+            HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        //<editor-fold desc="返回参数初始化">
+        r.setMsg(requestContext.getMessage("请求失败"));
+        r.setCode(Result.ERROR);
+        //</editor-fold>
+
+        //<editor-fold desc="业务操作并赋值">
+        Map<String, Object> responseDataMap = new HashMap<>();
+        int rowsCount = 0;
+        try {
+            rowsCount = ExamUserRelationService.deleteWithExameId(Integer.valueOf(exameId));
+            if (userIds != null && userIds != "") {
+                userIds = userIds.replaceAll("\\，", "\\,");
+                String[] userIdlst = userIds.split("\\，");
+                for (String uId : userIdlst) {
+                    ExamUserRelation reqMode = new ExamUserRelation();
+                    reqMode.setExamId(Integer.valueOf(exameId));
+                    reqMode.setUserId(Integer.valueOf(uId));
+                    ExamUserRelationService.insert(reqMode);
+                }
+                //responseDataMap.put("userIdlst", userIdlst);
+            }
+        } catch (Exception e) {
+            //            e.printStackTrace();
+            //responseDataMap.put("respMsg", e.getMessage());
+        }
+        if (rowsCount > 0) {
+            r.setMsg(requestContext.getMessage("OK"));
+            r.setCode(Result.SUCCESS);
+            //responseDataMap.put("token", strToken);
+            //responseDataMap.put("respMsg", "执行成功");
+        }
+        //responseDataMap.put("requestModel", userIds);
+        r.setData(responseDataMap);
+        //</editor-fold>
+        return r;
+    }
+
+
+    //  15、获取试题列表数据接口；需要与数据库交互
 
     /**
      * @param strToken
@@ -493,148 +696,7 @@ public class StrategyController {
         return r;
     }
 
-    //  9、获取[工艺/单元]列表
-
-    /**
-     * @param strToken
-     * @param request
-     * @return [工艺/单元]列表数据；对应接口文档《TS2020接口文档 ---- 策略库模块》 getTechnologyList
-     */
-    @ResponseBody
-    @RequestMapping(value = "/getTechnologyList", method = RequestMethod.GET)
-    public Result getTechnologyList(
-            @RequestParam(value = "token", required = false) String strToken,
-            @RequestParam(value = "userId", required = false) String userId,
-            HttpServletRequest request) {
-        RequestContext requestContext = new RequestContext(request);
-        Result r = new Result();
-        //<editor-fold desc="返回参数初始化">
-        r.setMsg(requestContext.getMessage("OK"));
-        r.setCode(Result.SUCCESS);
-        Map<String, Object> responseDataMap = new HashMap<>();
-        List<Technology> techLst = TechnologyService.GetList();
-        Integer strRespMsg=TechnologyService.GetTechnologyName(1);
-        responseDataMap.put("dataList", techLst);
-        responseDataMap.put("respMsg", strRespMsg);
-        r.setData(responseDataMap);
-        //</editor-fold>
-        return r;
-    }
-
-    //  获取[工况]列表
-
-    /**
-     * @param strToken
-     * @param request
-     * @return [工况]列表数据；对应接口文档《TS2020接口文档 ---- 策略库模块》 getOperateList
-     */
-    @ResponseBody
-    @RequestMapping(value = "/getOperateList", method = RequestMethod.GET)
-    public Result getOperateList(
-            @RequestParam(value = "token", required = false) String strToken,
-            @RequestParam(value = "userId", required = false) String userId,
-            @RequestParam(value = "technologyId", required = false) String technologyId,
-            HttpServletRequest request) {
-        RequestContext requestContext = new RequestContext(request);
-        Result r = new Result();
-        //<editor-fold desc="返回参数初始化">
-        r.setMsg(requestContext.getMessage("OK"));
-        r.setCode(Result.SUCCESS);
-        Map<String, Object> responseDataMap = new HashMap<>();
-        List<TechnologyTaskOperatePOJO> operLst = OperateService.GetPojoList(Integer.valueOf(technologyId));
-        responseDataMap.put("dataList", operLst);
-        r.setData(responseDataMap);
-        //</editor-fold>
-        return r;
-    }
-
-    //  10、获取[事故策略]列表
-
-    /**
-     * @param strToken
-     * @param request
-     * @return [事故策略]列表数据；对应接口文档《TS2020接口文档 ---- 策略库模块》 getTroubleList
-     */
-    @ResponseBody
-    @RequestMapping(value = "/getTroubleList", method = RequestMethod.GET)
-    public Result getTroubleList(
-            @RequestParam(value = "token", required = false) String strToken,
-            @RequestParam(value = "userId", required = false) String userId,
-            @RequestParam(value = "technologyId", required = false) String technologyId,
-            HttpServletRequest request) {
-        RequestContext requestContext = new RequestContext(request);
-        Result r = new Result();
-        //<editor-fold desc="返回参数初始化">
-        r.setMsg(requestContext.getMessage("OK"));
-        r.setCode(Result.SUCCESS);
-        Map<String, Object> responseDataMap = new HashMap<>();
-        List<Trouble> techLst = TroubleService.GetList(Integer.valueOf(technologyId));
-        responseDataMap.put("dataList", techLst);
-        r.setData(responseDataMap);
-        //</editor-fold>
-        return r;
-    }
-
-    //  11、获取[运行时标]列表
-
-    /**
-     * @param strToken
-     * @param request
-     * @return [事故策略]列表数据；对应接口文档《TS2020接口文档 ---- 策略库模块》 getTimescaleList
-     */
-    @ResponseBody
-    @RequestMapping(value = "/getTimescaleList", method = RequestMethod.GET)
-    public Result getTimescaleList(
-            @RequestParam(value = "token", required = false) String strToken,
-            @RequestParam(value = "userId", required = false) String userId,
-            HttpServletRequest request) {
-        RequestContext requestContext = new RequestContext(request);
-        Result r = new Result();
-        //<editor-fold desc="返回参数初始化">
-        r.setMsg(requestContext.getMessage("OK"));
-        r.setCode(Result.SUCCESS);
-        Map<String, Object> responseDataMap = new HashMap<>();
-        List<TimeScalePOJO> techLst = new ArrayList<TimeScalePOJO>();
-        for (int i = 1; i < 3; i++) {
-            TimeScalePOJO mod = new TimeScalePOJO();
-            mod.setId(i);
-            mod.setTimescaleCode(toString().valueOf(i));
-            mod.setTimescaleName(toString().valueOf(i * 100));
-            techLst.add(mod);
-        }
-        responseDataMap.put("dataList", techLst);
-        r.setData(responseDataMap);
-        //</editor-fold>
-        return r;
-    }
-
-    //  12、获取[DCS风格]列表
-
-    /**
-     * @param strToken
-     * @param request
-     * @return [事故策略]列表数据；对应接口文档《TS2020接口文档 ---- 策略库模块》 getStyleList
-     */
-    @ResponseBody
-    @RequestMapping(value = "/getStyleList", method = RequestMethod.GET)
-    public Result getStyleList(
-            @RequestParam(value = "token", required = false) String strToken,
-            @RequestParam(value = "userId", required = false) String userId,
-            HttpServletRequest request) {
-        RequestContext requestContext = new RequestContext(request);
-        Result r = new Result();
-        //<editor-fold desc="返回参数初始化">
-        r.setMsg(requestContext.getMessage("OK"));
-        r.setCode(Result.SUCCESS);
-        Map<String, Object> responseDataMap = new HashMap<>();
-        List<Style> techLst = StyleService.GetList();
-        responseDataMap.put("dataList", techLst);
-        r.setData(responseDataMap);
-        //</editor-fold>
-        return r;
-    }
-
-    //  13、新增/编辑试题数据接口；需要与数据库交互
+    //  16、新增/编辑试题数据接口；需要与数据库交互
 
     /**
      * @param strToken
@@ -660,27 +722,27 @@ public class StrategyController {
         int rowsCount = 0;
         try {
             if (reqMod.getId() == null) {
-                rowsCount = QuestionsService.insert(reqMod);
+                Questions respObj = QuestionsService.getInsertModel(reqMod);
+                responseDataMap.put("reqMod", respObj);
+                rowsCount = respObj.getId();
             } else {
                 rowsCount = QuestionsService.update(reqMod);
+                responseDataMap.put("reqMod", reqMod);
             }
         } catch (Exception e) {
-            //            e.printStackTrace();
-            //            responseDataMap.put("respMsg", e.getMessage());
+            //e.printStackTrace();
+            responseDataMap.put("respMsg", e.getMessage());
         }
         if (rowsCount > 0) {
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
-            //            responseDataMap.put("token", strToken);
-            //            responseDataMap.put("respMsg", "执行成功");
         }
-        //        responseDataMap.put("requestModel", reqMod);
         r.setData(responseDataMap);
         //</editor-fold>
         return r;
     }
 
-    //  14、删除试题数据接口；需要与数据库交互
+    //  17、删除试题数据接口；需要与数据库交互
 
     /**
      * @param strToken
@@ -723,91 +785,147 @@ public class StrategyController {
         return r;
     }
 
-
-    //  15、获取指定试卷的考生列表
+    //  18、获取[工艺/单元]列表
 
     /**
      * @param strToken
      * @param request
-     * @return 获取试卷的考生列表；对应接口文档《TS2020接口文档 ---- 策略库模块》 getExamuserList
+     * @return [工艺/单元]列表数据；对应接口文档《TS2020接口文档 ---- 策略库模块》 getTechnologyList
      */
     @ResponseBody
-    @RequestMapping(value = "/getExamuserList", method = RequestMethod.GET)
-    public Result getExamuserList(
+    @RequestMapping(value = "/getTechnologyList", method = RequestMethod.GET)
+    public Result getTechnologyList(
             @RequestParam(value = "token", required = false) String strToken,
             @RequestParam(value = "userId", required = false) String userId,
-            @RequestParam(value = "exameId", required = false) String exameId,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
         //<editor-fold desc="返回参数初始化">
-        r.setMsg(requestContext.getMessage("请求失败"));
-        r.setCode(Result.ERROR);
-        //</editor-fold>
-
-        //<editor-fold desc="业务操作并赋值">
-        Map<String, Object> responseDataMap = new HashMap<>();
-        List<ExamUserRelation> questLst = ExamUserRelationService.GetList(Integer.valueOf(exameId));
-        responseDataMap.put("dataList", questLst);
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
+        Map<String, Object> responseDataMap = new HashMap<>();
+        List<Technology> techLst = TechnologyService.GetList();
+        Integer strRespMsg = TechnologyService.GetTechnologyName(1);
+        responseDataMap.put("dataList", techLst);
+        responseDataMap.put("respMsg", strRespMsg);
         r.setData(responseDataMap);
         //</editor-fold>
         return r;
     }
 
-    //  16、增加/删除试卷的考生列表
+    //  19、获取[工况]列表
 
     /**
      * @param strToken
      * @param request
-     * @return 执行结果；对应接口文档《TS2020接口文档 ---- 策略库模块》 editExamUser
+     * @return [工况]列表数据；对应接口文档《TS2020接口文档 ---- 策略库模块》 getOperateList
      */
     @ResponseBody
-    @RequestMapping(value = "/editExamUser", method = RequestMethod.POST)
-    public Result editExamUser(
+    @RequestMapping(value = "/getOperateList", method = RequestMethod.GET)
+    public Result getOperateList(
             @RequestParam(value = "token", required = false) String strToken,
             @RequestParam(value = "userId", required = false) String userId,
-            @RequestParam(value = "exameId", required = false) String exameId,
-            @RequestParam(value = "userIds", required = false) String userIds,
+            @RequestParam(value = "technologyId", required = false) String technologyId,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
         //<editor-fold desc="返回参数初始化">
-        r.setMsg(requestContext.getMessage("请求失败"));
-        r.setCode(Result.ERROR);
-        //</editor-fold>
-
-        //<editor-fold desc="业务操作并赋值">
+        r.setMsg(requestContext.getMessage("OK"));
+        r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
-        int rowsCount = 0;
-        try {
-            rowsCount = ExamUserRelationService.deleteWithExameId(Integer.valueOf(exameId));
-            if (userIds != null && userIds != "") {
-                String[] userIdlst = userIds.split("\\，");
-                for (String uId : userIdlst) {
-                    ExamUserRelation reqMode = new ExamUserRelation();
-                    reqMode.setExamId(Integer.valueOf(exameId));
-                    reqMode.setUserId(Integer.valueOf(uId));
-                    ExamUserRelationService.insert(reqMode);
-                }
-                //responseDataMap.put("userIdlst", userIdlst);
-            }
-        } catch (Exception e) {
-            //            e.printStackTrace();
-            //responseDataMap.put("respMsg", e.getMessage());
-        }
-        if (rowsCount > 0) {
-            r.setMsg(requestContext.getMessage("OK"));
-            r.setCode(Result.SUCCESS);
-            //responseDataMap.put("token", strToken);
-            //responseDataMap.put("respMsg", "执行成功");
-        }
-        //responseDataMap.put("requestModel", userIds);
+        List<TechnologyTaskOperatePOJO> operLst = OperateService.GetPojoList(Integer.valueOf(technologyId));
+        responseDataMap.put("dataList", operLst);
         r.setData(responseDataMap);
         //</editor-fold>
         return r;
     }
+
+    //  20、获取[事故策略]列表
+
+    /**
+     * @param strToken
+     * @param request
+     * @return [事故策略]列表数据；对应接口文档《TS2020接口文档 ---- 策略库模块》 getTroubleList
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getTroubleList", method = RequestMethod.GET)
+    public Result getTroubleList(
+            @RequestParam(value = "token", required = false) String strToken,
+            @RequestParam(value = "userId", required = false) String userId,
+            @RequestParam(value = "technologyId", required = false) String technologyId,
+            HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        //<editor-fold desc="返回参数初始化">
+        r.setMsg(requestContext.getMessage("OK"));
+        r.setCode(Result.SUCCESS);
+        Map<String, Object> responseDataMap = new HashMap<>();
+        List<Trouble> techLst = TroubleService.GetList(Integer.valueOf(technologyId));
+        responseDataMap.put("dataList", techLst);
+        r.setData(responseDataMap);
+        //</editor-fold>
+        return r;
+    }
+
+    //  21、获取[运行时标]列表
+
+    /**
+     * @param strToken
+     * @param request
+     * @return [事故策略]列表数据；对应接口文档《TS2020接口文档 ---- 策略库模块》 getTimescaleList
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getTimescaleList", method = RequestMethod.GET)
+    public Result getTimescaleList(
+            @RequestParam(value = "token", required = false) String strToken,
+            @RequestParam(value = "userId", required = false) String userId,
+            HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        //<editor-fold desc="返回参数初始化">
+        r.setMsg(requestContext.getMessage("OK"));
+        r.setCode(Result.SUCCESS);
+        Map<String, Object> responseDataMap = new HashMap<>();
+        List<TimeScalePOJO> techLst = new ArrayList<TimeScalePOJO>();
+        for (int i = 1; i < 3; i++) {
+            TimeScalePOJO mod = new TimeScalePOJO();
+            mod.setId(i);
+            mod.setTimescaleCode(toString().valueOf(i));
+            mod.setTimescaleName(toString().valueOf(i * 100));
+            techLst.add(mod);
+        }
+        responseDataMap.put("dataList", techLst);
+        r.setData(responseDataMap);
+        //</editor-fold>
+        return r;
+    }
+
+    //  22、获取[DCS风格]列表
+
+    /**
+     * @param strToken
+     * @param request
+     * @return [事故策略]列表数据；对应接口文档《TS2020接口文档 ---- 策略库模块》 getStyleList
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getStyleList", method = RequestMethod.GET)
+    public Result getStyleList(
+            @RequestParam(value = "token", required = false) String strToken,
+            @RequestParam(value = "userId", required = false) String userId,
+            HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        //<editor-fold desc="返回参数初始化">
+        r.setMsg(requestContext.getMessage("OK"));
+        r.setCode(Result.SUCCESS);
+        Map<String, Object> responseDataMap = new HashMap<>();
+        List<Style> techLst = StyleService.GetList();
+        responseDataMap.put("dataList", techLst);
+        r.setData(responseDataMap);
+        //</editor-fold>
+        return r;
+    }
+
 
     //统计图表接口
 
@@ -846,12 +964,14 @@ public class StrategyController {
         dstaLst = new ArrayList<>();
         mod = new StatisticalChartDataPOJO();
         mod.setxAxis("60");
-        mod.setyAxis("");;
+        mod.setyAxis("");
+        ;
         dstaLst.add(mod);
 
         mod = new StatisticalChartDataPOJO();
         mod.setxAxis("40");
-        mod.setyAxis("");;
+        mod.setyAxis("");
+        ;
         dstaLst.add(mod);
 
         modMap.setDataList(dstaLst);
@@ -866,12 +986,14 @@ public class StrategyController {
         dstaLst = new ArrayList<>();
         mod = new StatisticalChartDataPOJO();
         mod.setxAxis("80");
-        mod.setyAxis("");;
+        mod.setyAxis("");
+        ;
         dstaLst.add(mod);
 
         mod = new StatisticalChartDataPOJO();
         mod.setxAxis("20");
-        mod.setyAxis("");;
+        mod.setyAxis("");
+        ;
         dstaLst.add(mod);
 
         modMap.setDataList(dstaLst);
@@ -1077,6 +1199,9 @@ public class StrategyController {
         return r;
     }
 
+
+    //<editor-fold desc="关于List的公用方法">
+
     /**
      * 返回符合条件的第一条数据
      * 示例：
@@ -1124,5 +1249,6 @@ public class StrategyController {
         return eList;
     }
 
+    //</editor-fold>
 
 }

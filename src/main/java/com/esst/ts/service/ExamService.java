@@ -16,5 +16,9 @@ public interface ExamService {
 
     int deleteWithId(int id);
 
-    List<ExamPOJO> GetList(int is_deleted);
+    int updateStatus(int id, int status);
+
+    Exam getInsertModel(Exam mod);
+
+    List<ExamPOJO> GetList(Exam mod);
 }

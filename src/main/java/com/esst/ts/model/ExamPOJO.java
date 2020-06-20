@@ -5,7 +5,6 @@ package com.esst.ts.model;
  * 创建标识：梁建磊 2020-06-12
  */
 public class ExamPOJO {
-
     private Integer id;//` int(11) NOT NULL AUTO_INCREMENT COMMENT '递增主键',
     private String examName;//` varchar(32) DEFAULT NULL COMMENT '试卷名称',
     private Integer status;//` int(1) DEFAULT NULL COMMENT '试卷状态（发布/未发布）',

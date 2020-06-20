@@ -34,6 +34,11 @@ public class QuestionsImpl implements QuestionsService {
     }
 
     @Override
+    public Questions getInsertModel(Questions mod) {
+        return QuestionsMapper.getInsertModel(mod);
+    }
+
+    @Override
     public List<QuestionsPOJO> GetList(int is_deleted,int exameId) {
         return QuestionsMapper.GetList(is_deleted,exameId);
     }

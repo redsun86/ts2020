@@ -36,7 +36,17 @@ public class ExamImpl implements ExamService {
     }
 
     @Override
-    public List<ExamPOJO> GetList(int is_deleted) {
-        return ExamMapper.GetList(is_deleted);
+    public List<ExamPOJO> GetList(Exam mod) {
+        return ExamMapper.GetList(mod);
+    }
+
+    @Override
+    public int updateStatus(int id, int status) {
+        return ExamMapper.updateStatus(id, status);
+    }
+
+    @Override
+    public Exam getInsertModel(Exam mod) {
+        return ExamMapper.getInsertModel(mod);
     }
 }

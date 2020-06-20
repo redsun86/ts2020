@@ -22,6 +22,8 @@ public interface QuestionsMapper {
 
     int updateByPrimaryKey(Questions record);
 
+    Questions getInsertModel(Questions record);
+
     @Update("UPDATE questions SET is_deleted=1 WHERE id=#{id}")
     int deleteWithId(@Param("id") int id);
 
@@ -32,7 +34,7 @@ public interface QuestionsMapper {
             "LEFT JOIN trouble tr on q.trouble_id=tr.id LEFT JOIN style s on q.style_id=s.id " +
             "where q.is_deleted=#{is_deleted} and q.exame_id=#{exameId}")
     @ResultMap("BasePOJOResultMap")
-    List<QuestionsPOJO> GetList(@Param("is_deleted") int is_deleted,@Param("exameId") int exameId);
+    List<QuestionsPOJO> GetList(@Param("is_deleted") int is_deleted, @Param("exameId") int exameId);
 
     @Select("select * from questions")
     @ResultMap("BaseResultMap")

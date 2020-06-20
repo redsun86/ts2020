@@ -4,19 +4,10 @@
     <resultMap id="BaseResultMap" type="com.esst.ts.model.Exam">
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="exam_name" property="examName" jdbcType="VARCHAR"/>
-        <result column="status" property="status" jdbcType="INTEGER"/>
-        <result column="create_user" property="createUser" jdbcType="INTEGER"/>
-    </resultMap>
-
-    <resultMap id="BasePOJOResultMap" type="com.esst.ts.model.ExamPOJO">
-        <id column="exam_id" property="id" jdbcType="INTEGER"/>
-        <result column="exam_name" property="examName" jdbcType="VARCHAR"/>
-        <result column="status" property="status" jdbcType="INTEGER"/>
-        <result column="status_name" property="statusName" jdbcType="VARCHAR"/>
-        <result column="create_user" property="createUser" jdbcType="INTEGER"/>
-        <result column="user_count" property="userCount" jdbcType="INTEGER"/>
         <result column="exam_attribute" property="examAttribute" jdbcType="INTEGER"/>
-        <result column="edit_info" property="editInfo" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="create_user" property="createUser" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
     </resultMap>
     <sql id="Base_Column_List">
     id, exam_name, status, create_user
@@ -35,7 +26,7 @@
     insert into exam (id, exam_name, exam_attribute,
       status, create_user)
     values (#{id,jdbcType=INTEGER}, #{examName,jdbcType=VARCHAR}, #{examAttribute,jdbcType=INTEGER},
-      #{status,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER})
+      #{status,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER});
   </insert>
     <insert id="insertSelective" parameterType="com.esst.ts.model.Exam">
         insert into exam
@@ -60,7 +51,7 @@
             <if test="examName != null">
                 #{examName,jdbcType=VARCHAR},
             </if>
-            <if test="status != null">
+            <if test="status != null">insert
                 #{status,jdbcType=INTEGER},
             </if>
             <if test="createUser != null">
@@ -93,4 +84,36 @@
       create_user = #{createUser,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+    <select id="getInsertModel" resultMap="BaseResultMap" parameterType="com.esst.ts.model.Exam">
+        insert into exam (exam_name, exam_attribute,status, create_user)
+        values (#{examName,jdbcType=VARCHAR}, #{examAttribute,jdbcType=INTEGER},#{status,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER});
+        select * from exam where id = @@IDENTITY;
+</select>
+    <resultMap id="BaseResultPOJOMap" type="com.esst.ts.model.ExamPOJO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="exam_name" property="examName" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="status_name" property="statusName" jdbcType="VARCHAR"/>
+        <result column="create_user" property="createUser" jdbcType="INTEGER"/>
+        <result column="user_count" property="userCount" jdbcType="INTEGER"/>
+        <result column="exam_attribute" property="examAttribute" jdbcType="INTEGER"/>
+        <result column="edit_info" property="editInfo" jdbcType="INTEGER"/>
+    </resultMap>
+    <select id="GetList" resultMap="BaseResultPOJOMap" parameterType="com.esst.ts.model.Exam">
+        select e.id,e.exam_name,e.`status`,(case e.`status` when 1 then '发布' else '未发布' end) status_name
+        ,e.create_user,ifnull(uc.user_count,0) user_count,e.exam_attribute
+        ,concat((case e.exam_attribute when 1 then '考试' else '联合操作' end),'，','3题','，','60分钟') edit_info
+        from exam e LEFT JOIN (select exam_id,count(distinct user_id) user_count
+        from exam_user_relation group by exam_id) uc on e.id=uc.exam_id
+        where e.id>0
+        <if test="id != null">
+            and e.id=#{id,jdbcType=INTEGER}
+        </if>
+        <if test="isDeleted != null">
+            and e.is_deleted=#{isDeleted,jdbcType=INTEGER}
+        </if>
+        <if test="examName != null">
+            and e.exam_name like CONCAT('%', #{examName,jdbcType=VARCHAR}, '%')
+        </if>
+    </select>
 </mapper>

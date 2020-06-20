@@ -15,5 +15,7 @@ public interface QuestionsService {
 
     int deleteWithId(int id);
 
-    List<QuestionsPOJO> GetList(int is_deleted,int exameId);
+    Questions getInsertModel(Questions mod);
+
+    List<QuestionsPOJO> GetList(int is_deleted, int exameId);
 }
