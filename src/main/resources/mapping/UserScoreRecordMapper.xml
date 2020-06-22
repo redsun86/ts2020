@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.esst.ts.dao.UserScoreRecordMapper" >
+  <resultMap id="BasePOJOResultMap" type="com.esst.ts.model.UserScoreRecordPOJO" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="task_id" property="taskId" jdbcType="INTEGER" />
+    <result column="operate_id" property="operateId" jdbcType="INTEGER" />
+    <result column="score" property="score" jdbcType="DOUBLE" />
+    <result column="total_score" property="totalScore" jdbcType="DOUBLE" />
+    <result column="begin_time" property="beginTime" jdbcType="BIGINT" />
+    <result column="end_time" property="endTime" jdbcType="BIGINT" />
+    <result column="lear_time" property="learTime" jdbcType="BIGINT" />
+    <result column="study_type" property="studyType" jdbcType="INTEGER" />
+    <result column="mac_address" property="macAddress" jdbcType="VARCHAR" />
+    <result column="ip_address" property="ipAddress" jdbcType="VARCHAR" />
+    <result column="rel_name" property="userTrueName" jdbcType="VARCHAR" />
+    <result column="st_num" property="userStNum" jdbcType="VARCHAR" />
+    <result column="class_name" property="className" jdbcType="VARCHAR" />
+    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+  </resultMap>
   <resultMap id="BaseResultMap" type="com.esst.ts.model.UserScoreRecord" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="user_id" property="userId" jdbcType="INTEGER" />
@@ -11,9 +29,11 @@
     <result column="begin_time" property="beginTime" jdbcType="BIGINT" />
     <result column="end_time" property="endTime" jdbcType="BIGINT" />
     <result column="study_type" property="studyType" jdbcType="INTEGER" />
+    <result column="mac_address" property="macAddress" jdbcType="VARCHAR" />
+    <result column="ip_address" property="ipAddress" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_id, task_id, operate_id, score, total_score, begin_time, end_time, study_type
+    id, user_id, task_id, operate_id, score, total_score, begin_time, end_time, study_type,mac_address,ip_address
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -28,11 +48,13 @@
   <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.esst.ts.model.UserScoreRecord" >
     insert into user_score_record (id, user_id, task_id, 
       operate_id, score, total_score, 
-      begin_time, end_time, study_type
+      begin_time, end_time, study_type,
+      mac_address, ip_address
       )
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, 
       #{operateId,jdbcType=INTEGER}, #{score,jdbcType=DOUBLE}, #{totalScore,jdbcType=DOUBLE}, 
-      #{beginTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, #{studyType,jdbcType=INTEGER}
+      #{beginTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, #{studyType,jdbcType=INTEGER},
+      #{macAddress,jdbcType=VARCHAR}, #{ipAddress,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.esst.ts.model.UserScoreRecord" >
@@ -65,6 +87,12 @@
       <if test="studyType != null" >
         study_type,
       </if>
+      <if test="macAddress != null" >
+        mac_address,
+      </if>
+      <if test="ipAddress != null" >
+        ip_address,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -93,6 +121,12 @@
       </if>
       <if test="studyType != null" >
         #{studyType,jdbcType=INTEGER},
+      </if>
+      <if test="macAddress != null" >
+        #{macAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="ipAddress != null" >
+        #{ipAddress,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -123,6 +157,12 @@
       <if test="studyType != null" >
         study_type = #{studyType,jdbcType=INTEGER},
       </if>
+      <if test="macAddress != null" >
+        mac_address = #{macAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="ipAddress != null" >
+        ip_address = #{ipAddress,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -135,7 +175,9 @@
       total_score = #{totalScore,jdbcType=DOUBLE},
       begin_time = #{beginTime,jdbcType=BIGINT},
       end_time = #{endTime,jdbcType=BIGINT},
-      study_type = #{studyType,jdbcType=INTEGER}
+      study_type = #{studyType,jdbcType=INTEGER},
+      mac_address = #{macAddress,jdbcType=VARCHAR},
+      ip_address = #{ipAddress,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
