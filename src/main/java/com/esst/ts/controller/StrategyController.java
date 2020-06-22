@@ -431,7 +431,7 @@ public class StrategyController {
             int allowContinue = 1;
             Exam reqCheckMod = new Exam();
             reqCheckMod.setExamName(reqMod.getExamName());
-            //reqCheckMod.setIsDeleted(0);
+            reqCheckMod.setIsDeleted(0);
             List<ExamPOJO> questLst = ExamService.GetList(reqCheckMod);
             if (reqMod.getId() == null || reqMod.getId() == 0 || reqMod.getId() == -1) {
                 allowContinue = questLst.size() == 0 ? 1 : 0;
