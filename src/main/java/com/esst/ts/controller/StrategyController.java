@@ -432,7 +432,7 @@ public class StrategyController {
             Exam reqCheckMod = new Exam();
             reqCheckMod.setExamName(reqMod.getExamName());
             List<ExamPOJO> questLst = ExamService.GetList(reqCheckMod);
-            if (reqMod.getId() == null) {
+            if (reqMod.getId() == null||reqMod.getId()==0||reqMod.getId()==-1) {
                 allowContinue = questLst.size() == 0 ? 1 : 0;
             } else {
                 for (ExamPOJO mod : questLst) {
@@ -440,7 +440,8 @@ public class StrategyController {
                 }
             }
             if (allowContinue == 0) throw new Exception("试卷名称已存在，请更改后重试");
-            if (reqMod.getId() == null) {
+            if (reqMod.getId() == null||reqMod.getId()==0||reqMod.getId()==-1) {
+                reqMod.setId(null);
                 Exam respObj = ExamService.getInsertModel(reqMod);
                 responseDataMap.put("reqMod", respObj);
                 rowsCount = respObj.getId();
@@ -731,7 +732,8 @@ public class StrategyController {
         Map<String, Object> responseDataMap = new HashMap<>();
         int rowsCount = 0;
         try {
-            if (reqMod.getId() == null) {
+            if (reqMod.getId() == null||reqMod.getId()==0||reqMod.getId()==-1) {
+                reqMod.setId(null);
                 Questions respObj = QuestionsService.getInsertModel(reqMod);
                 responseDataMap.put("reqMod", respObj);
                 rowsCount = respObj.getId();
