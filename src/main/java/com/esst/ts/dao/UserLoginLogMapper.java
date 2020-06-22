@@ -1,8 +1,12 @@
 package com.esst.ts.dao;
 
 import com.esst.ts.model.UserLoginLog;
+import com.esst.ts.model.UserLoginLogPOJO;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 public interface UserLoginLogMapper {
     int deleteByPrimaryKey(Integer id);
@@ -19,4 +23,12 @@ public interface UserLoginLogMapper {
 
     @Select("SELECT count(DISTINCT user_id) userCount FROM user_login_log u LEFT JOIN teacher_student_relation t ON u.user_id=t.student_id WHERE t.teacher_id=#{userId};")
     int getUserLoginLogCountByTeacherID(@Param("userId") String userId);
+
+    @Select("select * from user_login_log where  create_time >=#{beginDate} and create_time <=#{endDate} and status=1 and is_admin=1 GROUP BY user_id")
+    @ResultMap("BaseResultMap")
+    List<UserLoginLog> getUserloginLogForDate(@Param("beginDate") String beginDate, @Param("endDate") String endDate);
+
+    @Select("select id,date_format(create_time,'%Y-%m-%d') AS newcreate_time FROM user_login_log where is_admin=1 and status=1 and create_time >=#{beginDate} and create_time <=#{endDate} GROUP BY newcreate_time")
+    @ResultMap("BasePOJOResultMap")
+    List<UserLoginLogPOJO> getDistinctDateForDate(@Param("beginDate") String beginDate, @Param("endDate") String endDate);
 }

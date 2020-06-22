@@ -1,11 +1,13 @@
 package com.esst.ts.model;
 
-public class UserScoreRecord {
+public class UserScoreRecordPOJO {
     private Integer id;
 
     private Integer userId;
 
     private Integer taskId;
+
+    private String taskName;
 
     private Integer operateId;
 
@@ -17,11 +19,21 @@ public class UserScoreRecord {
 
     private Long endTime;
 
+    private Long learTime;
+
     private Integer studyType;
 
     private String macAddress;
 
     private String ipAddress;
+
+    private String userTrueName;
+
+    private String userStNum;
+
+    private String className;
+
+    private String groupName;
 
     public Integer getId() {
         return id;
@@ -37,6 +49,14 @@ public class UserScoreRecord {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 
     public Integer getTaskId() {
@@ -87,6 +107,13 @@ public class UserScoreRecord {
         this.endTime = endTime;
     }
 
+    public Long getLearTime() {
+        return learTime;
+    }
+
+    public void setLearTime(Long learTime) {
+        this.learTime = learTime;
+    }
     public Integer getStudyType() {
         return studyType;
     }
@@ -110,4 +137,37 @@ public class UserScoreRecord {
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
     }
+
+    public String getUserTrueName() {
+        return userTrueName;
+    }
+
+    public void setUserTrueName(String userTrueName) {
+        this.userTrueName = userTrueName;
+    }
+
+    public String getUserStNum() {
+        return userStNum;
+    }
+
+    public void setUserStNum(String userStNum) {
+        this.userStNum = userStNum;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void settGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
 }
