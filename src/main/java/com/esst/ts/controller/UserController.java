@@ -76,6 +76,8 @@ public class UserController {
     public Result userLogin(@RequestParam(value = "userName") String userName,
                             @RequestParam(value = "passWord") String passWord,
                             @RequestParam(value = "type") Integer type,
+                            @RequestParam(value = "ipAddress") String ipAddress,
+                            @RequestParam(value = "macAddress") String macAddress,
                             HttpServletRequest request) throws ParseException {
 
         RequestContext requestContext = new RequestContext(request);
@@ -96,6 +98,8 @@ public class UserController {
                 userLoginLogModel.setCreateTime(DateUtils.stringToDate());
                 userLoginLogModel.setStatus(1);
                 userLoginLogModel.setisAdmin(1);
+                userLoginLogModel.setMacAddress(macAddress);
+                userLoginLogModel.setIpAddress(ipAddress);
                 int j = userService.insert(userLoginLogModel);
                 if (j > 0) {
                     r.setMsg("OK");
@@ -121,6 +125,8 @@ public class UserController {
                 userLoginLogModel.setCreateTime(DateUtils.stringToDate());
                 userLoginLogModel.setStatus(1);
                 userLoginLogModel.setisAdmin(0);
+                userLoginLogModel.setMacAddress(macAddress);
+                userLoginLogModel.setIpAddress(ipAddress);
                 int j = userService.insert(userLoginLogModel);
                 if (j > 0) {
                     r.setMsg("OK");
@@ -174,6 +180,8 @@ public class UserController {
     })
     public Result logOut(@RequestParam(value = "userId") int userId,
                          @RequestParam(value = "token") String token,
+                         @RequestParam(value = "ipAddress") String ipAddress,
+                         @RequestParam(value = "macAddress") String macAddress,
                          HttpServletRequest request) throws ParseException {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
@@ -186,6 +194,8 @@ public class UserController {
             userLoginLogModel.setUserId(userId);
             userLoginLogModel.setCreateTime(DateUtils.stringToDate());
             userLoginLogModel.setStatus(2);
+            userLoginLogModel.setMacAddress(macAddress);
+            userLoginLogModel.setIpAddress(ipAddress);
             if(u.getIsAdmin()==1){
                 //教师
                 userLoginLogModel.setisAdmin(1);

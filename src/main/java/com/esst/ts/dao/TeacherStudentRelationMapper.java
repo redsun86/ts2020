@@ -11,6 +11,8 @@ public interface TeacherStudentRelationMapper {
 
     TeacherStudentRelation selectByPrimaryKey(Integer id);
 
+    TeacherStudentRelation selectByTeacherId(Integer id);
+
     int updateByPrimaryKeySelective(TeacherStudentRelation record);
 
     int updateByPrimaryKey(TeacherStudentRelation record);

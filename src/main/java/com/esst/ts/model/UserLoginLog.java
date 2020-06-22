@@ -13,6 +13,10 @@ public class UserLoginLog {
 
     private Integer isAdmin;
 
+    private String macAddress;
+
+    private String ipAddress;
+
     public Integer getId() {
         return id;
     }
@@ -50,5 +54,21 @@ public class UserLoginLog {
 
     public void setisAdmin(Integer isAdmin) {
         this.isAdmin = isAdmin;
+    }
+
+    public String getMacAddress() {
+        return macAddress;
+    }
+
+    public void setMacAddress(String macAddress) {
+        this.macAddress = macAddress;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 }

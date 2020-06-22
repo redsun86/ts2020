@@ -47,6 +47,12 @@ public interface UserService {
     User getUserLastRecord();
 
     int insert(TeacherStudentRelation record);
+    /**
+     * 根据教师Id获取教师对应的学员信息
+     * @param userId
+     * @return
+     */
+    TeacherStudentRelation getUserByTeacherId(Integer userId);
 
     int insert(UserLoginLog record);
 }

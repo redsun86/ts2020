@@ -57,6 +57,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public TeacherStudentRelation getUserByTeacherId(Integer userId) {
+        return teacherStudentRelationMapper.selectByTeacherId(userId);
+    }
+
+    @Override
     public int insert(UserLoginLog record) {
         return userLoginLogMapper.insert(record);
     }
