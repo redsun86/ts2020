@@ -514,7 +514,7 @@ public class StrategyController {
     public Result releaseExam(
             @RequestParam(value = "token", required = false) String strToken,
             @RequestParam(value = "userId", required = false) String userId,
-            @RequestParam(value = "exameId", required = false) String exameId,
+            @RequestParam(value = "exameIds", required = false) String exameIds,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
@@ -525,14 +525,19 @@ public class StrategyController {
 
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
-        int rowsCount = 0;
         try {
-            rowsCount = ExamService.updateStatus(Integer.valueOf(exameId), 1);
-        } catch (Exception e) {
-        }
-        if (rowsCount > 0) {
+            if (exameIds != null && exameIds != "") {
+                exameIds = exameIds.replaceAll("\\，", "\\,");
+                String[] exameIdlst = exameIds.split("\\,");
+                for (String eId : exameIdlst) {
+                    ExamService.updateStatus(Integer.valueOf(eId), 1);
+                }
+            }
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
+        } catch (Exception e) {
+            //e.printStackTrace();
+            responseDataMap.put("respMsg", e.getMessage());
         }
         r.setData(responseDataMap);
         //</editor-fold>
@@ -551,7 +556,7 @@ public class StrategyController {
     public Result unReleaseExam(
             @RequestParam(value = "token", required = false) String strToken,
             @RequestParam(value = "userId", required = false) String userId,
-            @RequestParam(value = "exameId", required = false) String exameId,
+            @RequestParam(value = "exameIds", required = false) String exameIds,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
@@ -562,14 +567,19 @@ public class StrategyController {
 
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
-        int rowsCount = 0;
         try {
-            rowsCount = ExamService.updateStatus(Integer.valueOf(exameId), 2);
-        } catch (Exception e) {
-        }
-        if (rowsCount > 0) {
+            if (exameIds != null && exameIds != "") {
+                exameIds = exameIds.replaceAll("\\，", "\\,");
+                String[] exameIdlst = exameIds.split("\\,");
+                for (String eId : exameIdlst) {
+                    ExamService.updateStatus(Integer.valueOf(eId), 2);
+                }
+            }
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
+        } catch (Exception e) {
+            //e.printStackTrace();
+            //responseDataMap.put("respMsg", e.getMessage());
         }
         r.setData(responseDataMap);
         //</editor-fold>

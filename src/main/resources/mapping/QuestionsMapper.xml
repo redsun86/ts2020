@@ -25,6 +25,7 @@
         <result column="proportion" property="proportion" jdbcType="INTEGER"/>
         <result column="time_limit" property="timeLimit" jdbcType="INTEGER"/>
         <result column="time_scale" property="timeScale" jdbcType="INTEGER"/>
+        <result column="time_scale_name" property="timeScaleName" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
     id, exame_id, operate_id, trouble_id, style_id, proportion, time_limit

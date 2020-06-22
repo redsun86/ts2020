@@ -19,6 +19,7 @@ public class QuestionsPOJO {
     private Integer proportion;//` int(11) DEFAULT NULL COMMENT '得分所占比重',
     private Integer timeLimit;//` int(11) DEFAULT NULL COMMENT '答题时间限制',
     private Integer timeScale;//运行时标
+    private Integer timeScaleName;//运行时标
 
     public Integer getId() {
         return id;
@@ -130,5 +131,13 @@ public class QuestionsPOJO {
 
     public void setTimeScale(Integer timeScale) {
         this.timeScale = timeScale;
+    }
+
+    public Integer getTimeScaleName() {
+        return timeScaleName;
+    }
+
+    public void setTimeScaleName(Integer timeScaleName) {
+        this.timeScaleName = timeScaleName;
     }
 }
