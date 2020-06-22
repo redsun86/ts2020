@@ -431,8 +431,9 @@ public class StrategyController {
             int allowContinue = 1;
             Exam reqCheckMod = new Exam();
             reqCheckMod.setExamName(reqMod.getExamName());
+            //reqCheckMod.setIsDeleted(0);
             List<ExamPOJO> questLst = ExamService.GetList(reqCheckMod);
-            if (reqMod.getId() == null||reqMod.getId()==0||reqMod.getId()==-1) {
+            if (reqMod.getId() == null || reqMod.getId() == 0 || reqMod.getId() == -1) {
                 allowContinue = questLst.size() == 0 ? 1 : 0;
             } else {
                 for (ExamPOJO mod : questLst) {
@@ -440,7 +441,7 @@ public class StrategyController {
                 }
             }
             if (allowContinue == 0) throw new Exception("试卷名称已存在，请更改后重试");
-            if (reqMod.getId() == null||reqMod.getId()==0||reqMod.getId()==-1) {
+            if (reqMod.getId() == null || reqMod.getId() == 0 || reqMod.getId() == -1) {
                 reqMod.setId(null);
                 Exam respObj = ExamService.getInsertModel(reqMod);
                 responseDataMap.put("reqMod", respObj);
@@ -698,8 +699,13 @@ public class StrategyController {
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
         //List<QuestionsPOJO> questLst = new ArrayList<QuestionsPOJO>();
-        List<QuestionsPOJO> questLst = QuestionsService.GetList(0, Integer.valueOf(exameId));
-        responseDataMap.put("dataList", questLst);
+        try {
+            List<QuestionsPOJO> questLst = QuestionsService.GetList(0, Integer.valueOf(exameId));
+            responseDataMap.put("dataList", questLst);
+        } catch (Exception e) {
+            //e.printStackTrace();
+            responseDataMap.put("respMsg", e.getMessage());
+        }
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
         r.setData(responseDataMap);
@@ -732,7 +738,7 @@ public class StrategyController {
         Map<String, Object> responseDataMap = new HashMap<>();
         int rowsCount = 0;
         try {
-            if (reqMod.getId() == null||reqMod.getId()==0||reqMod.getId()==-1) {
+            if (reqMod.getId() == null || reqMod.getId() == 0 || reqMod.getId() == -1) {
                 reqMod.setId(null);
                 Questions respObj = QuestionsService.getInsertModel(reqMod);
                 responseDataMap.put("reqMod", respObj);
