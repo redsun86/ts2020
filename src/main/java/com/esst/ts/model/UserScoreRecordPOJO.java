@@ -19,6 +19,8 @@ public class UserScoreRecordPOJO {
 
     private Long endTime;
 
+    private String studyDate;
+
     private Long learTime;
 
     private Integer studyType;
@@ -105,6 +107,14 @@ public class UserScoreRecordPOJO {
 
     public void setEndTime(Long endTime) {
         this.endTime = endTime;
+    }
+
+    public String getStudyDate() {
+        return studyDate;
+    }
+
+    public void setStudyDate(String studyDate) {
+        this.studyDate = studyDate;
     }
 
     public Long getLearTime() {

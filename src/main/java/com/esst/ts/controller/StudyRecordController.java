@@ -1,9 +1,11 @@
 package com.esst.ts.controller;
 
 import com.esst.ts.model.*;
+import com.esst.ts.service.FZhKTService;
 import com.esst.ts.service.StudyRecordService;
 import com.esst.ts.service.TaskService;
 import com.esst.ts.service.UserService;
+import com.esst.ts.utils.DateUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 成绩查询模块
@@ -32,15 +36,15 @@ public class StudyRecordController {
     private UserService userService;
 
     @Resource
-    private TaskService taskService;
+    private FZhKTService fzhktService;
 
     /**
      * 成绩查询万年历接口
      */
     @ResponseBody
     @RequestMapping("/selectScore")
-    public Result selectScore(@RequestParam(value = "date") String date,
-                             @RequestParam(value = "token") String token,
+    public Result selectScore(@RequestParam(value = "date",required = true) String date,
+                             @RequestParam(value = "token",required = true) String token,
                              HttpServletRequest request) throws ParseException {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
@@ -114,21 +118,28 @@ public class StudyRecordController {
      */
     @ResponseBody
     @RequestMapping("/selectClassScore")
-    public Result selectClassScore(@RequestParam(value = "begainDate") String begainDate,
+    public Result selectClassScore(@RequestParam(value = "beginDate") String beginDate,
                                    @RequestParam(value = "endDate") String endDate,
                                    @RequestParam(value = "userId") Integer userId,
-                              @RequestParam(value = "token") String token,
+                                   @RequestParam(value = "taskId") Integer taskId,
+                                   @RequestParam(value = "studyType") String studyType,
+                                   @RequestParam(value = "token") String token,
                               HttpServletRequest request) throws ParseException {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
+        String task="";
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
-        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfo(begainDate,endDate,userId);
+        List<taskModel> tasklist = new ArrayList<taskModel>();
+        List<Task> tasklistsql = fzhktService.getTaskListAll();
+        Map<Integer, Task> task_map = tasklistsql.stream().collect(Collectors.toMap(Task::getId, Function.identity(), (key1, key2) -> key2));
+        List<Exam> examList=fzhktService.getExamListAll();
+        Map<Integer,Exam> examMap=examList.stream().collect(Collectors.toMap(Exam::getId, Function.identity(), (key1, key2) -> key2));
+        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfo(beginDate,endDate,userId,studyType,taskId);
         List<UserScoreRecordPOJO> dataList = new ArrayList<UserScoreRecordPOJO>();
         for (UserScoreRecordPOJO newuserScoreRecordPOJO : userScoreRecordPOJO) {
             User u=new User();
-            Task t=new Task();
             //taskService.
             u=userService.getUserById(newuserScoreRecordPOJO.getUserId());
             UserScoreRecordPOJO m = new UserScoreRecordPOJO();
@@ -139,17 +150,59 @@ public class StudyRecordController {
             m.setUserTrueName(u.getRelName());
             m.setUserStNum(u.getStNum());
             m.setTaskId(newuserScoreRecordPOJO.getTaskId());
-            m.setTaskName("任务名称");
             m.setOperateId(newuserScoreRecordPOJO.getOperateId());
             m.setStudyType(newuserScoreRecordPOJO.getStudyType());
             m.setClassName(u.getClassName());
             m.setTotalScore(newuserScoreRecordPOJO.getTotalScore());
+            String beginTime=Long.toString(newuserScoreRecordPOJO.getBeginTime());
+            m.setStudyDate(DateUtils.stampToDate(beginTime));
             m.setLearTime(newuserScoreRecordPOJO.getLearTime());
             m.settGroupName(u.getGroupName());
+            if(newuserScoreRecordPOJO.getStudyType()==0){
+                //任务
+                Task t = task_map.get(newuserScoreRecordPOJO.getTaskId());
+                m.setTaskName(t.getTaskName());
+                int c=0;
+                for(int i=0;i<tasklist.size();i++){
+                    String a=tasklist.get(i).getStudy_type();
+                    String b=tasklist.get(i).getTask_id();
+                    String d=newuserScoreRecordPOJO.getTaskId().toString();
+                    if(tasklist.get(i).getStudy_type()=="0" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJO.getTaskId().toString())){
+                        c++;
+                    }
+                }
+                if(c==0) {
+                    taskModel taskModel = new taskModel();
+                    taskModel.setTask_id(t.getId().toString());
+                    taskModel.setTask_name(t.getTaskName());
+                    taskModel.setStudy_type("0");
+                    tasklist.add(taskModel);
+                }
+            }
+            else if(newuserScoreRecordPOJO.getStudyType()==1){
+                //试卷
+                Exam e=examMap.get(newuserScoreRecordPOJO.getTaskId());
+                m.setTaskName(e.getExamName());
+                int c=0;
+                for(int i=0;i<tasklist.size();i++){
+                    if(tasklist.get(i).getStudy_type()=="1" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJO.getTaskId().toString())){
+                        c++;
+                    }
+                }
+                if(c==0) {
+                    taskModel taskModel = new taskModel();
+                    taskModel.setTask_id(e.getId().toString());
+                    taskModel.setTask_name(e.getExamName());
+                    taskModel.setStudy_type("1");
+                    tasklist.add(taskModel);
+                }
+            }
             dataList.add(m);
         }
         responseDataMap.put("list", dataList);
+        responseDataMap.put("taskList", tasklist);
         r.setData(responseDataMap);
         return r;
     }
 }
+

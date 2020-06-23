@@ -39,8 +39,42 @@ public class StudyRecordImpl implements StudyRecordService {
     }
 
     @Override
-    public List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfo(String beginDate, String endDate, Integer userId) {
-        return userScoreRecordMapper.getUserStudyRecordAndUserInfo(beginDate,endDate,userId);
+    public List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfo(String beginDate, String endDate, Integer userId,String studyType,Integer taskId) {
+        if(studyType==null){
+            if(userId==0){
+                if(taskId==0){
+                    return userScoreRecordMapper.getUserStudyRecordAndUserInfoAll(beginDate, endDate);
+                }
+                else {
+                    return userScoreRecordMapper.getUserStudyRecordAndUserInfo(beginDate, endDate,taskId);
+                }
+            }
+            else{
+                if(taskId==0){
+                    return userScoreRecordMapper.getUserStudyRecordAndUserInfoByUserIdAll(beginDate, endDate, userId);
+                }
+                else {
+                    return userScoreRecordMapper.getUserStudyRecordAndUserInfoBytaskId(beginDate, endDate, userId,taskId);
+                }
+            }
+        }else
+        {
+            if(userId==0){
+                if(taskId==0){
+                    return userScoreRecordMapper.getUserStudyRecordAndUserInfoAlls(beginDate, endDate,studyType);
+                }
+                else {
+                    return userScoreRecordMapper.getUserStudyRecordAndUserInfos(beginDate, endDate,taskId,studyType);
+                }
+            }
+            else{
+                if(taskId==0){
+                    return userScoreRecordMapper.getUserStudyRecordAndUserInfoByUserIdAlls(beginDate, endDate, userId,studyType);
+                }
+                else {
+                    return userScoreRecordMapper.getUserStudyRecordAndUserInfoBytaskIds(beginDate, endDate, userId,taskId,studyType);
+                }
+            }
+        }
     }
-
 }
