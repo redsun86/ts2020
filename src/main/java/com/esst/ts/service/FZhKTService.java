@@ -38,4 +38,6 @@ public interface FZhKTService {
     List<UserToken> getUserLoginByTeacherID(String userId);
 
     int getUserLoginLogCountByTeacherID(String userId);
+
+    void userlivedataTorecord(int userId);
 }

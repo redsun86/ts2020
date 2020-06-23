@@ -43,6 +43,7 @@ public class FZhKTImpl implements FZhKTService {
     private  UserLoginLogMapper userLoginLogMapper;
     @Resource
     private  UserTokenDao userTokenDao;
+    @Resource UserScoreRecordMapper userScoreRecordMapper;
     @Override
     public List<Task> getCourseTaskLst(int courseID) {
         return FZhKTMapper.getCourseTaskLstBytechId(courseID);
@@ -154,6 +155,30 @@ public class FZhKTImpl implements FZhKTService {
     @Override
     public int getUserLoginLogCountByTeacherID(String userId) {
         return userLoginLogMapper.getUserLoginLogCountByTeacherID(userId);
+    }
+
+    @Override
+    public void userlivedataTorecord(int userId) {
+        List<UserLiveDataWithBLOBs> userLiveDataList = userlivedata.getUserlivaByteacherid(userId);
+        //先单条插入，以后改成按list批量的 crq
+        if (userLiveDataList!=null) {
+            for (UserLiveDataWithBLOBs uld : userLiveDataList) {
+                UserScoreRecord usr = new UserScoreRecord();
+                usr.setUserId(uld.getUserId());
+                usr.setTaskId(uld.getTaskId());
+                usr.setOperateId(uld.getOperateId());
+                usr.setScore(uld.getCurrentScore());
+                usr.setTotalScore(uld.getTotalScore());
+                usr.setBeginTime(uld.getStartTime().getTime());
+                usr.setEndTime(uld.getStartTime().getTime() + uld.getStudyDuration().longValue());
+                usr.setStudyType(uld.getStudyType());
+                usr.setMacAddress(uld.getMacAddress());
+                usr.setIpAddress(uld.getIdAddress());
+                userScoreRecordMapper.insert(usr);
+            }
+            userlivedata.deletUserlivaByteacherid(userId);
+            userliveScore.deletUserlivaByteacherid(userId);
+        }
     }
 
     @Override

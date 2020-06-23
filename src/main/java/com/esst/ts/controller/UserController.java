@@ -2,12 +2,10 @@ package com.esst.ts.controller;
 
 import com.esst.ts.constants.Constants;
 import com.esst.ts.model.*;
+import com.esst.ts.service.FZhKTService;
 import com.esst.ts.service.UserService;
 import com.esst.ts.service.UserTokenService;
 import com.esst.ts.utils.*;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -23,7 +21,6 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -40,6 +37,8 @@ public class UserController {
     @Resource
     private UserTokenService userTokenService;
 
+    @Resource
+    private FZhKTService fZhKTService;
     /**
      * 判断当前学员是否在线
      *
@@ -194,6 +193,7 @@ public class UserController {
             if(u.getIsAdmin()==1){
                 //教师
                 userLoginLogModel.setisAdmin(1);
+                fZhKTService.userlivedataTorecord(userId);
             }else
             {
                 userLoginLogModel.setisAdmin(0);
