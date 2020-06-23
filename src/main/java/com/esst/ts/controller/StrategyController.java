@@ -2,6 +2,7 @@ package com.esst.ts.controller;
 
 import com.esst.ts.model.*;
 import com.esst.ts.service.ExamService;
+import com.esst.ts.service.TimescaleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -44,6 +45,8 @@ public class StrategyController {
     private com.esst.ts.service.ExamUserRelationService ExamUserRelationService;
     @Resource
     private com.esst.ts.service.UserTaskRelationService UserTaskRelationService;
+    @Resource
+    private com.esst.ts.service.TimescaleService TimescaleService;
 
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     //</editor-fold>
@@ -214,7 +217,7 @@ public class StrategyController {
         try {
             if (taskIds != null && taskIds != "") {
                 taskIds = taskIds.replaceAll("\\，", "\\,");
-                String[] taskIdlst = taskIds.split("\\，");
+                String[] taskIdlst = taskIds.split("\\,");
                 for (String tId : taskIdlst) {
                     UserTaskRelation reqMode = new UserTaskRelation();
                     reqMode.setUserId(Integer.valueOf(userId));
@@ -649,7 +652,7 @@ public class StrategyController {
             rowsCount = ExamUserRelationService.deleteWithExameId(Integer.valueOf(exameId));
             if (userIds != null && userIds != "") {
                 userIds = userIds.replaceAll("\\，", "\\,");
-                String[] userIdlst = userIds.split("\\，");
+                String[] userIdlst = userIds.split("\\,");
                 for (String uId : userIdlst) {
                     ExamUserRelation reqMode = new ExamUserRelation();
                     reqMode.setExamId(Integer.valueOf(exameId));
@@ -660,7 +663,7 @@ public class StrategyController {
             }
         } catch (Exception e) {
             //            e.printStackTrace();
-            //responseDataMap.put("respMsg", e.getMessage());
+            responseDataMap.put("respMsg", e.getMessage());
         }
         if (rowsCount > 0) {
             r.setMsg(requestContext.getMessage("OK"));
@@ -904,14 +907,7 @@ public class StrategyController {
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
-        List<TimeScalePOJO> techLst = new ArrayList<TimeScalePOJO>();
-        for (int i = 1; i < 3; i++) {
-            TimeScalePOJO mod = new TimeScalePOJO();
-            mod.setId(i);
-            mod.setTimescaleCode(toString().valueOf(i));
-            mod.setTimescaleName(toString().valueOf(i * 100));
-            techLst.add(mod);
-        }
+        List<TimeScalePOJO> techLst = TimescaleService.GetList();
         responseDataMap.put("dataList", techLst);
         r.setData(responseDataMap);
         //</editor-fold>

@@ -100,11 +100,15 @@
         <result column="edit_info" property="editInfo" jdbcType="INTEGER"/>
     </resultMap>
     <select id="GetList" resultMap="BaseResultPOJOMap" parameterType="com.esst.ts.model.Exam">
-        select e.id,e.exam_name,e.`status`,(case e.`status` when 1 then '发布' else '未发布' end) status_name
-        ,e.create_user,ifnull(uc.user_count,0) user_count,e.exam_attribute
-        ,concat((case e.exam_attribute when 1 then '考试' else '联合操作' end),'，','3题','，','60分钟') edit_info
-        from exam e LEFT JOIN (select exam_id,count(distinct user_id) user_count
-        from exam_user_relation group by exam_id) uc on e.id=uc.exam_id
+        select e.id,e.exam_name,e.`status`,e.create_user,ifnull(uc.user_count,0) user_count,e.exam_attribute
+        ,(case e.`status` when 1 then '发布' else '未发布' end) status_name
+        ,concat((case e.exam_attribute when 1 then '考试' else '联合操作' end),'，',ifnull(eq.questionsCount,0),'题'
+        ,(case e.exam_attribute when 1 then CONCAT('，',ifnull(eq.time_limit,0),'分钟') else '，不限时' end)) edit_info
+        from exam e
+        LEFT JOIN (select exam_id,count(distinct user_id) user_count from exam_user_relation group by exam_id) uc
+          on e.id=uc.exam_id
+        LEFT JOIN (select exame_id,count(id) questionsCount,sum(time_limit) time_limit
+          from questions GROUP BY exame_id) eq on eq.exame_id=e.id
         where e.id>0
         <if test="id != null">
             and e.id=#{id,jdbcType=INTEGER}
