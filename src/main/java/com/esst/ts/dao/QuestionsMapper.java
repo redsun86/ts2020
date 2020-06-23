@@ -27,7 +27,7 @@ public interface QuestionsMapper {
     @Update("UPDATE questions SET is_deleted=1 WHERE id=#{id}")
     int deleteWithId(@Param("id") int id);
 
-    @Select("select q.id,e.id exam_id,e.exam_name,t.id technology_id,t.technology_zh_name technology_name" +
+    @Select("select q.id,ifnull(q.question_name,o.operate_name) question_name,e.id exam_id,e.exam_name,t.id technology_id,t.technology_zh_name technology_name" +
             ",o.id operate_id,o.operate_name,tr.id trouble_id,tr.trouble_name,s.id style_id,s.style_name" +
             ",q.proportion,q.time_limit,q.time_scale,q.time_scale time_scale_name from questions q LEFT JOIN exam e on q.exame_id=e.id " +
             "LEFT JOIN operate o ON q.operate_id=o.id LEFT JOIN technology t on t.id=o.technology_id " +

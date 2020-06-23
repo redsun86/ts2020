@@ -12,7 +12,8 @@
     </resultMap>
     <resultMap id="BasePOJOResultMap" type="com.esst.ts.model.QuestionsPOJO">
         <id column="id" property="id" jdbcType="INTEGER"/>
-        <id column="exam_id" property="exameId" jdbcType="INTEGER"/>
+        <result column="question_name" property="QuestionName" jdbcType="VARCHAR"/>
+        <result column="exame_id" property="exameId" jdbcType="INTEGER"/>
         <result column="exam_name" property="exameName" jdbcType="VARCHAR"/>
         <result column="technology_id" property="technologyId" jdbcType="INTEGER"/>
         <result column="technology_name" property="technologyName" jdbcType="VARCHAR"/>

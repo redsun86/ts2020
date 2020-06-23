@@ -6,6 +6,7 @@ package com.esst.ts.model;
  */
 public class QuestionsPOJO {
     private Integer id;//` int(11) NOT NULL AUTO_INCREMENT,
+    private String QuestionName;//试题名称，默认为工况名称,
     private Integer exameId;//` int(11) NOT NULL COMMENT '所属试卷id',
     private String exameName;//` varchar(32) DEFAULT NULL COMMENT '试卷名称',
     private Integer technologyId;//`technology_id` int(11) DEFAULT NULL COMMENT '工况所属的工艺'
@@ -27,6 +28,14 @@ public class QuestionsPOJO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getQuestionName() {
+        return QuestionName;
+    }
+
+    public void setQuestionName(String questionName) {
+        QuestionName = questionName;
     }
 
     public Integer getExameId() {
