@@ -108,7 +108,7 @@
         LEFT JOIN (select exam_id,count(distinct user_id) user_count from exam_user_relation group by exam_id) uc
           on e.id=uc.exam_id
         LEFT JOIN (select exame_id,count(id) questionsCount,sum(time_limit) time_limit
-          from questions GROUP BY exame_id) eq on eq.exame_id=e.id
+          from questions where is_deleted=0 GROUP BY exame_id) eq on eq.exame_id=e.id
         where e.id>0
         <if test="id != null">
             and e.id=#{id,jdbcType=INTEGER}
