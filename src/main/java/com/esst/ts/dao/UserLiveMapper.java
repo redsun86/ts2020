@@ -2,6 +2,7 @@ package com.esst.ts.dao;
 
 import com.esst.ts.model.UserLive;
 import com.esst.ts.model.UserLiveWithBLOBs;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
@@ -41,4 +42,7 @@ public interface UserLiveMapper {
     @Select("SELECT u.* FROM user_live u LEFT JOIN teacher_student_relation t ON u.user_id=t.student_id WHERE t.teacher_id=#{teacherId}")
     @ResultMap("ResultMapWithBLOBs")
     List<UserLiveWithBLOBs> getUserLiveByTeacherId(@Param("teacherId") String userId);
+
+    @Delete("delete from user_live where user_id in (select student_id from teacher_student_relation WHERE teacher_id=#{userId})")
+    int deletUserlivaByteacherid(@Param("userId") int userId);
 }
