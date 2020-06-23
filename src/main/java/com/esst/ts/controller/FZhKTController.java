@@ -109,8 +109,9 @@ public class FZhKTController {
                 } else if (study_type.equals("0")) {
                     if (uld.getTaskId().toString().equals(templateId)) {
                         t = task_map.get(uld.getTaskId());
-                    } else
+                    } else {
                         continue;
+                    }
                 } else {
                     continue;
                 }
@@ -131,16 +132,13 @@ public class FZhKTController {
                 taskModel.setStudy_type(uld.getStudyType().toString());
                 tasklist.add(taskModel);
                 if (StringUtil.isEmpty(study_type) || StringUtil.isEmpty(templateId)) {
-                    exam=examMap.get(uld.getTaskId());
-                }
-                else if (study_type.equals("1")) {
+                    exam = examMap.get(uld.getTaskId());
+                } else if (study_type.equals("1")) {
                     if (uld.getTaskId().toString().equals(templateId)) {
                         exam = examList.get(uld.getTaskId());
-                    }
-                    else
+                    } else
                         continue;
-                }
-                else
+                } else
                     continue;
 //                if (study_type.equals("1") && uld.getTaskId().toString().equals(templateId)) {
 //                    exam = examMap.get(uld.getTaskId());
