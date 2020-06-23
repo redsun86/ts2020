@@ -2,6 +2,7 @@ package com.esst.ts.controller;
 
 import com.esst.ts.model.*;
 import com.esst.ts.service.FZhKTService;
+import com.github.pagehelper.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -97,16 +98,19 @@ public class FZhKTController {
             //<editor-fold desc="任务单类型">
             if (uld.getStudyType() == 0) {
                 Task t = new Task();
-                Task tlist=task_map.get(uld.getTaskId());
+                Task tlist = task_map.get(uld.getTaskId());
                 taskModel taskModel = new taskModel();
                 taskModel.setTask_id(tlist.getId().toString());
                 taskModel.setTask_name(tlist.getTaskName());
                 taskModel.setStudy_type(uld.getStudyType().toString());
                 tasklist.add(taskModel);
-                if (study_type.equals("0") && uld.getTaskId().toString().equals(templateId)) {
+                if (StringUtil.isEmpty(study_type) || StringUtil.isEmpty(templateId)) {
                     t = task_map.get(uld.getTaskId());
-                } else if (study_type.equals("")) {
-                    t = task_map.get(uld.getTaskId());
+                } else if (study_type.equals("0")) {
+                    if (uld.getTaskId().toString().equals(templateId)) {
+                        t = task_map.get(uld.getTaskId());
+                    } else
+                        continue;
                 } else {
                     continue;
                 }
@@ -120,19 +124,31 @@ public class FZhKTController {
             //</editor-fold>
             else if (uld.getStudyType() == 1) {
                 Exam exam = new Exam();
-                Exam examlist=examMap.get(uld.getTaskId());
+                Exam examlist = examMap.get(uld.getTaskId());
                 taskModel taskModel = new taskModel();
                 taskModel.setTask_id(examlist.getId().toString());
                 taskModel.setTask_name(examlist.getExamName());
                 taskModel.setStudy_type(uld.getStudyType().toString());
                 tasklist.add(taskModel);
-                if (study_type.equals("1") && uld.getTaskId().toString().equals(templateId)) {
-                    exam = examMap.get(uld.getTaskId());
-                } else if (study_type.equals("")) {
-                    exam = examMap.get(uld.getTaskId());
-                } else {
-                    continue;
+                if (StringUtil.isEmpty(study_type) || StringUtil.isEmpty(templateId)) {
+                    exam=examMap.get(uld.getTaskId());
                 }
+                else if (study_type.equals("1")) {
+                    if (uld.getTaskId().toString().equals(templateId)) {
+                        exam = examList.get(uld.getTaskId());
+                    }
+                    else
+                        continue;
+                }
+                else
+                    continue;
+//                if (study_type.equals("1") && uld.getTaskId().toString().equals(templateId)) {
+//                    exam = examMap.get(uld.getTaskId());
+//                } else if (study_type.equals("")) {
+//                    exam = examMap.get(uld.getTaskId());
+//                } else {
+//                    continue;
+//                }
                 _score.setTemplate_id(exam.getId().toString());
                 _score.setTemplate_name(exam.getExamName());
                 Questions questions = questionsMap.get(uld.getTaskId());
