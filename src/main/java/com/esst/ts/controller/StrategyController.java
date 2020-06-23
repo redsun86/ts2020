@@ -661,15 +661,11 @@ public class StrategyController {
                 }
                 //responseDataMap.put("userIdlst", userIdlst);
             }
+            r.setMsg(requestContext.getMessage("OK"));
+            r.setCode(Result.SUCCESS);
         } catch (Exception e) {
             //            e.printStackTrace();
             responseDataMap.put("respMsg", e.getMessage());
-        }
-        if (rowsCount > 0) {
-            r.setMsg(requestContext.getMessage("OK"));
-            r.setCode(Result.SUCCESS);
-            //responseDataMap.put("token", strToken);
-            //responseDataMap.put("respMsg", "执行成功");
         }
         //responseDataMap.put("requestModel", userIds);
         r.setData(responseDataMap);
