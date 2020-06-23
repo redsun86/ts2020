@@ -76,8 +76,8 @@ public class UserController {
     public Result userLogin(@RequestParam(value = "userName") String userName,
                             @RequestParam(value = "passWord") String passWord,
                             @RequestParam(value = "type") Integer type,
-                            @RequestParam(value = "ipAddress") String ipAddress,
-                            @RequestParam(value = "macAddress") String macAddress,
+                            @RequestParam(value = "ipAddress",required = false) String ipAddress,
+                            @RequestParam(value = "macAddress",required = false) String macAddress,
                             HttpServletRequest request) throws ParseException {
 
         RequestContext requestContext = new RequestContext(request);
@@ -173,15 +173,10 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping("/logOut")
-    @ApiOperation(value = "登出接口", httpMethod = "POST", response = Result.class, notes = "登出接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "用户id", required = true, dataType = "int"),
-            @ApiImplicitParam(name = "token", value = "用户token", required = true, dataType = "String"),
-    })
     public Result logOut(@RequestParam(value = "userId") int userId,
                          @RequestParam(value = "token") String token,
-                         @RequestParam(value = "ipAddress") String ipAddress,
-                         @RequestParam(value = "macAddress") String macAddress,
+                         @RequestParam(value = "ipAddress",required = false) String ipAddress,
+                         @RequestParam(value = "macAddress",required = false) String macAddress,
                          HttpServletRequest request) throws ParseException {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
