@@ -27,7 +27,7 @@ public interface OperateMapper {
 
     @Select("select t.id,t.technology_id technologyId,t.operate_code operateCode,t.operate_name operateName" +
             ",ifnull(tor.task_id,0) taskId from operate t " +
-            "LEFT JOIN task_oper_relation tor ON t.id=tor.operate_id where t.id>0")
+            "LEFT JOIN task_oper_relation tor ON t.id=tor.operate_id where LENGTH(t.operate_name)>0")
     List<TechnologyTaskOperatePOJO> GetPojoAllList();
 
     @Select("select t.id,t.technology_id technologyId,t.operate_code operateCode,t.operate_name operateName " +
