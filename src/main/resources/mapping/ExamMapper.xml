@@ -97,11 +97,12 @@
         <result column="create_user" property="createUser" jdbcType="INTEGER"/>
         <result column="user_count" property="userCount" jdbcType="INTEGER"/>
         <result column="exam_attribute" property="examAttribute" jdbcType="INTEGER"/>
+        <result column="questions_count" property="questionsCount" jdbcType="INTEGER"/>
         <result column="edit_info" property="editInfo" jdbcType="INTEGER"/>
     </resultMap>
     <select id="GetList" resultMap="BaseResultPOJOMap" parameterType="com.esst.ts.model.Exam">
         select e.id,e.exam_name,e.`status`,e.create_user,ifnull(uc.user_count,0) user_count,e.exam_attribute
-        ,(case e.`status` when 1 then '发布' else '未发布' end) status_name
+        ,(case e.`status` when 1 then '发布' else '未发布' end) status_name,ifnull(eq.questionsCount,0) questionsCount
         ,concat((case e.exam_attribute when 1 then '考试' else '联合操作' end),'，',ifnull(eq.questionsCount,0),'题'
         ,(case e.exam_attribute when 1 then CONCAT('，',ifnull(eq.time_limit,0),'分钟') else '，不限时' end)) edit_info
         from exam e

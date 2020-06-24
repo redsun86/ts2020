@@ -12,6 +12,7 @@ public class ExamPOJO {
     private Integer createUser;//` int(11) NOT NULL COMMENT '试卷创建者的userid',
     private Integer userCount;//学员人数
     private Integer examAttribute;
+    private Integer questionsCount;//试题数量
     private String editInfo;
 
     public Integer getId() {
@@ -68,6 +69,14 @@ public class ExamPOJO {
 
     public void setExamAttribute(Integer examAttribute) {
         this.examAttribute = examAttribute;
+    }
+
+    public Integer getQuestionsCount() {
+        return questionsCount;
+    }
+
+    public void setQuestionsCount(Integer questionsCount) {
+        this.questionsCount = questionsCount;
     }
 
     public String getEditInfo() {

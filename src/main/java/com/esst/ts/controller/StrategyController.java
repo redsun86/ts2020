@@ -393,8 +393,14 @@ public class StrategyController {
             Exam reqMod = new Exam();
             reqMod.setIsDeleted(0);
             reqMod.setExamName(examName);
-            List<ExamPOJO> questLst = ExamService.GetList(reqMod);
-            responseDataMap.put("dataList", questLst);
+            List<ExamPOJO> examsLst = ExamService.GetList(reqMod);
+            responseDataMap.put("dataList", examsLst);
+            int questionsCount=0;
+            for(ExamPOJO mod : examsLst){
+                questionsCount+=Integer.valueOf(mod.getQuestionsCount());
+            }
+            responseDataMap.put("examsCount", examsLst.size());
+            responseDataMap.put("questionsCount", questionsCount);
         } catch (Exception e) {
             responseDataMap.put("respMsg", e.getMessage());
         }
