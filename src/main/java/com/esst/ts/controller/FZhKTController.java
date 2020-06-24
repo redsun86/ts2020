@@ -93,7 +93,7 @@ public class FZhKTController {
             _score.setUser_name(user.getRelName());
             _score.setScore(uld.getCurrentScore().toString());
             _score.setTotal_score(uld.getTotalScore().toString());
-            _score.setLearning_time(uld.getStudyDuration().toString());
+            _score.setLearning_time(String.valueOf(uld.getStudyDuration()/1000));
             _score.setStudy_type(uld.getStudyType());
             //<editor-fold desc="任务单类型">
             if (uld.getStudyType() == 0) {
@@ -117,7 +117,7 @@ public class FZhKTController {
                 }
                 _score.setTemplate_id(t.getId().toString());
                 _score.setTemplate_name(t.getTaskName());
-                Operate operate = operate_map.get(uld.getTaskId());
+                Operate operate = operate_map.get(uld.getOperateId());
                 _score.setTask_id(operate.getId().toString());
                 _score.setTask_name(operate.getOperateName());
 
@@ -149,7 +149,7 @@ public class FZhKTController {
 //                }
                 _score.setTemplate_id(exam.getId().toString());
                 _score.setTemplate_name(exam.getExamName());
-                Questions questions = questionsMap.get(uld.getTaskId());
+                Questions questions = questionsMap.get(uld.getOperateId());
                 _score.setTask_id(questions.getId().toString());
                 _score.setTask_name(operate_map.get(questions.getOperateId()).getOperateName());
 
