@@ -135,7 +135,7 @@ public class FZhKTController {
                     exam = examMap.get(uld.getTaskId());
                 } else if (study_type.equals("1")) {
                     if (uld.getTaskId().toString().equals(templateId)) {
-                        exam = examList.get(uld.getTaskId());
+                        exam = examMap.get(uld.getTaskId());
                     } else
                         continue;
                 } else
