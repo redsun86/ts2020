@@ -164,11 +164,14 @@ public class StudyRecordController {
                 //根据分组的operateid查询最大的成绩
                 List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
                 score+=maxscore.get(0).getScore();
-                leartime+=maxscore.get(0).getEndTime()-maxscore.get(0).getBeginTime();
             }
             m.setScore(score);
-            m.setLearTime(leartime);
-
+            //根据用户id和日期和任务单id进行查询对应的任务
+            List<UserScoreRecordPOJO> learnTime=studyRecordService.getLearnTime(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
+            for (UserScoreRecordPOJO learnTimes : learnTime) {
+                leartime+=learnTimes.getEndTime()-learnTimes.getBeginTime();
+            }
+            m.setLearTime(leartime/1000);
             m.settGroupName(u.getGroupName());
             if(newuserScoreRecordPOJO.getStudyType()==0){
                 //任务
@@ -222,13 +225,13 @@ public class StudyRecordController {
      */
     @ResponseBody
     @RequestMapping("/classScoreExcel")
-    public void classScoreExcel(@RequestParam(value = "beginDate") String beginDate,
+    public ResponseEntity<byte[]> classScoreExcel(@RequestParam(value = "beginDate") String beginDate,
                                 @RequestParam(value = "endDate") String endDate,
                                 @RequestParam(value = "userId") Integer userId,
                                 @RequestParam(value = "taskId") Integer taskId,
                                 @RequestParam(value = "studyType") String studyType,
                                 @RequestParam(value = "token") String token,
-                                HttpServletRequest request, HttpServletResponse response) throws ParseException {
+                                HttpServletRequest request) throws ParseException {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
         r.setMsg(requestContext.getMessage("OK"));
@@ -266,10 +269,14 @@ public class StudyRecordController {
                 //根据分组的operateid查询最大的成绩
                 List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
                 score+=maxscore.get(0).getScore();
-                leartime+=maxscore.get(0).getEndTime()-maxscore.get(0).getBeginTime();
             }
             m.setScore(score);
-            m.setLearTime(leartime);
+            //根据用户id和日期和任务单id进行查询对应的任务
+            List<UserScoreRecordPOJO> learnTime=studyRecordService.getLearnTime(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
+            for (UserScoreRecordPOJO learnTimes : learnTime) {
+                leartime+=learnTimes.getEndTime()-learnTimes.getBeginTime();
+            }
+            m.setLearTime(leartime/1000);
 
             m.settGroupName(u.getGroupName());
             if(newuserScoreRecordPOJO.getStudyType()==0){
@@ -284,7 +291,52 @@ public class StudyRecordController {
             }
             dataList.add(m);
         }
-        ExcelUtils.exportEmp(dataList,response);
+        return ExcelUtils.exportEmp(dataList);
+    }
+
+    /**
+     * 班级成绩查询详细成绩接口
+     */
+    @ResponseBody
+    @RequestMapping("/selectClassScoreDetail")
+    public Result selectClassScoreDetail(@RequestParam(value = "date") String date,
+                                   @RequestParam(value = "userId") Integer userId,
+                                   @RequestParam(value = "taskId") Integer taskId,
+                                   @RequestParam(value = "token") String token,
+                                   HttpServletRequest request) throws ParseException {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        r.setMsg(requestContext.getMessage("OK"));
+        r.setCode(Result.SUCCESS);
+        Map<String, Object> responseDataMap = new HashMap<>();
+        List<Operate> operatelistsql = fzhktService.getOprateList();
+        List<Questions> questionlistsql = fzhktService.getQuestionListAll();
+        Map<Integer, Operate> operate_map = operatelistsql.stream().collect(Collectors.toMap(Operate::getId, Function.identity(), (key1, key2) -> key2));
+        Map<Integer, Questions> questions_map = questionlistsql.stream().collect(Collectors.toMap(Questions::getId, Function.identity(), (key1, key2) -> key2));
+        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordDetail(date,userId,taskId);
+        List<UserScoreRecordPOJO> dataList = new ArrayList<UserScoreRecordPOJO>();
+        for (UserScoreRecordPOJO newuserScoreRecordPOJO : userScoreRecordPOJO) {
+            UserScoreRecordPOJO m = new UserScoreRecordPOJO();
+            m.setId(newuserScoreRecordPOJO.getId());
+            m.setStudyDate(newuserScoreRecordPOJO.getStudyDate());
+            m.setStudyType(newuserScoreRecordPOJO.getStudyType());
+            if(newuserScoreRecordPOJO.getStudyType()==0) {
+                Operate t = operate_map.get(newuserScoreRecordPOJO.getOperateId());
+                m.setTaskName(t.getOperateName());
+            }
+            else if(newuserScoreRecordPOJO.getStudyType()==1){
+                Questions q = questions_map.get(newuserScoreRecordPOJO.getOperateId());
+                Operate t = operate_map.get(q.getOperateId());
+                m.setTaskName(t.getOperateName());
+            }
+
+            m.setLearTime(newuserScoreRecordPOJO.getLearTime());
+            m.setTotalScore(newuserScoreRecordPOJO.getTotalScore());
+            dataList.add(m);
+        }
+        responseDataMap.put("list", dataList);
+        r.setData(responseDataMap);
+        return r;
     }
 }
 

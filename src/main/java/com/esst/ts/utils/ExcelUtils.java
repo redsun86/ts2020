@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -76,7 +74,7 @@ public class ExcelUtils {
         }
     }
 
-    public static void exportEmp(List<UserScoreRecordPOJO> employeeList, HttpServletResponse response) {
+    public static ResponseEntity<byte[]> exportEmp(List<UserScoreRecordPOJO> employeeList) {
         //1.创建一个excel文档
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
         //2.创建文档摘要
@@ -84,7 +82,7 @@ public class ExcelUtils {
         //3.获取并配置文档摘要信息
         DocumentSummaryInformation docInfo = hssfWorkbook.getDocumentSummaryInformation();
         //文档类别
-        docInfo.setCategory("XXX信息");
+        docInfo.setCategory("信息");
         //文档管理员
         docInfo.setManager("esst");
         //文档所属公司
@@ -102,9 +100,6 @@ public class ExcelUtils {
         //5.创建样式
         //创建标题行的样式
         HSSFCellStyle headerStyle = hssfWorkbook.createCellStyle();
-//        HSSFFont font = hssfWorkbook.createFont();
-//        font.setBoldweight(1);
-//        headerStyle.setFont(font);
         //设置该样式的图案颜色为黄色
         headerStyle.setFillForegroundColor(IndexedColors.YELLOW.index);
         //设置图案填充的样式
@@ -113,7 +108,7 @@ public class ExcelUtils {
         HSSFCellStyle dateCellStyle = hssfWorkbook.createCellStyle();
         //这里的m/d/yy 相当于yyyy-MM-dd
         //dateCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
-        HSSFSheet sheet = hssfWorkbook.createSheet("班级信息");
+        HSSFSheet sheet = hssfWorkbook.createSheet("班级成绩");
         //设置每一列的宽度
         sheet.setColumnWidth(0,25*256);
         sheet.setColumnWidth(1,25*256);
@@ -181,26 +176,19 @@ public class ExcelUtils {
             }
             row.createCell(9).setCellValue(employee.getGroupName());
         }
-        //ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
         HttpHeaders headers = new HttpHeaders();
         try {
             //将数据表这几个中文的字转码 防止导出后乱码
-            //headers.setContentDispositionFormData("attachment",
-                    //new String("20200623.xls".getBytes("UTF-8"),"ISO-8859-1"));
-            //headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            //hssfWorkbook.write(stream);
-            //清空response
-            response.reset();
-            //设置response的Header
-            response.addHeader("Content-Disposition", "attachment;filename=" +"20200623.xls");
-            OutputStream os = new BufferedOutputStream(response.getOutputStream());
-            response.setContentType("application/vnd.ms-excel;charset=gb2312");
-            //将excel写入到输出流中
-            hssfWorkbook.write(os);
-            os.flush();
-            os.close();
+            Date date=new Date();
+            String fileName=DateUtils.parseDate(date)+".xls";
+            headers.setContentDispositionFormData("attachment",
+                    new String(fileName.getBytes("UTF-8"),"ISO-8859-1"));
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            hssfWorkbook.write(stream);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return new ResponseEntity<byte[]>(stream.toByteArray(),headers, HttpStatus.CREATED);
     }
 }

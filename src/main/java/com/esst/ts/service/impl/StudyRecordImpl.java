@@ -87,4 +87,14 @@ public class StudyRecordImpl implements StudyRecordService {
     public List<UserScoreRecordPOJO> getmaxscore(String beginDate, Integer userId, Integer taskId, Integer operateId) {
         return userScoreRecordMapper.getmaxscore(beginDate, userId, taskId,operateId);
     }
+
+    @Override
+    public List<UserScoreRecordPOJO> getLearnTime(String beginDate, Integer userId, Integer taskId) {
+        return userScoreRecordMapper.getLearnTime(beginDate, userId, taskId);
+    }
+
+    @Override
+    public List<UserScoreRecordPOJO> getUserStudyRecordDetail(String date, Integer userId, Integer taskId) {
+        return userScoreRecordMapper.getUserStudyRecordDetail(date, userId, taskId);
+    }
 }
