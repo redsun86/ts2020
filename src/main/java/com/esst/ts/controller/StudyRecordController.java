@@ -9,6 +9,7 @@ import com.esst.ts.utils.ExcelUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.RequestContext;
@@ -44,7 +45,7 @@ public class StudyRecordController {
      * 成绩查询万年历接口
      */
     @ResponseBody
-    @RequestMapping("/selectScore")
+    @RequestMapping(value = "/selectScore", method = RequestMethod.POST)
     public Result selectScore(@RequestParam(value = "date",required = true) String date,
                              @RequestParam(value = "token",required = true) String token,
                              HttpServletRequest request) throws ParseException {
