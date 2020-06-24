@@ -182,6 +182,27 @@ public class FZhKTImpl implements FZhKTService {
     }
 
     @Override
+    public double getTaskTotal_score(UserLiveWithBLOBs ul) {
+        //如果uld正在做
+        double totalscore=0;
+        if(ul.getScoreStatues()!=2)
+        {
+            double maxscore=FZhKTMapper.getOperteMaxScore(ul);
+            if (maxscore==-1||ul.getCurrentScore()>maxscore){
+                totalscore=FZhKTMapper.getTotalcoreWhithooutUserLive(ul)+ul.getCurrentScore();
+            }
+            else {
+                totalscore=FZhKTMapper.getTotalcoreByUserLive(ul);
+            }
+        }
+        //如果已经做完
+        else {
+            totalscore=FZhKTMapper.getTotalcoreByUserLive(ul);
+        }
+        return totalscore;
+    }
+
+    @Override
     public List<scoreModel> getscoreModelList(String user_id, String template_id) {
         return FZhKTMapper.getscoreModelList(user_id,template_id);
     }

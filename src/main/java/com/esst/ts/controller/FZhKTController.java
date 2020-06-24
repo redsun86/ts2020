@@ -92,8 +92,11 @@ public class FZhKTController {
             _score.setStudent_num(user.getStNum());
             _score.setUser_name(user.getRelName());
             _score.setScore(uld.getCurrentScore().toString());
-            _score.setTotal_score(uld.getTotalScore().toString());
-            _score.setLearning_time(String.valueOf(uld.getStudyDuration()/1000));
+            //_score.setTotal_score(uld.getTotalScore().toString());
+            double totlscore = fzhktService.getTaskTotal_score(uld);
+            _score.setTotal_score(String.valueOf(totlscore));
+
+            _score.setLearning_time(String.valueOf(uld.getStudyDuration() / 1000));
             _score.setStudy_type(uld.getStudyType());
             //<editor-fold desc="任务单类型">
             if (uld.getStudyType() == 0) {

@@ -40,4 +40,6 @@ public interface FZhKTService {
     int getUserLoginLogCountByTeacherID(String userId);
 
     void userlivedataTorecord(int userId);
+
+    double getTaskTotal_score(UserLiveWithBLOBs uld);
 }
