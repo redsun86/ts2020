@@ -70,7 +70,9 @@ public class StudyRecordController {
             int s=0;
             int c=0;
             UserLoginLogLists l=new UserLoginLogLists();
-            List<UserLoginLog> userLoginLogListForUserId=studyRecordService.getUserloginLogForDate(userLoginLogList.get(i).getNewcreatetime(),userLoginLogList.get(i).getNewcreatetime());
+            String beginDates=userLoginLogList.get(i).getNewcreatetime()+" 00:00:00";
+            String endDates=userLoginLogList.get(i).getNewcreatetime()+" 23:59:59";
+            List<UserLoginLog> userLoginLogListForUserId=studyRecordService.getUserloginLogForDate(beginDates,endDates);
             if(userLoginLogListForUserId.size()>0){
                 List<UserLoginLogListitem> listitems = new ArrayList<UserLoginLogListitem>();
                 for (int j=0;j<userLoginLogListForUserId.size();j++) {
