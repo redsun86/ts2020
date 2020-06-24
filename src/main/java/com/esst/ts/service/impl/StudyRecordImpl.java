@@ -40,7 +40,7 @@ public class StudyRecordImpl implements StudyRecordService {
 
     @Override
     public List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfo(String beginDate, String endDate, Integer userId,String studyType,Integer taskId) {
-        if(studyType==null){
+        if(studyType== null || studyType.length() == 0){
             if(userId==0){
                 if(taskId==0){
                     return userScoreRecordMapper.getUserStudyRecordAndUserInfoAll(beginDate, endDate);

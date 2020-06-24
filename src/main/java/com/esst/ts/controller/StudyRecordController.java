@@ -178,7 +178,11 @@ public class StudyRecordController {
             if(newuserScoreRecordPOJO.getStudyType()==0){
                 //任务
                 Task t = task_map.get(newuserScoreRecordPOJO.getTaskId());
-                m.setTaskName(t.getTaskName());
+                if(t==null) {
+                    m.setTaskName("");
+                }else{
+                    m.setTaskName(t.getTaskName());
+                }
                 int c=0;
                 for(int i=0;i<tasklist.size();i++){
                     String a=tasklist.get(i).getStudy_type();
@@ -199,7 +203,12 @@ public class StudyRecordController {
             else if(newuserScoreRecordPOJO.getStudyType()==1){
                 //试卷
                 Exam e=examMap.get(newuserScoreRecordPOJO.getTaskId());
-                m.setTaskName(e.getExamName());
+                if(e==null){
+                    m.setTaskName("");
+                }
+                else {
+                    m.setTaskName(e.getExamName());
+                }
                 int c=0;
                 for(int i=0;i<tasklist.size();i++){
                     if(tasklist.get(i).getStudy_type()=="1" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJO.getTaskId().toString())){
@@ -284,12 +293,23 @@ public class StudyRecordController {
             if(newuserScoreRecordPOJO.getStudyType()==0){
                 //任务
                 Task t = task_map.get(newuserScoreRecordPOJO.getTaskId());
-                m.setTaskName(t.getTaskName());
+                if(t==null)
+                {
+                    m.setTaskName("");
+                }
+                else {
+                    m.setTaskName(t.getTaskName());
+                }
             }
             else if(newuserScoreRecordPOJO.getStudyType()==1){
                 //试卷
                 Exam e=examMap.get(newuserScoreRecordPOJO.getTaskId());
-                m.setTaskName(e.getExamName());
+                if(e==null) {
+                    m.setTaskName(e.getExamName());
+                }
+                else{
+                    m.setTaskName("");
+                }
             }
             dataList.add(m);
         }
