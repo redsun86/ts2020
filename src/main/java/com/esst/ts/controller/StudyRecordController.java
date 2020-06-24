@@ -3,9 +3,10 @@ package com.esst.ts.controller;
 import com.esst.ts.model.*;
 import com.esst.ts.service.FZhKTService;
 import com.esst.ts.service.StudyRecordService;
-import com.esst.ts.service.TaskService;
 import com.esst.ts.service.UserService;
 import com.esst.ts.utils.DateUtils;
+import com.esst.ts.utils.ExcelUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.support.RequestContext;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -127,7 +129,6 @@ public class StudyRecordController {
                               HttpServletRequest request) throws ParseException {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
-        String task="";
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
@@ -153,10 +154,21 @@ public class StudyRecordController {
             m.setOperateId(newuserScoreRecordPOJO.getOperateId());
             m.setStudyType(newuserScoreRecordPOJO.getStudyType());
             m.setClassName(u.getClassName());
-            m.setTotalScore(newuserScoreRecordPOJO.getTotalScore());
             String beginTime=Long.toString(newuserScoreRecordPOJO.getBeginTime());
-            m.setStudyDate(DateUtils.stampToDate(beginTime));
-            m.setLearTime(newuserScoreRecordPOJO.getLearTime());
+            m.setStudyDate(DateUtils.stampToDates(beginTime));
+            double score=0;
+            long leartime=0;
+            //根据用户id和日期和任务单id进行分组查询对应的任务
+            List<UserScoreRecordPOJO> operateid=studyRecordService.getoperateid(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
+            for (UserScoreRecordPOJO operateidlist : operateid) {
+                //根据分组的operateid查询最大的成绩
+                List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
+                score+=maxscore.get(0).getScore();
+                leartime+=maxscore.get(0).getEndTime()-maxscore.get(0).getBeginTime();
+            }
+            m.setScore(score);
+            m.setLearTime(leartime);
+
             m.settGroupName(u.getGroupName());
             if(newuserScoreRecordPOJO.getStudyType()==0){
                 //任务
@@ -203,6 +215,76 @@ public class StudyRecordController {
         responseDataMap.put("taskList", tasklist);
         r.setData(responseDataMap);
         return r;
+    }
+
+    /**
+     * 班级成绩查询导出Excel接口
+     */
+    @ResponseBody
+    @RequestMapping("/classScoreExcel")
+    public void classScoreExcel(@RequestParam(value = "beginDate") String beginDate,
+                                @RequestParam(value = "endDate") String endDate,
+                                @RequestParam(value = "userId") Integer userId,
+                                @RequestParam(value = "taskId") Integer taskId,
+                                @RequestParam(value = "studyType") String studyType,
+                                @RequestParam(value = "token") String token,
+                                HttpServletRequest request, HttpServletResponse response) throws ParseException {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        r.setMsg(requestContext.getMessage("OK"));
+        r.setCode(Result.SUCCESS);
+        Map<String, Object> responseDataMap = new HashMap<>();
+        List<taskModel> tasklist = new ArrayList<taskModel>();
+        List<Task> tasklistsql = fzhktService.getTaskListAll();
+        Map<Integer, Task> task_map = tasklistsql.stream().collect(Collectors.toMap(Task::getId, Function.identity(), (key1, key2) -> key2));
+        List<Exam> examList=fzhktService.getExamListAll();
+        Map<Integer,Exam> examMap=examList.stream().collect(Collectors.toMap(Exam::getId, Function.identity(), (key1, key2) -> key2));
+        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfo(beginDate,endDate,userId,studyType,taskId);
+        List<UserScoreRecordPOJO> dataList = new ArrayList<UserScoreRecordPOJO>();
+        for (UserScoreRecordPOJO newuserScoreRecordPOJO : userScoreRecordPOJO) {
+            User u=new User();
+            u=userService.getUserById(newuserScoreRecordPOJO.getUserId());
+            UserScoreRecordPOJO m = new UserScoreRecordPOJO();
+            m.setId(newuserScoreRecordPOJO.getId());
+            m.setMacAddress(newuserScoreRecordPOJO.getMacAddress());
+            m.setIpAddress(newuserScoreRecordPOJO.getIpAddress());
+            m.setUserId(newuserScoreRecordPOJO.getUserId());
+            m.setUserTrueName(u.getRelName());
+            m.setUserStNum(u.getStNum());
+            m.setTaskId(newuserScoreRecordPOJO.getTaskId());
+            m.setOperateId(newuserScoreRecordPOJO.getOperateId());
+            m.setStudyType(newuserScoreRecordPOJO.getStudyType());
+            m.setClassName(u.getClassName());
+            String beginTime=Long.toString(newuserScoreRecordPOJO.getBeginTime());
+            m.setStudyDate(DateUtils.stampToDate(beginTime));
+
+            double score=0;
+            long leartime=0;
+            //根据用户id和日期和任务单id进行分组查询对应的任务
+            List<UserScoreRecordPOJO> operateid=studyRecordService.getoperateid(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
+            for (UserScoreRecordPOJO operateidlist : operateid) {
+                //根据分组的operateid查询最大的成绩
+                List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
+                score+=maxscore.get(0).getScore();
+                leartime+=maxscore.get(0).getEndTime()-maxscore.get(0).getBeginTime();
+            }
+            m.setScore(score);
+            m.setLearTime(leartime);
+
+            m.settGroupName(u.getGroupName());
+            if(newuserScoreRecordPOJO.getStudyType()==0){
+                //任务
+                Task t = task_map.get(newuserScoreRecordPOJO.getTaskId());
+                m.setTaskName(t.getTaskName());
+            }
+            else if(newuserScoreRecordPOJO.getStudyType()==1){
+                //试卷
+                Exam e=examMap.get(newuserScoreRecordPOJO.getTaskId());
+                m.setTaskName(e.getExamName());
+            }
+            dataList.add(m);
+        }
+        ExcelUtils.exportEmp(dataList,response);
     }
 }
 

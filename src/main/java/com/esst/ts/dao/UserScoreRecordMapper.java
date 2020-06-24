@@ -58,5 +58,14 @@ public interface UserScoreRecordMapper {
     @Select("SELECT r.*,r.end_time-r.begin_time as lear_time,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') >=#{beginDate} AND FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') <= #{endDate} AND r.user_id IN (SELECT student_id FROM teacher_student_relation WHERE teacher_id =#{userId}) AND r.task_id=#{taskId} AND r.study_type=#{studyType} GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id ORDER BY total_score,begin_time DESC")
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoBytaskIds(@Param("beginDate") String beginDate, @Param("endDate") String endDate, @Param("userId") int userId,@Param("taskId") int taskId,@Param("studyType") String studyType);
+
+    @Select("select *  from user_score_record where user_id=#{userId} and FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d')=#{beginDate} and task_id=#{taskId} GROUP BY operate_id")
+    @ResultMap("BasePOJOResultMap")
+    List<UserScoreRecordPOJO> getoperateid(@Param("beginDate") String beginDate,@Param("userId") int userId,@Param("taskId") int taskId);
+
+    @Select("select max(score) as score,begin_time,end_time  from user_score_record where user_id=#{userId} and FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d')=#{beginDate} and task_id=#{taskId} and operate_id=#{operateId}")
+    @ResultMap("BasePOJOResultMap")
+    List<UserScoreRecordPOJO> getmaxscore(@Param("beginDate") String beginDate,@Param("userId") int userId,@Param("taskId") int taskId,@Param("operateId") int operateId);
+
     //@Select("select * from user_score_record where user_id=#{userId} and task_id =#{taskId} and opreate_id")
 }
