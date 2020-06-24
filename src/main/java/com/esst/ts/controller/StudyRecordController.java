@@ -122,7 +122,7 @@ public class StudyRecordController {
      * 班级成绩查询接口
      */
     @ResponseBody
-    @RequestMapping("/selectClassScore")
+    @RequestMapping(value = "/selectClassScore", method = RequestMethod.POST)
     public Result selectClassScore(@RequestParam(value = "beginDate") String beginDate,
                                    @RequestParam(value = "endDate") String endDate,
                                    @RequestParam(value = "userId") Integer userId,
@@ -236,7 +236,7 @@ public class StudyRecordController {
      * 班级成绩查询导出Excel接口
      */
     @ResponseBody
-    @RequestMapping("/classScoreExcel")
+    @RequestMapping(value = "/classScoreExcel", method = RequestMethod.POST)
     public ResponseEntity<byte[]> classScoreExcel(@RequestParam(value = "beginDate") String beginDate,
                                 @RequestParam(value = "endDate") String endDate,
                                 @RequestParam(value = "userId") Integer userId,
@@ -321,7 +321,7 @@ public class StudyRecordController {
      * 班级成绩查询详细成绩接口
      */
     @ResponseBody
-    @RequestMapping("/selectClassScoreDetail")
+    @RequestMapping(value = "/selectClassScoreDetail", method = RequestMethod.POST)
     public Result selectClassScoreDetail(@RequestParam(value = "date") String date,
                                    @RequestParam(value = "userId") Integer userId,
                                    @RequestParam(value = "taskId") Integer taskId,
