@@ -1,5 +1,6 @@
 package com.esst.ts.controller;
 
+import com.esst.ts.dao.UserLiveMapper;
 import com.esst.ts.model.*;
 import com.esst.ts.service.FZhKTService;
 import com.github.pagehelper.util.StringUtil;
@@ -26,7 +27,8 @@ import java.util.stream.Collectors;
 public class FZhKTController {
     @Resource
     private FZhKTService fzhktService;
-
+    @Resource
+    private UserLiveMapper userliveservice;
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     //@Resource
     //private UserService userService;
@@ -154,7 +156,7 @@ public class FZhKTController {
                 _score.setTemplate_name(exam.getExamName());
                 Questions questions = questionsMap.get(uld.getOperateId());
                 _score.setTask_id(questions.getId().toString());
-                _score.setTask_name(operate_map.get(questions.getOperateId()).getOperateName());
+                _score.setTask_name(questions.getQuestionName());
 
             }
             if (uld.getScoreStatues() == 0 || uld.getScoreStatues() == 1) {
@@ -238,7 +240,8 @@ public class FZhKTController {
                               HttpServletRequest request) {
         RequestContext requestcontext = new RequestContext(request);
         Result r = new Result();
-        Date curretime = new Date();
+        Date datecurretime = new Date();
+        Long curretime=datecurretime.getTime();
         //user_live_data
         UserLiveDataWithBLOBs uldscore = new UserLiveDataWithBLOBs();
         uldscore.setUserId(user_id);
@@ -358,5 +361,27 @@ public class FZhKTController {
 //        }
         r.setMsg("更新成功");
         return r;
+    }
+    @ResponseBody
+    @RequestMapping(value = "/getTaskdetailscore", method = RequestMethod.GET)
+    public Result getTaskdetailscore(
+            @RequestParam(value = "Id",required = true) int Id,
+            @RequestParam(value = "taskName",required = true) String taskName,
+            @RequestParam(value = "token", required = true) String strToken,
+            HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+
+        UserLiveWithBLOBs ulwb=userliveservice.selectByPrimaryKey(Id);
+        List<ScoreDetailPOJO> scoreDetailPOJOSList=fzhktService.getScoreDetailList(ulwb);
+        double totlscore = fzhktService.getTaskTotal_score(ulwb);
+        //<editor-fold desc="返回参数赋值">
+        Map<String, Object> FZhKTMap = new HashMap<>();
+        FZhKTMap.put("dataList", scoreDetailPOJOSList);
+        FZhKTMap.put("totlScore", totlscore);
+        FZhKTMap.put("taskName", taskName);
+        r.setData(FZhKTMap);
+        //</editor-fold>
+        return  r;
     }
 }

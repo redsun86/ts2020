@@ -1,5 +1,6 @@
 package com.esst.ts.dao;
 
+import com.esst.ts.model.ScoreDetailPOJO;
 import com.esst.ts.model.Task;
 import com.esst.ts.model.UserLiveWithBLOBs;
 import com.esst.ts.model.scoreModel;
@@ -32,4 +33,6 @@ public interface FZhKTMapper {
             "WHERE user_id=#{userId} AND task_id=#{taskId} AND study_type=#{studyType} and score_statues='2' \n" +
             "GROUP BY operate_id) bv ;")
     double getTotalcoreByUserLive(UserLiveWithBLOBs ul);
+    @Select("SELECT start_time startTime,operate_id operateId,study_duration learnTime,current_score score FROM `user_live_data` WHERE user_id=#{userId} AND task_id=#{taskId} AND study_type=#{studyType} and score_statues='2' ")
+    List<ScoreDetailPOJO> getDetailScoreList(UserLiveWithBLOBs ulwb);
 }

@@ -42,4 +42,6 @@ public interface FZhKTService {
     void userlivedataTorecord(int userId);
 
     double getTaskTotal_score(UserLiveWithBLOBs uld);
+
+    List<ScoreDetailPOJO> getScoreDetailList(UserLiveWithBLOBs id);
 }
