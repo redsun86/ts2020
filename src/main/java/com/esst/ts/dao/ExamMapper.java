@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ExamMapper {
     int deleteByPrimaryKey(Integer id);
@@ -29,8 +30,7 @@ public interface ExamMapper {
     @Update("UPDATE exam SET is_deleted=1 WHERE id=#{id}")
     int deleteWithId(@Param("id") int id);
 
-    @Update("UPDATE exam SET status=#{status} WHERE id=#{id};")
-    int updateStatus(@Param("id") int id, @Param("status") int status);
+    int updateStatus(Map mapData);
 
     @Select("select * from exam")
     @ResultMap("BaseResultMap")

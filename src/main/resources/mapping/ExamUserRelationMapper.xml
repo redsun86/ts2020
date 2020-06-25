@@ -25,6 +25,26 @@
     values (#{id,jdbcType=INTEGER}, #{examId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}
       )
   </insert>
+    <insert id="insertUserIds">
+        insert into exam_user_relation (exam_id, user_id)
+        select bv.exam_id,bv.user_id from (
+        select 0 exam_id, 0 user_id
+        <foreach collection="idList" index="index" item="item" open="" separator="" close="">
+            union
+            select #{exameId,jdbcType=INTEGER} exam_id, #{item,jdbcType=INTEGER} user_id
+        </foreach>
+        ) bv left join exam_user_relation eur on eur.exam_id=bv.exam_id and eur.user_id=bv.user_id
+        where bv.exam_id>0 and bv.user_id>0 and eur.id is null
+    </insert>
+    <insert id="deleteUserIds">
+        delete from exam_user_relation
+        <where>
+            exam_id=#{exameId,jdbcType=INTEGER} and user_id not in
+            <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
+            </foreach>
+        </where>
+    </insert>
     <insert id="insertSelective" parameterType="com.esst.ts.model.ExamUserRelation">
         insert into exam_user_relation
         <trim prefix="(" suffix=")" suffixOverrides=",">

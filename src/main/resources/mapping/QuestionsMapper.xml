@@ -142,8 +142,8 @@
   </update>
 
     <select id="getInsertModel" resultMap="BaseResultMap" parameterType="com.esst.ts.model.Questions">
-        insert into questions (exame_id, operate_id, trouble_id, style_id, proportion, time_limit, time_scale, is_deleted)
-        values (#{exameId,jdbcType=INTEGER}, #{operateId,jdbcType=INTEGER},
+        insert into questions (question_name,exame_id, operate_id, trouble_id, style_id, proportion, time_limit, time_scale, is_deleted)
+        values (#{questionName,jdbcType=VARCHAR}, #{exameId,jdbcType=INTEGER}, #{operateId,jdbcType=INTEGER},
         #{troubleId,jdbcType=INTEGER}, #{styleId,jdbcType=INTEGER}, #{proportion,jdbcType=INTEGER},
         #{timeLimit,jdbcType=INTEGER}, #{timeScale,jdbcType=INTEGER}, #{isDeleted,jdbcType=INTEGER});
         select * from questions where id = @@IDENTITY;

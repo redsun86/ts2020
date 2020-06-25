@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 创建标识：梁建磊 2020/6/15 13:54
@@ -41,8 +44,23 @@ public class ExamImpl implements ExamService {
     }
 
     @Override
-    public int updateStatus(int id, int status) {
-        return ExamMapper.updateStatus(id, status);
+    public int updateStatus(String ids, int Status) {
+        int retVal = 0;
+        if (ids != null && ids != "") {
+            ids = ids.replaceAll("\\，", "\\,");
+            String[] idArray = ids.split("\\,");
+            final List idList = new ArrayList<>();
+            for (String eId : idArray) {
+                idList.add(eId);
+            }
+            if (idList.size() > 0) {
+                Map params = new HashMap();
+                params.put("idList", idList);
+                params.put("status", Status);
+                retVal = ExamMapper.updateStatus(params);
+            }
+        }
+        return retVal;
     }
 
     @Override

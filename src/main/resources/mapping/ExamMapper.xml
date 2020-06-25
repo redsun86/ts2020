@@ -84,6 +84,15 @@
       create_user = #{createUser,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+    <update id="updateStatus">
+        UPDATE exam SET status=#{status}
+        <where>
+            id in
+            <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
+    </update>
     <select id="getInsertModel" resultMap="BaseResultMap" parameterType="com.esst.ts.model.Exam">
         insert into exam (exam_name, exam_attribute,status, create_user)
         values (#{examName,jdbcType=VARCHAR}, #{examAttribute,jdbcType=INTEGER},#{status,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER});
@@ -107,9 +116,9 @@
         ,(case e.exam_attribute when 1 then CONCAT('，',ifnull(eq.time_limit,0),'分钟') else '，不限时' end)) edit_info
         from exam e
         LEFT JOIN (select exam_id,count(distinct user_id) user_count from exam_user_relation group by exam_id) uc
-          on e.id=uc.exam_id
+        on e.id=uc.exam_id
         LEFT JOIN (select exame_id,count(id) questionsCount,sum(time_limit) time_limit
-          from questions where is_deleted=0 GROUP BY exame_id) eq on eq.exame_id=e.id
+        from questions where is_deleted=0 GROUP BY exame_id) eq on eq.exame_id=e.id
         where e.id>0
         <if test="id != null">
             and e.id=#{id,jdbcType=INTEGER}
