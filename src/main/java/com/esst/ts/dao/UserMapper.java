@@ -39,6 +39,10 @@ public interface UserMapper {
     @ResultMap("BaseResultMap")
     List<User> getUserLst(@Param("userId") int userId);
 
+    @Select("select * from user where rel_name=#{userTrueName} AND is_del=0 AND is_admin=0")
+    @ResultMap("BaseResultMap")
+    List<User> getUserByTrueName(@Param("userTrueName") String userTrueName);
+
     @Update("update user set password = #{password} where id = #{userId}")
     int updateUserPwd(@Param("userId") int userId,@Param("password") String password);
 

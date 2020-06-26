@@ -67,6 +67,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getUserByTrueName(String userTrueName) {
+        return userMapper.getUserByTrueName(userTrueName);
+    }
+
+    @Override
     public int updatePassword(User record) {
         return userMapper.updateByPrimaryKeySelective(record);
     }

@@ -55,4 +55,11 @@ public interface UserService {
     TeacherStudentRelation getUserByTeacherId(Integer userId);
 
     int insert(UserLoginLog record);
+
+    /**
+     * 根据学员姓名查询学员信息
+     * @param userTrueName
+     * @return
+     */
+    List<User> getUserByTrueName(String userTrueName);
 }

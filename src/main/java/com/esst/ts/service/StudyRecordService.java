@@ -17,6 +17,8 @@ public interface StudyRecordService {
 
     List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfo(String beginDate, String endDate, Integer userId,String studyType,Integer taskId);
 
+    List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoforPerson(String userId);
+
     List<UserScoreRecordPOJO> getoperateid(String beginDate, Integer userId,Integer taskId);
 
     List<UserScoreRecordPOJO> getmaxscore(String beginDate, Integer userId,Integer taskId,Integer operateId);

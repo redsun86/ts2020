@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -171,7 +172,7 @@ public class UserController {
      * 登出接口  修改Token 状态
      */
     @ResponseBody
-    @RequestMapping("/logOut")
+    @RequestMapping(value = "/logOut", method = RequestMethod.POST)
     public Result logOut(@RequestParam(value = "userId") int userId,
                          @RequestParam(value = "token") String token,
                          @RequestParam(value = "ipAddress",required = false) String ipAddress,
@@ -218,7 +219,7 @@ public class UserController {
      * @param userId 教师ID
      */
     @ResponseBody
-    @RequestMapping("/userList")
+    @RequestMapping(value = "/userList", method = RequestMethod.POST)
     public Result userList(@RequestParam(value = "userId", required = true) Integer userId,
                            @RequestParam(value = "token", required = true) String strToken,
                            HttpServletRequest request) {
@@ -260,7 +261,7 @@ public class UserController {
      * @param id 学员ID
      */
     @ResponseBody
-    @RequestMapping("/delStudents")
+    @RequestMapping(value = "/delStudents", method = RequestMethod.POST)
     public Result delStudents(@RequestParam(value = "id", required = true) String id,
                               @RequestParam(value = "userId", required = true) Integer userId,
                               @RequestParam(value = "token", required = true) String strToken,
@@ -315,7 +316,7 @@ public class UserController {
      * @param id 学员ID
      */
     @ResponseBody
-    @RequestMapping("/resetStudentsPwd")
+    @RequestMapping(value = "/resetStudentsPwd", method = RequestMethod.POST)
     public Result resetStudentsPwd(@RequestParam(value = "id", required = true) String id,
                                    @RequestParam(value = "token", required = true) String strToken,
                                    HttpServletRequest request) {
@@ -338,7 +339,7 @@ public class UserController {
     /**
      * 导入学员接口
      */
-    @RequestMapping("/importStudentsInfo")
+    @RequestMapping(value = "/importStudentsInfo", method = RequestMethod.POST)
     @ResponseBody
     public Result importStudentsInfo(@RequestParam("file") MultipartFile file,
                                      @RequestParam(value = "userId", required = true) Integer userId,
