@@ -31,8 +31,11 @@ public class Constants {
 
 
     public static AtomicBoolean watchDogLoginFlag =new AtomicBoolean();
-
-    //测试服务器
+    //学习类型Task任务单，Exam试卷
+    public enum StudyType {TASK,EXAM };
+    //上传成绩状态 start第一次，middle中间上传，end结束
+    public enum ScoreStatues{START,MIDDLE,END,};
+        //测试服务器
     //public static final String SERVER_URL = "http://";
 
     public static String getIpAddress(HttpServletRequest request) {

@@ -12,9 +12,9 @@
     <result column="current_score" property="currentScore" jdbcType="DOUBLE" />
     <result column="total_score" property="totalScore" jdbcType="DOUBLE" />
     <result column="study_duration" property="studyDuration" jdbcType="DOUBLE" />
-    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="updatetime" property="updatetime" jdbcType="BIGINT" />
     <result column="study_type" property="studyType" jdbcType="INTEGER" />
-    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="start_time" property="startTime" jdbcType="BIGINT" />
     <result column="score_statues" property="scoreStatues" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.esst.ts.model.UserLiveWithBLOBs" extends="BaseResultMap" >
@@ -50,8 +50,8 @@
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{macAddress,jdbcType=VARCHAR}, 
       #{idAddress,jdbcType=VARCHAR}, #{taskId,jdbcType=INTEGER}, #{operateId,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{currentScore,jdbcType=DOUBLE}, #{totalScore,jdbcType=DOUBLE}, 
-      #{studyDuration,jdbcType=DOUBLE}, #{updatetime,jdbcType=TIMESTAMP}, #{studyType,jdbcType=INTEGER}, 
-      #{startTime,jdbcType=TIMESTAMP}, #{scoreStatues,jdbcType=INTEGER}, #{scoreDetail,jdbcType=LONGVARCHAR}, 
+      #{studyDuration,jdbcType=DOUBLE}, #{updatetime,jdbcType=BIGINT}, #{studyType,jdbcType=INTEGER}, 
+      #{startTime,jdbcType=BIGINT}, #{scoreStatues,jdbcType=INTEGER}, #{scoreDetail,jdbcType=LONGVARCHAR}, 
       #{report,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.esst.ts.model.UserLiveWithBLOBs" >
@@ -138,13 +138,13 @@
         #{studyDuration,jdbcType=DOUBLE},
       </if>
       <if test="updatetime != null" >
-        #{updatetime,jdbcType=TIMESTAMP},
+        #{updatetime,jdbcType=BIGINT},
       </if>
       <if test="studyType != null" >
         #{studyType,jdbcType=INTEGER},
       </if>
       <if test="startTime != null" >
-        #{startTime,jdbcType=TIMESTAMP},
+        #{startTime,jdbcType=BIGINT},
       </if>
       <if test="scoreStatues != null" >
         #{scoreStatues,jdbcType=INTEGER},
@@ -188,13 +188,13 @@
         study_duration = #{studyDuration,jdbcType=DOUBLE},
       </if>
       <if test="updatetime != null" >
-        updatetime = #{updatetime,jdbcType=TIMESTAMP},
+        updatetime = #{updatetime,jdbcType=BIGINT},
       </if>
       <if test="studyType != null" >
         study_type = #{studyType,jdbcType=INTEGER},
       </if>
       <if test="startTime != null" >
-        start_time = #{startTime,jdbcType=TIMESTAMP},
+        start_time = #{startTime,jdbcType=BIGINT},
       </if>
       <if test="scoreStatues != null" >
         score_statues = #{scoreStatues,jdbcType=INTEGER},
@@ -219,9 +219,9 @@
       current_score = #{currentScore,jdbcType=DOUBLE},
       total_score = #{totalScore,jdbcType=DOUBLE},
       study_duration = #{studyDuration,jdbcType=DOUBLE},
-      updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      updatetime = #{updatetime,jdbcType=BIGINT},
       study_type = #{studyType,jdbcType=INTEGER},
-      start_time = #{startTime,jdbcType=TIMESTAMP},
+      start_time = #{startTime,jdbcType=BIGINT},
       score_statues = #{scoreStatues,jdbcType=INTEGER},
       score_detail = #{scoreDetail,jdbcType=LONGVARCHAR},
       report = #{report,jdbcType=LONGVARCHAR}
@@ -238,9 +238,9 @@
       current_score = #{currentScore,jdbcType=DOUBLE},
       total_score = #{totalScore,jdbcType=DOUBLE},
       study_duration = #{studyDuration,jdbcType=DOUBLE},
-      updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      updatetime = #{updatetime,jdbcType=BIGINT},
       study_type = #{studyType,jdbcType=INTEGER},
-      start_time = #{startTime,jdbcType=TIMESTAMP},
+      start_time = #{startTime,jdbcType=BIGINT},
       score_statues = #{scoreStatues,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>

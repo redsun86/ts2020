@@ -1,5 +1,6 @@
 package com.esst.ts.service.impl;
 
+import com.esst.ts.constants.Constants;
 import com.esst.ts.dao.*;
 import com.esst.ts.model.*;
 import com.esst.ts.service.FZhKTService;
@@ -7,8 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static com.esst.ts.constants.Constants.StudyType;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -18,7 +25,7 @@ public class FZhKTImpl implements FZhKTService {
     @Resource
     private com.esst.ts.dao.FZhKTMapper FZhKTMapper;
     @Resource
-    private UserLiveMapper userliveScore;
+    public UserLiveMapper userliveScore;
     @Resource
     private UserLiveDataMapper userlivedata;
 
@@ -34,16 +41,18 @@ public class FZhKTImpl implements FZhKTService {
     @Resource
     private OperateMapper operate;
     @Resource
-    private  UserMapper user;
+    private UserMapper user;
     @Resource
-    private  ExamMapper examMapper;
+    private ExamMapper examMapper;
     @Resource
-    private  QuestionsMapper questionsMapper;
+    private QuestionsMapper questionsMapper;
     @Resource
-    private  UserLoginLogMapper userLoginLogMapper;
+    private UserLoginLogMapper userLoginLogMapper;
     @Resource
-    private  UserTokenDao userTokenDao;
-    @Resource UserScoreRecordMapper userScoreRecordMapper;
+    private UserTokenDao userTokenDao;
+    @Resource
+    UserScoreRecordMapper userScoreRecordMapper;
+
     @Override
     public List<Task> getCourseTaskLst(int courseID) {
         return FZhKTMapper.getCourseTaskLstBytechId(courseID);
@@ -74,7 +83,7 @@ public class FZhKTImpl implements FZhKTService {
 
     @Override
     public List<UserScoreRecord> getUserScoreRecore(int userid, int taskid, int operateid) {
-        return  userScoreRecord.getUserScoreRecore( userid,  taskid, operateid);
+        return userScoreRecord.getUserScoreRecore(userid, taskid, operateid);
     }
 
     public FZhKTImpl() {
@@ -82,15 +91,15 @@ public class FZhKTImpl implements FZhKTService {
     }
 
     @Override
-    public List<UserLiveData> getUserLiveDataList()
-    {
-       return  userlivedata.getUserLiveDataDistinct();
+    public List<UserLiveData> getUserLiveDataList() {
+        return userlivedata.getUserLiveDataDistinct();
     }
 
     @Override
     public List<UserLive> getUserLiveList() {
         return userliveScore.geUserLiveDistinct();
     }
+
     @Override
     public List<Task> getTaskListAll() {
         return FZhKTMapper.gteTaskListAll();
@@ -108,23 +117,24 @@ public class FZhKTImpl implements FZhKTService {
 
     @Override
     public UserLiveWithBLOBs updateUserLive(UserLiveWithBLOBs userlive) {
-        UserLiveWithBLOBs ul=new UserLiveWithBLOBs();
-        ul= userliveScore.getUserLiveByUserTaskType(userlive.getUserId(),userlive.getTaskId(),userlive.getStudyType());
+        UserLiveWithBLOBs ul = new UserLiveWithBLOBs();
+        ul = userliveScore.getUserLiveByUserTaskType(userlive.getUserId(), userlive.getTaskId(), userlive.getStudyType());
 
-        if(ul!=null) {
+        if (ul != null) {
             userlive.setId(ul.getId());
-            if(userlive.getScoreStatues()==1||userlive.getScoreStatues()==2){
+            if (userlive.getScoreStatues() == 1 || userlive.getScoreStatues() == 2) {
 
-                double duration = new Date().getTime() - ul.getStartTime().getTime();
+                double duration = new Date().getTime() - ul.getStartTime();
                 userlive.setStudyDuration(duration);
                 userlive.setStartTime(ul.getStartTime());
             }
             userliveScore.updateByPrimaryKey(userlive);
-        }else{
+        } else {
             userliveScore.insert(userlive);
         }
         return userlive;
     }
+
     //获取所有试题表
     @Override
     public List<Exam> getExamListAll() {
@@ -149,7 +159,7 @@ public class FZhKTImpl implements FZhKTService {
     @Override
     public List<UserToken> getUserLoginByTeacherID(String userId) {
         //return userLoginLogMapper.getUserLoginByTeacherID(userId);
-        return  userTokenDao.getUserLoginByTeacherID(userId);
+        return userTokenDao.getUserLoginByTeacherID(userId);
     }
 
     @Override
@@ -161,7 +171,7 @@ public class FZhKTImpl implements FZhKTService {
     public void userlivedataTorecord(int userId) {
         List<UserLiveDataWithBLOBs> userLiveDataList = userlivedata.getUserlivaByteacherid(userId);
         //先单条插入，以后改成按list批量的 crq
-        if (userLiveDataList!=null) {
+        if (userLiveDataList != null) {
             for (UserLiveDataWithBLOBs uld : userLiveDataList) {
                 UserScoreRecord usr = new UserScoreRecord();
                 usr.setUserId(uld.getUserId());
@@ -169,8 +179,8 @@ public class FZhKTImpl implements FZhKTService {
                 usr.setOperateId(uld.getOperateId());
                 usr.setScore(uld.getCurrentScore());
                 usr.setTotalScore(uld.getTotalScore());
-                usr.setBeginTime(uld.getStartTime().getTime());
-                usr.setEndTime(uld.getStartTime().getTime() + uld.getStudyDuration().longValue());
+                usr.setBeginTime(uld.getStartTime());
+                usr.setEndTime(uld.getStartTime() + uld.getStudyDuration().longValue());
                 usr.setStudyType(uld.getStudyType());
                 usr.setMacAddress(uld.getMacAddress());
                 usr.setIpAddress(uld.getIdAddress());
@@ -182,7 +192,65 @@ public class FZhKTImpl implements FZhKTService {
     }
 
     @Override
+    public double getTaskTotal_score(UserLiveWithBLOBs ul) {
+        //如果uld正在做
+        double totalscore = 0;
+        if (ul.getScoreStatues() != 2) {
+            double maxscore = FZhKTMapper.getOperteMaxScore(ul);
+            if (maxscore == -1 || ul.getCurrentScore() > maxscore) {
+                totalscore = FZhKTMapper.getTotalcoreWhithooutUserLive(ul) + ul.getCurrentScore();
+            } else {
+                totalscore = FZhKTMapper.getTotalcoreByUserLive(ul);
+            }
+        }
+        //如果已经做完
+        else {
+            totalscore = FZhKTMapper.getTotalcoreByUserLive(ul);
+        }
+        return totalscore;
+    }
+
+    @Override
+    public List<ScoreDetailPOJO> getScoreDetailList(UserLiveWithBLOBs ulwb) {
+        List<ScoreDetailPOJO> scoreDetailPOJOArrayList = new ArrayList<>();
+        List<Operate> operateList = getOprateList();
+        List<Questions> questionsList = getQuestionListAll();
+        Map<Integer, Operate> operate_map = operateList.stream().collect(Collectors.toMap(Operate::getId, Function.identity(), (key1, key2) -> key2));
+        Map<Integer, Questions> questionsMap = questionsList.stream().collect(Collectors.toMap(Questions::getId, Function.identity(), (key1, key2) -> key2));
+
+
+        scoreDetailPOJOArrayList = FZhKTMapper.getDetailScoreList(ulwb);
+        ScoreDetailPOJO scordetail = new ScoreDetailPOJO();
+        scordetail.setOperateId(ulwb.getTaskId());
+        scordetail.setLearnTime(String.valueOf(ulwb.getStudyDuration() / 1000));
+        //DateFormat df=new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+        scordetail.setStartTime(String.valueOf(ulwb.getStartTime()));
+        scordetail.setScore(ulwb.getCurrentScore().toString());
+
+        scordetail.setScoreDetail(ulwb.getScoreDetail());
+        if (ulwb.getStudyType() == StudyType.TASK.ordinal()) {
+            for (ScoreDetailPOJO sd : scoreDetailPOJOArrayList) {
+                int keyi = sd.getOperateId();
+                Operate op = operate_map.get(sd.getOperateId());
+                sd.setOperateName(op.getOperateName());
+            }
+            scordetail.setOperateName(operate_map.get(scordetail.getOperateId()).getOperateName());
+        } else if (ulwb.getStudyType() == StudyType.EXAM.ordinal()) {
+            for (ScoreDetailPOJO sd : scoreDetailPOJOArrayList) {
+                sd.setOperateName(questionsMap.get(sd.getOperateId()).getQuestionName());
+                //sd.setOperateName("空空空");
+            }
+            scordetail.setOperateName(questionsMap.get(scordetail.getOperateId()).getQuestionName());
+            //scordetail.setOperateName("空空空");
+        }
+        if (ulwb.getScoreStatues() != Constants.ScoreStatues.END.ordinal()) {
+            scoreDetailPOJOArrayList.add(scordetail);
+        }
+        return scoreDetailPOJOArrayList;
+    }
+
+    @Override
     public List<scoreModel> getscoreModelList(String user_id, String template_id) {
-        return FZhKTMapper.getscoreModelList(user_id,template_id);
+        return FZhKTMapper.getscoreModelList(user_id, template_id);
     }
 }

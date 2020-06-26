@@ -1,7 +1,5 @@
 package com.esst.ts.model;
 
-import java.util.Date;
-
 public class UserLive {
     private Integer id;
 
@@ -23,11 +21,11 @@ public class UserLive {
 
     private Double studyDuration;
 
-    private Date updatetime;
+    private Long updatetime;
 
     private Integer studyType;
 
-    private Date startTime;
+    private Long startTime;
 
     private Integer scoreStatues;
 
@@ -111,11 +109,11 @@ public class UserLive {
         this.studyDuration = studyDuration;
     }
 
-    public Date getUpdatetime() {
+    public Long getUpdatetime() {
         return updatetime;
     }
 
-    public void setUpdatetime(Date updatetime) {
+    public void setUpdatetime(Long updatetime) {
         this.updatetime = updatetime;
     }
 
@@ -127,11 +125,11 @@ public class UserLive {
         this.studyType = studyType;
     }
 
-    public Date getStartTime() {
+    public Long getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(Long startTime) {
         this.startTime = startTime;
     }
 

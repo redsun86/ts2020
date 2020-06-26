@@ -3,6 +3,8 @@ package com.esst.ts.model;
 public class Questions {
     private Integer id;
 
+    private String questionName;
+
     private Integer exameId;
 
     private Integer operateId;
@@ -29,6 +31,14 @@ public class Questions {
 
     public Integer getExameId() {
         return exameId;
+    }
+
+    public String getQuestionName() {
+        return questionName;
+    }
+
+    public void setQuestionName(String questionName) {
+        this.questionName = questionName;
     }
 
     public void setExameId(Integer exameId) {

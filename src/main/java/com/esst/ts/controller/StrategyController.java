@@ -2,7 +2,6 @@ package com.esst.ts.controller;
 
 import com.esst.ts.model.*;
 import com.esst.ts.service.ExamService;
-import com.esst.ts.service.TimescaleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -215,22 +214,12 @@ public class StrategyController {
         Map<String, Object> responseDataMap = new HashMap<>();
         int rowsCount = 0;
         try {
-            if (taskIds != null && taskIds != "") {
-                taskIds = taskIds.replaceAll("\\，", "\\,");
-                String[] taskIdlst = taskIds.split("\\,");
-                for (String tId : taskIdlst) {
-                    UserTaskRelation reqMode = new UserTaskRelation();
-                    reqMode.setUserId(Integer.valueOf(userId));
-                    reqMode.setTaskId(Integer.valueOf(tId));
-                    UserTaskRelationService.deleteWithTaskIdUserId(reqMode);
-                    UserTaskRelationService.insert(reqMode);
-                }
-            }
+            UserTaskRelationService.insertTaskIds(taskIds, userId);
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
         } catch (Exception e) {
             //e.printStackTrace();
-            //responseDataMap.put("respMsg", e.getMessage());
+            responseDataMap.put("respMsg", e.getMessage());
         }
         r.setData(responseDataMap);
         //</editor-fold>
@@ -262,16 +251,7 @@ public class StrategyController {
         Map<String, Object> responseDataMap = new HashMap<>();
         int rowsCount = 0;
         try {
-            if (taskIds != null && taskIds != "") {
-                taskIds = taskIds.replaceAll("\\，", "\\,");
-                String[] taskIdlst = taskIds.split("\\,");
-                for (String tId : taskIdlst) {
-                    UserTaskRelation reqMode = new UserTaskRelation();
-                    reqMode.setUserId(Integer.valueOf(userId));
-                    reqMode.setTaskId(Integer.valueOf(tId));
-                    UserTaskRelationService.deleteWithTaskIdUserId(reqMode);
-                }
-            }
+            UserTaskRelationService.deleteTaskIds(taskIds, userId);
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
         } catch (Exception e) {
@@ -394,13 +374,13 @@ public class StrategyController {
             reqMod.setIsDeleted(0);
             reqMod.setExamName(examName);
             List<ExamPOJO> examsLst = ExamService.GetList(reqMod);
-            responseDataMap.put("dataList", examsLst);
-            int questionsCount=0;
-            for(ExamPOJO mod : examsLst){
-                questionsCount+=Integer.valueOf(mod.getQuestionsCount());
+            int questionsCount = 0;
+            for (ExamPOJO mod : examsLst) {
+                questionsCount += Integer.valueOf(mod.getQuestionsCount());
             }
             responseDataMap.put("examsCount", examsLst.size());
             responseDataMap.put("questionsCount", questionsCount);
+            responseDataMap.put("dataList", examsLst);
         } catch (Exception e) {
             responseDataMap.put("respMsg", e.getMessage());
         }
@@ -537,13 +517,7 @@ public class StrategyController {
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
         try {
-            if (exameIds != null && exameIds != "") {
-                exameIds = exameIds.replaceAll("\\，", "\\,");
-                String[] exameIdlst = exameIds.split("\\,");
-                for (String eId : exameIdlst) {
-                    ExamService.updateStatus(Integer.valueOf(eId), 1);
-                }
-            }
+            ExamService.updateStatus(exameIds, 1);
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
         } catch (Exception e) {
@@ -579,18 +553,12 @@ public class StrategyController {
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
         try {
-            if (exameIds != null && exameIds != "") {
-                exameIds = exameIds.replaceAll("\\，", "\\,");
-                String[] exameIdlst = exameIds.split("\\,");
-                for (String eId : exameIdlst) {
-                    ExamService.updateStatus(Integer.valueOf(eId), 2);
-                }
-            }
+            ExamService.updateStatus(exameIds, 2);
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
         } catch (Exception e) {
             //e.printStackTrace();
-            //responseDataMap.put("respMsg", e.getMessage());
+            responseDataMap.put("respMsg", e.getMessage());
         }
         r.setData(responseDataMap);
         //</editor-fold>
@@ -655,25 +623,14 @@ public class StrategyController {
         Map<String, Object> responseDataMap = new HashMap<>();
         int rowsCount = 0;
         try {
-            rowsCount = ExamUserRelationService.deleteWithExameId(Integer.valueOf(exameId));
-            if (userIds != null && userIds != "") {
-                userIds = userIds.replaceAll("\\，", "\\,");
-                String[] userIdlst = userIds.split("\\,");
-                for (String uId : userIdlst) {
-                    ExamUserRelation reqMode = new ExamUserRelation();
-                    reqMode.setExamId(Integer.valueOf(exameId));
-                    reqMode.setUserId(Integer.valueOf(uId));
-                    ExamUserRelationService.insert(reqMode);
-                }
-                //responseDataMap.put("userIdlst", userIdlst);
-            }
+            ExamUserRelationService.deleteUserIds(userIds, exameId);
+            ExamUserRelationService.insertUserIds(userIds, exameId);
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
         } catch (Exception e) {
             //            e.printStackTrace();
             responseDataMap.put("respMsg", e.getMessage());
         }
-        //responseDataMap.put("requestModel", userIds);
         r.setData(responseDataMap);
         //</editor-fold>
         return r;
@@ -745,6 +702,14 @@ public class StrategyController {
         try {
             if (reqMod.getId() == null || reqMod.getId() == 0 || reqMod.getId() == -1) {
                 reqMod.setId(null);
+                if (reqMod.getQuestionName() == null || reqMod.getQuestionName() == "") {
+                    List<TechnologyTaskOperatePOJO> operPojoLst = OperateService.GetPojoAllList();
+                    for (TechnologyTaskOperatePOJO mod : operPojoLst) {
+                        if (mod.getId() == reqMod.getOperateId()) {
+                            reqMod.setQuestionName(mod.getOperateName());
+                        }
+                    }
+                }
                 Questions respObj = QuestionsService.getInsertModel(reqMod);
                 responseDataMap.put("reqMod", respObj);
                 rowsCount = respObj.getId();

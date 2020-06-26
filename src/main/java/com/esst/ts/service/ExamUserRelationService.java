@@ -8,10 +8,11 @@ import java.util.List;
  * 创建标识：梁建磊 2020/6/16 13:28
  */
 public interface ExamUserRelationService {
-
     int insert(ExamUserRelation mod);
 
-    int deleteWithExameId(int exameId);
+    int insertUserIds(String userIds, String exameId);
+
+    int deleteUserIds(String userIds, String exameId);
 
     List<ExamUserRelation> GetList(int exameId);
 }
