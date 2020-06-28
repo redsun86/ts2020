@@ -374,11 +374,11 @@ public class FZhKTController {
 
         UserLiveWithBLOBs ulwb=userliveservice.selectByPrimaryKey(Id);
         List<ScoreDetailPOJO> scoreDetailPOJOSList=fzhktService.getScoreDetailList(ulwb);
-        double totlscore = fzhktService.getTaskTotal_score(ulwb);
+        //double totlscore = fzhktService.getTaskTotal_score(ulwb);
         //<editor-fold desc="返回参数赋值">
         Map<String, Object> FZhKTMap = new HashMap<>();
         FZhKTMap.put("dataList", scoreDetailPOJOSList);
-        FZhKTMap.put("totlScore", totlscore);
+        //FZhKTMap.put("totlScore", totlscore);
         FZhKTMap.put("taskName", taskName);
         r.setData(FZhKTMap);
         //</editor-fold>

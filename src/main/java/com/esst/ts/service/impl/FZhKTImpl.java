@@ -224,7 +224,7 @@ public class FZhKTImpl implements FZhKTService {
         scordetail.setOperateId(ulwb.getTaskId());
         scordetail.setLearnTime(String.valueOf(ulwb.getStudyDuration() / 1000));
         //DateFormat df=new SimpleDateFormat("yyyy-MM-dd 00:00:00");
-        scordetail.setStartTime(String.valueOf(ulwb.getStartTime()));
+        scordetail.setStudyDate(String.valueOf(ulwb.getStartTime()));
         scordetail.setScore(ulwb.getCurrentScore().toString());
 
         scordetail.setScoreDetail(ulwb.getScoreDetail());
@@ -232,15 +232,15 @@ public class FZhKTImpl implements FZhKTService {
             for (ScoreDetailPOJO sd : scoreDetailPOJOArrayList) {
                 int keyi = sd.getOperateId();
                 Operate op = operate_map.get(sd.getOperateId());
-                sd.setOperateName(op.getOperateName());
+                sd.setTaskName(op.getOperateName());
             }
-            scordetail.setOperateName(operate_map.get(scordetail.getOperateId()).getOperateName());
+            scordetail.setTaskName(operate_map.get(scordetail.getOperateId()).getOperateName());
         } else if (ulwb.getStudyType() == StudyType.EXAM.ordinal()) {
             for (ScoreDetailPOJO sd : scoreDetailPOJOArrayList) {
-                sd.setOperateName(questionsMap.get(sd.getOperateId()).getQuestionName());
+                sd.setTaskName(questionsMap.get(sd.getOperateId()).getQuestionName());
                 //sd.setOperateName("空空空");
             }
-            scordetail.setOperateName(questionsMap.get(scordetail.getOperateId()).getQuestionName());
+            scordetail.setTaskName(questionsMap.get(scordetail.getOperateId()).getQuestionName());
             //scordetail.setOperateName("空空空");
         }
         if (ulwb.getScoreStatues() != Constants.ScoreStatues.END.ordinal()) {

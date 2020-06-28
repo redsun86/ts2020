@@ -1,20 +1,20 @@
 package com.esst.ts.model;
 
 public class ScoreDetailPOJO {
-    public String getStartTime() {
-        return startTime;
+    public String getStudyDate() {
+        return studyDate;
     }
 
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
+    public void setStudyDate(String studyDate) {
+        this.studyDate = studyDate;
     }
 
-    public String getOperateName() {
-        return operateName;
+    public String getTaskName() {
+        return taskName;
     }
 
-    public void setOperateName(String operateName) {
-        this.operateName = operateName;
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 
     public String getLearnTime() {
@@ -33,8 +33,8 @@ public class ScoreDetailPOJO {
         this.score = score;
     }
 
-    private String startTime;
-    private String operateName;
+    private String studyDate;
+    private String taskName;
     private String learnTime;
     private String score;
 

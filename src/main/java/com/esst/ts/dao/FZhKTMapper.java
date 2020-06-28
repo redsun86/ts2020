@@ -33,6 +33,6 @@ public interface FZhKTMapper {
             "WHERE user_id=#{userId} AND task_id=#{taskId} AND study_type=#{studyType} and score_statues='2' \n" +
             "GROUP BY operate_id) bv ;")
     double getTotalcoreByUserLive(UserLiveWithBLOBs ul);
-    @Select("SELECT start_time startTime,operate_id operateId,study_duration learnTime,current_score score FROM `user_live_data` WHERE user_id=#{userId} AND task_id=#{taskId} AND study_type=#{studyType} and score_statues='2' ")
+    @Select("SELECT date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d %H:%i:%s') as studyDate,operate_id operateId,ROUND(study_duration/1000,2) learnTime,current_score score FROM `user_live_data` WHERE user_id=#{userId} AND task_id=#{taskId} AND study_type=#{studyType} and score_statues='2' ")
     List<ScoreDetailPOJO> getDetailScoreList(UserLiveWithBLOBs ulwb);
 }
