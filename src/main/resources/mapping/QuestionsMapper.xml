@@ -3,7 +3,7 @@
 <mapper namespace="com.esst.ts.dao.QuestionsMapper">
     <resultMap id="BaseResultMap" type="com.esst.ts.model.Questions">
         <id column="id" property="id" jdbcType="INTEGER"/>
-        <result column="question_name" property="QuestionName" jdbcType="VARCHAR"/>
+        <result column="question_name" property="questionName" jdbcType="VARCHAR"/>
         <result column="exame_id" property="exameId" jdbcType="INTEGER"/>
         <result column="operate_id" property="operateId" jdbcType="INTEGER"/>
         <result column="trouble_id" property="troubleId" jdbcType="INTEGER"/>
@@ -13,7 +13,7 @@
     </resultMap>
     <resultMap id="BasePOJOResultMap" type="com.esst.ts.model.QuestionsPOJO">
         <id column="id" property="id" jdbcType="INTEGER"/>
-        <result column="question_name" property="QuestionName" jdbcType="VARCHAR"/>
+        <result column="question_name" property="questionName" jdbcType="VARCHAR"/>
         <result column="exame_id" property="exameId" jdbcType="INTEGER"/>
         <result column="exam_name" property="exameName" jdbcType="VARCHAR"/>
         <result column="technology_id" property="technologyId" jdbcType="INTEGER"/>
