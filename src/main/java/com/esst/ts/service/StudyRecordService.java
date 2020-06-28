@@ -25,6 +25,5 @@ public interface StudyRecordService {
 
     List<UserScoreRecordPOJO> getLearnTime(String beginDate, Integer userId,Integer taskId);
 
-    List<UserScoreRecordPOJO> getUserStudyRecordDetail(String date, Integer userId,Integer taskId);
-
+    List<UserScoreRecordPOJO> getUserStudyRecordDetail(String date, Integer userId,Integer taskId,Integer studyType);
 }
