@@ -99,7 +99,7 @@ public class StudyRecordImpl implements StudyRecordService {
     }
 
     @Override
-    public List<UserScoreRecordPOJO> getUserStudyRecordDetail(String date, Integer userId, Integer taskId) {
-        return userScoreRecordMapper.getUserStudyRecordDetail(date, userId, taskId);
+    public List<UserScoreRecordPOJO> getUserStudyRecordDetail(String date, Integer userId, Integer taskId,Integer studyType) {
+        return userScoreRecordMapper.getUserStudyRecordDetail(date, userId, taskId,studyType);
     }
 }

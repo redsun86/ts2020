@@ -21,7 +21,7 @@ public class UserScoreRecordPOJO {
 
     private String studyDate;
 
-    private Long learTime;
+    private Long learnTime;
 
     private Integer studyType;
 
@@ -117,12 +117,12 @@ public class UserScoreRecordPOJO {
         this.studyDate = studyDate;
     }
 
-    public Long getLearTime() {
-        return learTime;
+    public Long getLearnTime() {
+        return learnTime;
     }
 
-    public void setLearTime(Long learTime) {
-        this.learTime = learTime;
+    public void setLearnTime(Long learnTime) {
+        this.learnTime = learnTime;
     }
     public Integer getStudyType() {
         return studyType;

@@ -169,10 +169,10 @@ public class ExcelUtils {
                 }
                 row.createCell(6).setCellValue(employee.getClassName());
                 row.createCell(7).setCellValue(employee.getScore());
-                if (employee.getLearTime() == null) {
+                if (employee.getLearnTime() == null) {
                     row.createCell(8).setCellValue(0);
                 } else {
-                    row.createCell(8).setCellValue(employee.getLearTime());
+                    row.createCell(8).setCellValue(employee.getLearnTime());
                 }
                 row.createCell(9).setCellValue(employee.getGroupName());
             }
@@ -248,10 +248,10 @@ public class ExcelUtils {
                 }
                 row.createCell(6).setCellValue(employee.getIpAddress());
                 row.createCell(7).setCellValue(employee.getScore());
-                if (employee.getLearTime() == null) {
+                if (employee.getLearnTime() == null) {
                     row.createCell(8).setCellValue(0);
                 } else {
-                    row.createCell(8).setCellValue(employee.getLearTime());
+                    row.createCell(8).setCellValue(employee.getLearnTime());
                 }
             }
             ByteArrayOutputStream stream = new ByteArrayOutputStream();

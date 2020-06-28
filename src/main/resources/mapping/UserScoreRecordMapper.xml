@@ -10,7 +10,7 @@
     <result column="total_score" property="totalScore" jdbcType="DOUBLE" />
     <result column="begin_time" property="beginTime" jdbcType="BIGINT" />
     <result column="end_time" property="endTime" jdbcType="BIGINT" />
-    <result column="lear_time" property="learTime" jdbcType="BIGINT" />
+    <result column="learn_time" property="learnTime" jdbcType="BIGINT" />
     <result column="study_type" property="studyType" jdbcType="INTEGER" />
     <result column="mac_address" property="macAddress" jdbcType="VARCHAR" />
     <result column="ip_address" property="ipAddress" jdbcType="VARCHAR" />
