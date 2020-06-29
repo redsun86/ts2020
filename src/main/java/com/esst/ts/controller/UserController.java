@@ -257,22 +257,22 @@ public class UserController {
     /**
      * 删除我的学员信息
      *
-     * @param userId 学员ID
-     * @param teacherId 教师ID
+     * @param id 学员ID
+     * @param userId 教师ID
      */
     @ResponseBody
     @RequestMapping(value = "/delStudents", method = RequestMethod.POST)
-    public Result delStudents(@RequestParam(value = "userId", required = true) String userId,
-                              @RequestParam(value = "teacherId", required = true) Integer teacherId,
+    public Result delStudents(@RequestParam(value = "id", required = true) String id,
+                              @RequestParam(value = "userId", required = true) Integer userId,
                               @RequestParam(value = "token", required = true) String strToken,
                               HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
-        if (userId.contains(",")) {
+        if (id.contains(",")) {
             Result r = new Result();
             int j = 0;
-            String[] str = userId.split(",");
+            String[] str = id.split(",");
             for (String s : str) {
-                int result = userService.delete(Integer.valueOf(s), teacherId);
+                int result = userService.delete(Integer.valueOf(s), userId);
                 if (result > 0) {
                     j++;
                 }
@@ -295,7 +295,7 @@ public class UserController {
                 return r;
             }
         } else {
-            int result = userService.delete(Integer.valueOf(userId),teacherId);
+            int result = userService.delete(Integer.valueOf(id),userId);
             Result r = new Result();
             if (result > 0) {
                 r.setMsg(requestContext.getMessage("OK"));
