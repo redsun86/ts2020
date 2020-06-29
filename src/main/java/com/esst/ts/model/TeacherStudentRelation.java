@@ -7,6 +7,8 @@ public class TeacherStudentRelation {
 
     private Integer teacherId;
 
+    private Integer isDel;
+
     public Integer getId() {
         return id;
     }
@@ -29,5 +31,13 @@ public class TeacherStudentRelation {
 
     public void setTeacherId(Integer teacherId) {
         this.teacherId = teacherId;
+    }
+
+    public Integer getIsDel() {
+        return isDel;
+    }
+
+    public void setIsDel(Integer isDel) {
+        this.isDel = isDel;
     }
 }

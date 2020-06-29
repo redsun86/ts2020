@@ -429,6 +429,7 @@ public class UserController {
                             TeacherStudentRelation teacherStudentRelation = new TeacherStudentRelation();
                             teacherStudentRelation.setStudentId(newUser.getId());
                             teacherStudentRelation.setTeacherId(userId);
+                            teacherStudentRelation.setIsDel(0);
                             userService.insert(teacherStudentRelation);
                         }
                     }
@@ -441,6 +442,7 @@ public class UserController {
                             TeacherStudentRelation teacherStudentRelation = new TeacherStudentRelation();
                             teacherStudentRelation.setStudentId(user.getId());
                             teacherStudentRelation.setTeacherId(userId);
+                            teacherStudentRelation.setIsDel(0);
                             userService.insert(teacherStudentRelation);
                         }
                     }
