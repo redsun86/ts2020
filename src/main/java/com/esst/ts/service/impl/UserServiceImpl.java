@@ -47,6 +47,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getCheckUserByNum(String num) {
+        return userMapper.getCheckUserByNum(num);
+    }
+
+    @Override
     public User getUserLastRecord() {
         return userMapper.selectLastRecord();
     }

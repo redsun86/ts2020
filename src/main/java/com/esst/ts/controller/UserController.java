@@ -419,9 +419,21 @@ public class UserController {
                     m.setCreateUser(userId);
                     m.setIsDel(Short.parseShort("0"));
                     m.setIsAdmin(Short.parseShort("0"));
-                    //查询当前教师傅已导入该学号
-                    User newUser = userService.getUserByNum(m.getStNum(), userId);
-                    if (newUser == null) {
+                    //判断当前学员是否存在
+                    User newUser = userService.getCheckUserByNum(m.getStNum());
+                    if(newUser!=null){
+                        //存在
+                        //查询当前教师是否已导入该学号
+                        User newUsers = userService.getUserByNum(m.getStNum(),userId);
+                        if (newUsers == null) {
+                            TeacherStudentRelation teacherStudentRelation = new TeacherStudentRelation();
+                            teacherStudentRelation.setStudentId(newUser.getId());
+                            teacherStudentRelation.setTeacherId(userId);
+                            userService.insert(teacherStudentRelation);
+                        }
+                    }
+                    else{
+                        //不存在
                         int result = userService.insert(m);
                         if (result > 0) {
                             //查询刚刚添加的学员ID

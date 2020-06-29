@@ -27,6 +27,10 @@ public interface UserMapper {
     @ResultMap("BaseResultMap")
     User selectByNum(@Param("num") String num,@Param("userId") int userId);
 
+    @Select("select * from user where st_num = #{num} and is_del=0")
+    @ResultMap("BaseResultMap")
+    User getCheckUserByNum(@Param("num") String num);
+
     @Select("select * from user where user_name = #{userName} and password = #{passWord} and is_admin=1 and is_del=0")
     @ResultMap("BaseResultMap")
     User loginByTeacher(@Param("userName") String userName, @Param("passWord") String passWord);

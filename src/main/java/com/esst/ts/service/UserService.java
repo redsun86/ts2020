@@ -40,6 +40,8 @@ public interface UserService {
      */
     User getUserByNum(String num,Integer userId);
 
+    User getCheckUserByNum(String num);
+
     /**
      * 获取刚创建的学员ID
      * @return
