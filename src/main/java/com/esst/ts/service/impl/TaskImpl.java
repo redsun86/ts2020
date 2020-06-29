@@ -18,12 +18,7 @@ public class TaskImpl implements TaskService {
     com.esst.ts.dao.TaskMapper TaskMapper;
 
     @Override
-    public List<TechnologyTaskPOJO> GetPojoAllList() {
-        return TaskMapper.GetPojoAllList();
-    }
-
-    @Override
-    public List<TechnologyTaskPOJO> GetPojoList(int technologyId) {
-        return TaskMapper.GetPojoList(technologyId);
+    public List<TechnologyTaskPOJO> GetPojoAllList(int userId) {
+        return TaskMapper.GetPojoAllList(userId);
     }
 }
