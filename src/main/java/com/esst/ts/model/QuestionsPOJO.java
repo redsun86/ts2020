@@ -19,6 +19,7 @@ public class QuestionsPOJO {
     private String styleName;//` varchar(32) DEFAULT NULL COMMENT '风格名称',
     private Integer proportion;//` int(11) DEFAULT NULL COMMENT '得分所占比重',
     private Integer timeLimit;//` int(11) DEFAULT NULL COMMENT '答题时间限制',
+    private Integer timeLimitSecond;//` int(11) DEFAULT NULL COMMENT '答题时间限制',
     private Integer timeScale;//运行时标
     private Integer timeScaleName;//运行时标
 
@@ -132,6 +133,14 @@ public class QuestionsPOJO {
 
     public void setTimeLimit(Integer timeLimit) {
         this.timeLimit = timeLimit;
+    }
+
+    public Integer getTimeLimitSecond() {
+        return timeLimitSecond;
+    }
+
+    public void setTimeLimitSecond(Integer timeLimitSecond) {
+        this.timeLimitSecond = timeLimitSecond;
     }
 
     public Integer getTimeScale() {

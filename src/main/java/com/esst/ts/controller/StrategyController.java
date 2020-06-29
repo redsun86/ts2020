@@ -38,6 +38,9 @@ public class StrategyController {
     private com.esst.ts.service.TechnologyService TechnologyService;
     @Resource
     private com.esst.ts.service.TroubleService TroubleService;
+    /**
+     * [DCS风格]服务
+     */
     @Resource
     private com.esst.ts.service.StyleService StyleService;
     @Resource

@@ -26,6 +26,7 @@
         <result column="style_name" property="styleName" jdbcType="VARCHAR"/>
         <result column="proportion" property="proportion" jdbcType="INTEGER"/>
         <result column="time_limit" property="timeLimit" jdbcType="INTEGER"/>
+        <result column="time_limit_second" property="timeLimitSecond" jdbcType="INTEGER"/>
         <result column="time_scale" property="timeScale" jdbcType="INTEGER"/>
         <result column="time_scale_name" property="timeScaleName" jdbcType="VARCHAR"/>
     </resultMap>
