@@ -37,7 +37,6 @@ public class UserController {
     private UserService userService;
     @Resource
     private UserTokenService userTokenService;
-
     @Resource
     private FZhKTService fZhKTService;
     /**
@@ -116,7 +115,7 @@ public class UserController {
             if (user == null) {
                 r.setMsg("Err");
                 r.setCode(201);
-                r.setData("登录名或学号错误");
+                r.setData("登录失败");
                 return r;
             } else {
                 //记录学员登录日志
@@ -258,21 +257,22 @@ public class UserController {
     /**
      * 删除我的学员信息
      *
-     * @param id 学员ID
+     * @param userId 学员ID
+     * @param teacherId 教师ID
      */
     @ResponseBody
     @RequestMapping(value = "/delStudents", method = RequestMethod.POST)
-    public Result delStudents(@RequestParam(value = "id", required = true) String id,
-                              @RequestParam(value = "userId", required = true) Integer userId,
+    public Result delStudents(@RequestParam(value = "userId", required = true) String userId,
+                              @RequestParam(value = "teacherId", required = true) Integer teacherId,
                               @RequestParam(value = "token", required = true) String strToken,
                               HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
-        if (id.contains(",")) {
+        if (userId.contains(",")) {
             Result r = new Result();
             int j = 0;
-            String[] str = id.split(",");
+            String[] str = userId.split(",");
             for (String s : str) {
-                int result = userService.delete(Integer.valueOf(s), userId);
+                int result = userService.delete(Integer.valueOf(s), teacherId);
                 if (result > 0) {
                     j++;
                 }
@@ -295,7 +295,7 @@ public class UserController {
                 return r;
             }
         } else {
-            int result = userService.delete(Integer.valueOf(id), userId);
+            int result = userService.delete(Integer.valueOf(userId),teacherId);
             Result r = new Result();
             if (result > 0) {
                 r.setMsg(requestContext.getMessage("OK"));
@@ -422,7 +422,15 @@ public class UserController {
                     //判断当前学员是否存在
                     User newUser = userService.getCheckUserByNum(m.getStNum());
                     if(newUser!=null){
-                        //存在
+                        //存在 更新用户信息
+                        newUser.setUserName(m.getUserName());
+                        newUser.setRelName(m.getRelName());
+                        newUser.setClassName(m.getClassName());
+                        newUser.setMobile(m.getMobile());
+                        newUser.setGroupName(m.getGroupName());
+                        newUser.setOperateMode(m.getOperateMode());
+                        newUser.setRoleName(m.getRoleName());
+                        userService.update(newUser);
                         //查询当前教师是否已导入该学号
                         User newUsers = userService.getUserByNum(m.getStNum(),userId);
                         if (newUsers == null) {
@@ -431,6 +439,15 @@ public class UserController {
                             teacherStudentRelation.setTeacherId(userId);
                             teacherStudentRelation.setIsDel(0);
                             userService.insert(teacherStudentRelation);
+                        }
+                        else
+                        {
+                            //更新
+                            TeacherStudentRelation teacherStudentRelation=userService.selectByUserAndTeacher(newUser.getId(),userId);
+                            if(teacherStudentRelation.getIsDel()==1) {
+                                teacherStudentRelation.setIsDel(0);
+                                userService.updateByPrimaryKey(teacherStudentRelation);
+                            }
                         }
                     }
                     else{

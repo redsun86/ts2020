@@ -263,7 +263,9 @@
       valid_begin_time = #{validBeginTime,jdbcType=TIMESTAMP},
       valid_end_time = #{validEndTime,jdbcType=TIMESTAMP},
       group_name = #{groupName,jdbcType=VARCHAR},
-      role_name = #{roleName,jdbcType=VARCHAR}
+      role_name = #{roleName,jdbcType=VARCHAR},
+      dog_id = #{dogId,jdbcType=VARCHAR},
+      operate_mode = #{operateMode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

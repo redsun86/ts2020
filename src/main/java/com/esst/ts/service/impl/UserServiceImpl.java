@@ -67,6 +67,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public TeacherStudentRelation selectByUserAndTeacher(Integer userId,Integer teacherId) {
+        return teacherStudentRelationMapper.selectByUserAndTeacher(userId,teacherId);
+    }
+
+    @Override
+    public int updateByPrimaryKey(TeacherStudentRelation record) {
+        return teacherStudentRelationMapper.updateByPrimaryKey(record);
+    }
+
+    @Override
     public int insert(UserLoginLog record) {
         return userLoginLogMapper.insert(record);
     }
@@ -83,7 +93,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int update(User user) {
-        return userMapper.updateByPrimaryKeySelective(user);
+        return userMapper.updateByPrimaryKey(user);
     }
 
     @Override
@@ -92,8 +102,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int delete(Integer Id,Integer userId) {
-        return userMapper.deleteUserById(Id,userId);
+    public int delete(Integer studentId,Integer teacherId) {
+        return userMapper.deleteUserById(studentId,teacherId);
     }
 
     @Override

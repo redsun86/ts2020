@@ -22,7 +22,7 @@ public interface UserService {
 
     int updateUserPwd(Integer userId, String password);
 
-    int delete(Integer Id,Integer userId);
+    int delete(Integer studentId,Integer teacherId);
 
     List<User> getUserListByTeacherId(Integer userID);
 
@@ -55,6 +55,10 @@ public interface UserService {
      * @return
      */
     TeacherStudentRelation getUserByTeacherId(Integer userId);
+
+    TeacherStudentRelation selectByUserAndTeacher(Integer userId,Integer teacherId);
+
+    int updateByPrimaryKey(TeacherStudentRelation record);
 
     int insert(UserLoginLog record);
 
