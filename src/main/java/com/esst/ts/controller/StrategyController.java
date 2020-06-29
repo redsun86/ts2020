@@ -147,7 +147,7 @@ public class StrategyController {
         } else {
             techPojoLst = TechnologyService.GetPojoAllList();
         }
-        taskPojolst = TaskService.GetPojoAllList();
+        taskPojolst = TaskService.GetPojoAllList(Integer.valueOf(userId));
         operPojoLst = OperateService.GetPojoAllList();
         //</editor-fold>
 
@@ -286,7 +286,7 @@ public class StrategyController {
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
         List<TechnologyTaskPOJO> taskPojolst; //任务单
-        taskPojolst = TaskService.GetPojoAllList();
+        taskPojolst = TaskService.GetPojoAllList(Integer.valueOf(userId));
         responseDataMap.put("dataList", taskPojolst);
         r.setData(responseDataMap);
         //</editor-fold>
@@ -320,7 +320,7 @@ public class StrategyController {
 
         //<editor-fold desc="从数据库中读取 工艺/单元、任务单、工况">
         techPojoLst = TechnologyService.GetPojoAllList();
-        taskPojolst = TaskService.GetPojoAllList();
+        taskPojolst = TaskService.GetPojoAllList(Integer.valueOf(userId));
         operPojoLst = OperateService.GetPojoAllList();
         //</editor-fold>
 

@@ -12,6 +12,7 @@ public class TechnologyTaskPOJO {
     private String taskName;//` varchar(32) DEFAULT NULL COMMENT '任务单名称',
     private Integer technologyId;//` int(11) DEFAULT NULL COMMENT '工艺ID',
     private String shiBiao;//` varchar(32) DEFAULT NULL COMMENT '时标（保留字段）',
+    private Integer status;//状态（1：发布/2：未发布）
     private List<TechnologyTaskOperatePOJO> operateList;
 
     public Integer getId() {
@@ -52,6 +53,14 @@ public class TechnologyTaskPOJO {
 
     public void setShiBiao(String shiBiao) {
         this.shiBiao = shiBiao;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public List<TechnologyTaskOperatePOJO> getOperateList() {
