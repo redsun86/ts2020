@@ -27,7 +27,7 @@ public interface UserMapper {
     @ResultMap("BaseResultMap")
     User selectByNum(@Param("num") String num,@Param("userId") int userId);
 
-    @Select("select * from user where st_num = #{num}")
+    @Select("select * from user where st_num = #{num} and is_admin=0")
     @ResultMap("BaseResultMap")
     User getCheckUserByNum(@Param("num") String num);
 

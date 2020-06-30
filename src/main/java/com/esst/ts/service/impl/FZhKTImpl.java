@@ -192,6 +192,13 @@ public class FZhKTImpl implements FZhKTService {
     }
 
     @Override
+    public int deletelivedataTorecord(int userId) {
+        int j=userlivedata.deletUserlivaByteacherid(userId);
+        int s=userliveScore.deletUserlivaByteacherid(userId);
+        return j+s;
+    }
+
+    @Override
     public double getTaskTotal_score(UserLiveWithBLOBs ul) {
         //如果uld正在做
         double totalscore = 0;

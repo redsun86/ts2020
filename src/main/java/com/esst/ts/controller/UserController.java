@@ -22,6 +22,7 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -65,13 +66,32 @@ public class UserController {
     }
 
     /**
+     * 删除实时记录
+     *
+     * @param userId 用户ID
+     */
+    @ResponseBody
+    @RequestMapping("/delRecord")
+    public Result delRecord(@RequestParam(value = "userId") Integer userId,
+                             @RequestParam(value = "token") String token,
+                             HttpServletRequest request){
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        fZhKTService.deletelivedataTorecord(userId);
+        r.setMsg("OK");
+        r.setCode(0);
+        r.setData("清除实时记录成功");
+        return r;
+    }
+
+    /**
      * 登录接口
      *
      * @param userName 用户名称
      * @param passWord 用户密码
      */
     @ResponseBody
-    @RequestMapping("/userLogin")
+    @RequestMapping(value = "/userLogin", method = RequestMethod.POST)
     public Result userLogin(@RequestParam(value = "userName") String userName,
                             @RequestParam(value = "passWord") String passWord,
                             @RequestParam(value = "type") Integer type,
@@ -82,6 +102,7 @@ public class UserController {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
         User user;
+        int loginCount=0;
         if (type == 0) {
             //教师登录
             user = userService.loginByTeacher(userName, MD5Code.encodeByMD5(passWord));
@@ -91,6 +112,23 @@ public class UserController {
                 r.setData("用户名或密码错误");
                 return r;
             } else {
+                //判断教师当天第几次登录
+                Date date=new Date();
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                String beginDate=formatter.format(date)+" 00:00:00";
+                String endDate=formatter.format(date)+" 23:59:59";
+                List<UserLoginLogPOJO> userLoginLog=userService.getUserLogByUserId(user.getId(),beginDate,endDate);
+                if(userLoginLog.size()>0){
+                    //不是第一次登录
+                    loginCount=1;
+                }
+                else
+                {
+                    //第一次登录
+                    //清除实时数据中非当天的数据
+                    fZhKTService.deletelivedataTorecord(user.getId());
+                    loginCount=0;
+                }
                 //记录教师登录日志
                 UserLoginLog userLoginLogModel = new UserLoginLog();
                 userLoginLogModel.setUserId(user.getId());
@@ -163,6 +201,7 @@ public class UserController {
         userMap.put("groupName", user.getGroupName());
         userMap.put("roleName", user.getRoleName());
         userMap.put("operateMode", user.getOperateMode());
+        userMap.put("loginCount", loginCount);
         r.setData(userMap);
         return r;
     }
@@ -193,7 +232,7 @@ public class UserController {
             if(u.getIsAdmin()==1){
                 //教师
                 userLoginLogModel.setisAdmin(1);
-                fZhKTService.userlivedataTorecord(userId);
+                //fZhKTService.userlivedataTorecord(userId); //废弃掉退出教师站的时候统计历史数据
             }else
             {
                 userLoginLogModel.setisAdmin(0);

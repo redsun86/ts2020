@@ -6,6 +6,7 @@ import com.esst.ts.dao.UserMapper;
 import com.esst.ts.model.TeacherStudentRelation;
 import com.esst.ts.model.User;
 import com.esst.ts.model.UserLoginLog;
+import com.esst.ts.model.UserLoginLogPOJO;
 import com.esst.ts.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,6 +85,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getUserByTrueName(String userTrueName) {
         return userMapper.getUserByTrueName(userTrueName);
+    }
+
+    @Override
+    public List<UserLoginLogPOJO> getUserLogByUserId(Integer userId,String beginDate,String endDate) {
+        return userLoginLogMapper.getUserLogByUserId(userId,beginDate,endDate);
     }
 
     @Override

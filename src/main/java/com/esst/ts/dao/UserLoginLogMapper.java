@@ -31,4 +31,8 @@ public interface UserLoginLogMapper {
     @Select("select id,date_format(create_time,'%Y-%m-%d') AS newcreate_time FROM user_login_log where is_admin=1 and status=1 and create_time >=#{beginDate} and create_time <=#{endDate} GROUP BY newcreate_time")
     @ResultMap("BasePOJOResultMap")
     List<UserLoginLogPOJO> getDistinctDateForDate(@Param("beginDate") String beginDate, @Param("endDate") String endDate);
+
+    @Select("select id,date_format(create_time,'%Y-%m-%d %h:%m:%s') AS newcreate_time FROM user_login_log where is_admin=1 and status=1 and user_id=#{userId} and create_time >=#{beginDate} and create_time <=#{endDate}")
+    @ResultMap("BasePOJOResultMap")
+    List<UserLoginLogPOJO> getUserLogByUserId(@Param("userId") Integer userId,@Param("beginDate") String beginDate, @Param("endDate") String endDate);
 }
