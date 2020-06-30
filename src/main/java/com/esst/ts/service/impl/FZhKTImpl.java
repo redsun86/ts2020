@@ -221,7 +221,7 @@ public class FZhKTImpl implements FZhKTService {
 
         scoreDetailPOJOArrayList = FZhKTMapper.getDetailScoreList(ulwb);
         ScoreDetailPOJO scordetail = new ScoreDetailPOJO();
-        scordetail.setOperateId(ulwb.getTaskId());
+        scordetail.setOperateId(ulwb.getOperateId());
         scordetail.setLearnTime(String.valueOf(ulwb.getStudyDuration() / 1000));
         //DateFormat df=new SimpleDateFormat("yyyy-MM-dd 00:00:00");
         scordetail.setStudyDate(String.valueOf(ulwb.getStartTime()));
@@ -247,6 +247,11 @@ public class FZhKTImpl implements FZhKTService {
             scoreDetailPOJOArrayList.add(scordetail);
         }
         return scoreDetailPOJOArrayList;
+    }
+
+    @Override
+    public int updateUserScoreRecoredByTrainID(UserScoreRecord usrScore) {
+        return userScoreRecord.updateUserScoreRecoredByTrainID(usrScore);
     }
 
     @Override

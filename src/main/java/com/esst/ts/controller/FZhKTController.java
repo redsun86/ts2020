@@ -1,6 +1,7 @@
 package com.esst.ts.controller;
 
 import com.esst.ts.dao.UserLiveMapper;
+import com.esst.ts.dao.UserMapper;
 import com.esst.ts.model.*;
 import com.esst.ts.service.FZhKTService;
 import com.github.pagehelper.util.StringUtil;
@@ -29,6 +30,8 @@ public class FZhKTController {
     private FZhKTService fzhktService;
     @Resource
     private UserLiveMapper userliveservice;
+    @Resource
+    private UserMapper userMapper;
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     //@Resource
     //private UserService userService;
@@ -96,7 +99,7 @@ public class FZhKTController {
             _score.setScore(uld.getCurrentScore().toString());
             //_score.setTotal_score(uld.getTotalScore().toString());
             double totlscore = fzhktService.getTaskTotal_score(uld);
-            _score.setTotal_score(String.format("%.2f",totlscore));
+            _score.setTotal_score(String.format("%.2f", totlscore));
 
             _score.setLearning_time(String.valueOf(uld.getStudyDuration() / 1000));
             _score.setStudy_type(uld.getStudyType());
@@ -236,12 +239,13 @@ public class FZhKTController {
                               @RequestParam(value = "score_detail") String score_detail,
                               @RequestParam(value = "client_status") int client_status,
                               @RequestParam(value = "study_type") int study_type,
+                              @RequestParam(value = "train_id") String train_id,
                               @RequestParam(value = "token", required = true) String token,
                               HttpServletRequest request) {
         RequestContext requestcontext = new RequestContext(request);
         Result r = new Result();
         Date datecurretime = new Date();
-        Long curretime=datecurretime.getTime();
+        Long curretime = datecurretime.getTime();
         //user_live_data
         UserLiveDataWithBLOBs uldscore = new UserLiveDataWithBLOBs();
         uldscore.setUserId(user_id);
@@ -254,13 +258,8 @@ public class FZhKTController {
         uldscore.setScoreDetail(score_detail);
         uldscore.setStartTime(curretime);
         uldscore.setScoreStatues(client_status);
+        uldscore.setTrainId(train_id);
         uldscore.setStudyDuration(0.00);
-//        if(client_status==2)
-//        {
-//            UserScoreRecord usrecord = Constants.userscorerecord_map.get(user_id);
-//            double duration = new Date().getTime() - usrecord.getBeginTime();
-//            uldscore.setStudyDuration(duration);
-//        }
         uldscore.setUpdatetime(curretime);
         uldscore.setStudyType(study_type);
         //fzhktService.insertUserLiveDataWithBLOBS(uldscore);
@@ -279,101 +278,43 @@ public class FZhKTController {
         userlive.setStartTime(curretime);
         userlive.setStudyDuration(0.00);
         userlive.setScoreStatues(client_status);
+        userlive.setTrainId(train_id);
         userlive = fzhktService.updateUserLive(userlive);
         uldscore.setStudyDuration(userlive.getStudyDuration());
         uldscore.setStartTime(userlive.getStartTime());
         fzhktService.insertUserLiveDataWithBLOBS(uldscore);
-        //如果没有就插入，如果有就更新
 
-//        if (client_status == 0) {//第一次传成绩
-//            //user_score_recored插入数据
-//            UserScoreRecord usrScore = new UserScoreRecord();
-//            usrScore.setUserId(user_id);
-//            usrScore.setTaskId(task_id);
-//            usrScore.setOperateId(operate_id);
-//            usrScore.setScore(current_score);
-//            usrScore.setTotalScore(total_score);
-//            usrScore.setStudyType(study_type);
-//            Date date = new Date();
-//            usrScore.setBeginTime(date.getTime());
-//            fzhktService.insertUserScoreRecore(usrScore);
-//
-//
-//            Constants.userscorerecord_map.put(user_id, usrScore);
-//
-//
-//            //20200617
-//            UserLiveWithBLOBs ulscore = new UserLiveWithBLOBs();
-//            ulscore.setUserId(user_id);
-//            ulscore.setIdAddress(id_adress);
-//            ulscore.setTaskId(task_id);
-//            ulscore.setOperateId(operate_id);
-//            ulscore.setCurrentScore(current_score);
-//            ulscore.setTotalScore(total_score);
-//            ulscore.setScoreDetail(score_detail);
-//            ulscore.setStudyType(study_type);
-//            ulscore.setUpdatetime(new Date());
-//
-//       }
-//else if (client_status == 1) {
-////
-////            UserScoreRecord usrecord = Constants.userscorerecord_map.get(user_id);
-////            if (usrecord==null)
-////            {
-////                //List<UserScoreRecord>=fzhktService.getUserScoreRecore(user_id,task_id,operate_id);
-////            }
-////            //user_live_data
-////            UserLiveDataWithBLOBs uldscore = new UserLiveDataWithBLOBs();
-////            uldscore.setUserId(user_id);
-////            uldscore.setIdAddress(id_adress);
-////            uldscore.setTaskId(task_id);
-////            uldscore.setOperateId(operate_id);
-////            uldscore.setCurrentScore(current_score);
-////            uldscore.setTotalScore(total_score);
-////            uldscore.setScoreDetail(score_detail);
-////            uldscore.setStudyType(study_type);
-////            uldscore.setUpdatetime(new Date());
-////            //计算培训时长
-////            double duration = new Date().getTime() - usrecord.getBeginTime();
-////            uldscore.setStudyDuration(duration);
-////            fzhktService.insertUserLiveDataWithBLOBS(uldscore);
-//       }
-//else if (client_status == 2) {
-//            UserScoreRecord usrecord = Constants.userscorerecord_map.get(user_id);
-//            usrecord.setEndTime(new Date().getTime());
-//            fzhktService.updateUserScoreRecored(usrecord);
-//
-//            UserLiveWithBLOBs ulscore = new UserLiveWithBLOBs();
-//            ulscore.setUserId(user_id);
-//            ulscore.setIdAddress(id_adress);
-//            ulscore.setTaskId(task_id);
-//            ulscore.setOperateId(operate_id);
-//            ulscore.setCurrentScore(current_score);
-//            ulscore.setTotalScore(total_score);
-//            ulscore.setScoreDetail(score_detail);
-//            ulscore.setStudyType(study_type);
-//            ulscore.setUpdatetime(new Date());
-//            //计算培训时长
-//            double duration = new Date().getTime() - usrecord.getBeginTime();
-//            ulscore.setStudyDuration(duration);
-//            fzhktService.inserUserLiveWithBLOBS(ulscore);
-//            Constants.userscorerecord_map.remove(user_id);
-//        }
+
+        UserScoreRecord usrScore = new UserScoreRecord();
+        usrScore.setUserId(user_id);
+        usrScore.setTaskId(task_id);
+        usrScore.setOperateId(operate_id);
+        usrScore.setScore(current_score);
+        usrScore.setTotalScore(total_score);
+        usrScore.setBeginTime(curretime);
+        usrScore.setEndTime(curretime);
+        usrScore.setMacAddress(mac_adress);
+        usrScore.setIpAddress(id_adress);
+        usrScore.setTrainId(train_id);
+        usrScore.setStudyType(study_type);
+
+        fzhktService.updateUserScoreRecoredByTrainID(usrScore);
         r.setMsg("更新成功");
         return r;
     }
+
     @ResponseBody
     @RequestMapping(value = "/getTaskdetailscore", method = RequestMethod.GET)
     public Result getTaskdetailscore(
-            @RequestParam(value = "Id",required = true) int Id,
-            @RequestParam(value = "taskName",required = true) String taskName,
+            @RequestParam(value = "Id", required = true) int Id,
+            @RequestParam(value = "taskName", required = true) String taskName,
             @RequestParam(value = "token", required = true) String strToken,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
 
-        UserLiveWithBLOBs ulwb=userliveservice.selectByPrimaryKey(Id);
-        List<ScoreDetailPOJO> scoreDetailPOJOSList=fzhktService.getScoreDetailList(ulwb);
+        UserLiveWithBLOBs ulwb = userliveservice.selectByPrimaryKey(Id);
+        List<ScoreDetailPOJO> scoreDetailPOJOSList = fzhktService.getScoreDetailList(ulwb);
         //double totlscore = fzhktService.getTaskTotal_score(ulwb);
         //<editor-fold desc="返回参数赋值">
         Map<String, Object> FZhKTMap = new HashMap<>();
@@ -382,6 +323,29 @@ public class FZhKTController {
         FZhKTMap.put("taskName", taskName);
         r.setData(FZhKTMap);
         //</editor-fold>
-        return  r;
+        return r;
+    }
+
+    /**
+     * 学员端上传成绩接口
+     *
+     * @param userId 老师ID
+     * @param taskId 试卷或者任务单ID
+     * @return studyType 学习类型
+     */
+    @ResponseBody
+    @RequestMapping(value = "/realtimeExcel", method = RequestMethod.GET)
+    public Result realttimeExcel(
+            @RequestParam(value = "userId", required = true) int userId,
+            @RequestParam(value = "taskId", required = true) int taskId,
+            @RequestParam(value = "studyType", required = true) int studyType,
+            HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        //key operateId,value userlivedata
+        Map<String, Object> operaMaxmap = new HashMap<>();
+
+        List<User> userList = userMapper.getUserLst(userId);
+        return r;
     }
 }

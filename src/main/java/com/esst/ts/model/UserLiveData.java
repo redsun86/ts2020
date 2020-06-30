@@ -29,6 +29,8 @@ public class UserLiveData {
 
     private Integer scoreStatues;
 
+    private String trainId;
+
     public Integer getId() {
         return id;
     }
@@ -139,5 +141,13 @@ public class UserLiveData {
 
     public void setScoreStatues(Integer scoreStatues) {
         this.scoreStatues = scoreStatues;
+    }
+
+    public String getTrainId() {
+        return trainId;
+    }
+
+    public void setTrainId(String trainId) {
+        this.trainId = trainId == null ? null : trainId.trim();
     }
 }
