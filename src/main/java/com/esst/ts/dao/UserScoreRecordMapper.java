@@ -2,6 +2,7 @@ package com.esst.ts.dao;
 
 import com.esst.ts.model.UserScoreRecord;
 import com.esst.ts.model.UserScoreRecordPOJO;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
@@ -78,6 +79,17 @@ public interface UserScoreRecordMapper {
     @Select("SELECT r.*, r.end_time - r.begin_time AS learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d %h:%m:%s') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE user_id in(#{userId}) GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id ORDER BY total_score,begin_time DESC")
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoforPerson(@Param("userId") String userId);
+    @Insert(" insert into user_score_record (user_id, task_id, \n" +
+            "operate_id, score, total_score, \n" +
+            "begin_time, end_time, study_type,\n" +
+            "mac_address, ip_address,train_id)\n" +
+            "values (#{userId,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, \n" +
+            "#{operateId,jdbcType=INTEGER}, #{score,jdbcType=DOUBLE}, #{totalScore,jdbcType=DOUBLE}, \n" +
+            " #{beginTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, #{studyType,jdbcType=INTEGER},\n" +
+            " #{macAddress,jdbcType=VARCHAR}, #{ipAddress,jdbcType=VARCHAR},#{trainId,jdbcType=VARCHAR}\n" +
+            " )" +
+            "ON DUPLICATE KEY UPDATE score=#{score,jdbcType=DOUBLE},total_score=#{totalScore},end_time=#{endTime}")
+    int updateUserScoreRecoredByTrainID(UserScoreRecord usrScore);
 
 
     //@Select("select * from user_score_record where user_id=#{userId} and task_id =#{taskId} and opreate_id")
