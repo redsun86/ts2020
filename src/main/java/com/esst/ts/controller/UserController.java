@@ -119,15 +119,17 @@ public class UserController {
                 String endDate=formatter.format(date)+" 23:59:59";
                 List<UserLoginLogPOJO> userLoginLog=userService.getUserLogByUserId(user.getId(),beginDate,endDate);
                 if(userLoginLog.size()>0){
-                    //不是第一次登录
-                    loginCount=1;
+                    //不是第一次登录,判断当天是否有该教师名下的学员实时数据
+                    List<UserLive> userlive=fZhKTService.checkIsRecordByTeacherId(beginDate,endDate,user.getId());
+                    if(userlive.size()>0) {
+                        loginCount = 1;
+                    }
                 }
                 else
                 {
                     //第一次登录
                     //清除实时数据中非当天的数据
                     fZhKTService.deletelivedataTorecord(user.getId());
-                    loginCount=0;
                 }
                 //记录教师登录日志
                 UserLoginLog userLoginLogModel = new UserLoginLog();

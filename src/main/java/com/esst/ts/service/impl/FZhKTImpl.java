@@ -218,6 +218,11 @@ public class FZhKTImpl implements FZhKTService {
     }
 
     @Override
+    public List<UserLive> checkIsRecordByTeacherId(String beginDate,String endDate,int userID) {
+        return userliveScore.checkIsRecordByTeacherId(beginDate,endDate,userID);
+    }
+
+    @Override
     public List<ScoreDetailPOJO> getScoreDetailList(UserLiveWithBLOBs ulwb) {
         List<ScoreDetailPOJO> scoreDetailPOJOArrayList = new ArrayList<>();
         List<Operate> operateList = getOprateList();
