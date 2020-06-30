@@ -26,6 +26,7 @@
       )
   </insert>
     <insert id="insertTaskIds">
+        delete from user_task_relation where user_id=#{userId};
         insert into user_task_relation (user_id, task_id)
         select bv.user_id,bv.task_id from (
         select 0 user_id, 0 task_id

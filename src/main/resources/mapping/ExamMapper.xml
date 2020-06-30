@@ -85,9 +85,12 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
     <update id="updateStatus">
+        <if test="status == 1">
+            UPDATE exam SET status=0 where create_User=#{userId} and is_deleted=0;
+        </if>
         UPDATE exam SET status=#{status}
         <where>
-            id in
+            create_User=#{userId} and is_deleted=0 and id in
             <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
                 #{item}
             </foreach>
@@ -128,6 +131,9 @@
         </if>
         <if test="examName != null">
             and e.exam_name like CONCAT('%', #{examName,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="createUser != null">
+            and e.create_user=#{createUser,jdbcType=INTEGER}
         </if>
     </select>
 </mapper>

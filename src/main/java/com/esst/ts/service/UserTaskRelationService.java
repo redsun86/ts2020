@@ -8,7 +8,7 @@ import com.esst.ts.model.UserTaskRelation;
 public interface UserTaskRelationService {
     int insert(UserTaskRelation mod);
 
-    int insertTaskIds(String taskIds, String userId);
+    int insertTaskIds(String taskIds, int userId);
 
-    int deleteTaskIds(String taskIds, String userId);
+    int deleteTaskIds(String taskIds, int userId);
 }

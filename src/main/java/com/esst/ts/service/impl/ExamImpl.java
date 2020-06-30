@@ -44,7 +44,7 @@ public class ExamImpl implements ExamService {
     }
 
     @Override
-    public int updateStatus(String ids, int Status) {
+    public int updateStatus(String ids, int status,int userId) {
         int retVal = 0;
         if (ids != null && ids != "") {
             ids = ids.replaceAll("\\，", "\\,");
@@ -56,7 +56,8 @@ public class ExamImpl implements ExamService {
             if (idList.size() > 0) {
                 Map params = new HashMap();
                 params.put("idList", idList);
-                params.put("status", Status);
+                params.put("status", status);
+                params.put("userId", userId);
                 retVal = ExamMapper.updateStatus(params);
             }
         }

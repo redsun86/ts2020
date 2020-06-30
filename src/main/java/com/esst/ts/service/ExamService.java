@@ -16,7 +16,7 @@ public interface ExamService {
 
     int deleteWithId(int id);
 
-    int updateStatus(String ids, int Status);
+    int updateStatus(String ids, int status,int userId);
 
     Exam getInsertModel(Exam mod);
 

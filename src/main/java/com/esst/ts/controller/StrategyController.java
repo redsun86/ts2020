@@ -49,6 +49,8 @@ public class StrategyController {
     private com.esst.ts.service.UserTaskRelationService UserTaskRelationService;
     @Resource
     private com.esst.ts.service.TimescaleService TimescaleService;
+    @Resource
+    private com.esst.ts.service.UserService UserService;
 
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     //</editor-fold>
@@ -217,7 +219,7 @@ public class StrategyController {
         Map<String, Object> responseDataMap = new HashMap<>();
         int rowsCount = 0;
         try {
-            UserTaskRelationService.insertTaskIds(taskIds, userId);
+            UserTaskRelationService.insertTaskIds(taskIds,Integer.valueOf(userId) );
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
         } catch (Exception e) {
@@ -254,7 +256,7 @@ public class StrategyController {
         Map<String, Object> responseDataMap = new HashMap<>();
         int rowsCount = 0;
         try {
-            UserTaskRelationService.deleteTaskIds(taskIds, userId);
+            UserTaskRelationService.deleteTaskIds(taskIds,Integer.valueOf(userId) );
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
         } catch (Exception e) {
@@ -376,6 +378,10 @@ public class StrategyController {
             Exam reqMod = new Exam();
             reqMod.setIsDeleted(0);
             reqMod.setExamName(examName);
+            User umod = UserService.getUserById(Integer.valueOf(userId));
+            if (null != umod && umod.getIsAdmin() == 1) {
+                reqMod.setCreateUser(Integer.valueOf((userId)));
+            }
             List<ExamPOJO> examsLst = ExamService.GetList(reqMod);
             int questionsCount = 0;
             for (ExamPOJO mod : examsLst) {
@@ -423,6 +429,7 @@ public class StrategyController {
             int allowContinue = 1;
             Exam reqCheckMod = new Exam();
             reqCheckMod.setExamName(reqMod.getExamName());
+            reqCheckMod.setCreateUser(reqMod.getCreateUser());
             reqCheckMod.setIsDeleted(0);
             List<ExamPOJO> questLst = ExamService.GetList(reqCheckMod);
             if (reqMod.getId() == null || reqMod.getId() == 0 || reqMod.getId() == -1) {
@@ -520,7 +527,7 @@ public class StrategyController {
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
         try {
-            ExamService.updateStatus(exameIds, 1);
+            ExamService.updateStatus(exameIds, 1,Integer.valueOf(userId));
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
         } catch (Exception e) {
@@ -556,7 +563,7 @@ public class StrategyController {
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
         try {
-            ExamService.updateStatus(exameIds, 2);
+            ExamService.updateStatus(exameIds, 0,Integer.valueOf(userId));
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
         } catch (Exception e) {

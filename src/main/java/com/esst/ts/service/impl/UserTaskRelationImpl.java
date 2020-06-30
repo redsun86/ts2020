@@ -27,7 +27,7 @@ public class UserTaskRelationImpl implements UserTaskRelationService {
     }
 
     @Override
-    public int insertTaskIds(String taskIds, String userId) {
+    public int insertTaskIds(String taskIds, int userId) {
         int retVal = 0;
         if (taskIds != null && taskIds != "") {
             taskIds = taskIds.replaceAll("\\，", "\\,");
@@ -47,7 +47,7 @@ public class UserTaskRelationImpl implements UserTaskRelationService {
     }
 
     @Override
-    public int deleteTaskIds(String taskIds, String userId) {
+    public int deleteTaskIds(String taskIds, int userId) {
         int retVal = 0;
         if (taskIds != null && taskIds != "") {
             taskIds = taskIds.replaceAll("\\，", "\\,");
