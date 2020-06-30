@@ -23,6 +23,8 @@ public class UserScoreRecord {
 
     private String ipAddress;
 
+    private  String trainId;
+
     public Integer getId() {
         return id;
     }
@@ -109,5 +111,13 @@ public class UserScoreRecord {
 
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
+    }
+
+    public String getTrainId() {
+        return trainId;
+    }
+
+    public void setTrainId(String trainId) {
+        this.trainId = trainId;
     }
 }

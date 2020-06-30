@@ -31,9 +31,10 @@
     <result column="study_type" property="studyType" jdbcType="INTEGER" />
     <result column="mac_address" property="macAddress" jdbcType="VARCHAR" />
     <result column="ip_address" property="ipAddress" jdbcType="VARCHAR" />
+    <result column="train_id" property="trainId" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_id, task_id, operate_id, score, total_score, begin_time, end_time, study_type,mac_address,ip_address
+    id, user_id, task_id, operate_id, score, total_score, begin_time, end_time, study_type,mac_address,ip_address,train_id
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -49,12 +50,12 @@
     insert into user_score_record (id, user_id, task_id, 
       operate_id, score, total_score, 
       begin_time, end_time, study_type,
-      mac_address, ip_address
+      mac_address, ip_address,train_id
       )
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, 
       #{operateId,jdbcType=INTEGER}, #{score,jdbcType=DOUBLE}, #{totalScore,jdbcType=DOUBLE}, 
       #{beginTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, #{studyType,jdbcType=INTEGER},
-      #{macAddress,jdbcType=VARCHAR}, #{ipAddress,jdbcType=VARCHAR}
+      #{macAddress,jdbcType=VARCHAR}, #{ipAddress,jdbcType=VARCHAR},#{trainId,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.esst.ts.model.UserScoreRecord" >
@@ -93,6 +94,9 @@
       <if test="ipAddress != null" >
         ip_address,
       </if>
+      <if test="trainId != null" >
+        train_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -127,6 +131,9 @@
       </if>
       <if test="ipAddress != null" >
         #{ipAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="trainId != null" >
+        #{trainId,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -163,6 +170,9 @@
       <if test="ipAddress != null" >
         ip_address = #{ipAddress,jdbcType=VARCHAR},
       </if>
+      <if test="trainId != null" >
+        train_id = #{trainId,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -177,7 +187,8 @@
       end_time = #{endTime,jdbcType=BIGINT},
       study_type = #{studyType,jdbcType=INTEGER},
       mac_address = #{macAddress,jdbcType=VARCHAR},
-      ip_address = #{ipAddress,jdbcType=VARCHAR}
+      ip_address = #{ipAddress,jdbcType=VARCHAR},
+      train_id = #{trainId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
