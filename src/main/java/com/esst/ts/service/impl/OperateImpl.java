@@ -1,5 +1,8 @@
 package com.esst.ts.service.impl;
 
+import com.esst.ts.model.Exam;
+import com.esst.ts.model.ExamPOJO;
+import com.esst.ts.model.Operate;
 import com.esst.ts.model.TechnologyTaskOperatePOJO;
 import com.esst.ts.service.OperateService;
 import org.springframework.stereotype.Service;
@@ -25,5 +28,10 @@ public class OperateImpl implements OperateService {
     @Override
     public List<TechnologyTaskOperatePOJO> GetPojoList(int technologyId) {
         return OperateMapper.GetPojoList(technologyId);
+    }
+
+    @Override
+    public List<Operate> GetList(Operate mod) {
+        return OperateMapper.GetList(mod);
     }
 }

@@ -9,6 +9,16 @@ public class Operate {
 
     private String operateName;
 
+    /**
+     * 是否被删除（0：未删除；1：已删除）
+     */
+    private Integer isDeleted;
+
+    /**
+     * 所属任务单id
+     */
+    private Integer taskId;
+
     public Integer getId() {
         return id;
     }
@@ -30,7 +40,7 @@ public class Operate {
     }
 
     public void setOperateCode(String operateCode) {
-        this.operateCode = operateCode == null ? null : operateCode.trim();
+        this.operateCode = operateCode;
     }
 
     public String getOperateName() {
@@ -38,6 +48,22 @@ public class Operate {
     }
 
     public void setOperateName(String operateName) {
-        this.operateName = operateName == null ? null : operateName.trim();
+        this.operateName = operateName;
+    }
+
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public Integer getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Integer taskId) {
+        this.taskId = taskId;
     }
 }

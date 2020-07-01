@@ -54,6 +54,7 @@ public class StrategyController {
 
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     //</editor-fold>
+
     //  1、策略库数据更新接口
 
     /**
@@ -78,6 +79,7 @@ public class StrategyController {
         //</editor-fold>
         return r;
     }
+
     //  2、获取产品列表接口；从任务库数据列表中解析
 
     /**
@@ -1116,9 +1118,9 @@ public class StrategyController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/getDataList", method = RequestMethod.GET)
+    @RequestMapping(value = "/getDataList", method = RequestMethod.POST)
     public Result getDataList(
-            @RequestParam(value = "token", required = true) String strToken,
+            @RequestBody List<Exam> reqModList,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
@@ -1187,6 +1189,10 @@ public class StrategyController {
         r.setData(productlistMap);
         //</editor-fold>
 
+        Operate reqMod=new Operate();
+        reqMod.setIsDeleted(0);
+        reqMod.setTaskId(1);
+        List<Operate> operateList=OperateService.GetList(reqMod);
         return r;
     }
 

@@ -1,5 +1,8 @@
 package com.esst.ts.service;
 
+import com.esst.ts.model.Exam;
+import com.esst.ts.model.ExamPOJO;
+import com.esst.ts.model.Operate;
 import com.esst.ts.model.TechnologyTaskOperatePOJO;
 
 import java.util.List;
@@ -11,4 +14,5 @@ public interface OperateService {
     List<TechnologyTaskOperatePOJO> GetPojoAllList();
 
     List<TechnologyTaskOperatePOJO> GetPojoList(int technologyId);
+    List<Operate> GetList(Operate mod);
 }

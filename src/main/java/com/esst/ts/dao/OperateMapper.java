@@ -1,5 +1,7 @@
 package com.esst.ts.dao;
 
+import com.esst.ts.model.Exam;
+import com.esst.ts.model.ExamPOJO;
 import com.esst.ts.model.Operate;
 import com.esst.ts.model.TechnologyTaskOperatePOJO;
 import org.apache.ibatis.annotations.Param;
@@ -16,6 +18,8 @@ public interface OperateMapper {
     int insertSelective(Operate record);
 
     Operate selectByPrimaryKey(Integer id);
+
+    List<Operate> GetList(Operate mod);
 
     int updateByPrimaryKeySelective(Operate record);
 

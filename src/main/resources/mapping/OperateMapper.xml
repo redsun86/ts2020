@@ -6,6 +6,8 @@
     <result column="technology_id" property="technologyId" jdbcType="INTEGER" />
     <result column="operate_code" property="operateCode" jdbcType="VARCHAR" />
     <result column="operate_name" property="operateName" jdbcType="VARCHAR" />
+    <result column="task_id" property="taskId" jdbcType="INTEGER" />
+    <result column="is_deleted" property="isDeleted" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, technology_id, operate_code, operate_name
@@ -79,4 +81,30 @@
       operate_name = #{operateName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="GetList" resultMap="BaseResultMap" parameterType="com.esst.ts.model.Operate">
+    select t.id,t.technology_id,t.operate_code,t.operate_name,t.is_deleted
+    from operate t
+    LEFT JOIN task_oper_relation tor ON t.id=tor.operate_id
+    <where>
+      t.id>0
+      <if test="id != null">
+        and t.id=#{id,jdbcType=INTEGER}
+      </if>
+      <if test="isDeleted != null">
+        and t.is_deleted=#{isDeleted,jdbcType=INTEGER}
+      </if>
+        <if test="operateCode != null">
+          and t.operate_code like CONCAT('%', #{operateCode,jdbcType=VARCHAR}, '%')
+        </if>
+      <if test="operateName != null">
+        and t.operate_name like CONCAT('%', #{operateName,jdbcType=VARCHAR}, '%')
+      </if>
+      <if test="technologyId != null">
+        and t.technology_id=#{technologyId,jdbcType=INTEGER}
+      </if>
+      <if test="taskId != null">
+        and tor.task_id=#{taskId,jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
 </mapper>
