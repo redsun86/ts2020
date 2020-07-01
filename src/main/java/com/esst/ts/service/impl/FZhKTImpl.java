@@ -192,10 +192,9 @@ public class FZhKTImpl implements FZhKTService {
     }
 
     @Override
-    public int deletelivedataTorecord(int userId) {
-        int j=userlivedata.deletUserlivaByteacherid(userId);
-        int s=userliveScore.deletUserlivaByteacherid(userId);
-        return j+s;
+    public void deletelivedataTorecord(int userId) {
+        userlivedata.deletUserlivaByteacherid(userId);
+        userliveScore.deletUserlivaByteacherid(userId);
     }
 
     @Override

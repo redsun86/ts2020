@@ -40,7 +40,7 @@ public interface FZhKTService {
     int getUserLoginLogCountByTeacherID(String userId);
 
     void userlivedataTorecord(int userId);
-    int deletelivedataTorecord(int userId);
+    void deletelivedataTorecord(int userId);
     double getTaskTotal_score(UserLiveWithBLOBs uld);
     List<UserLive> checkIsRecordByTeacherId(String beginDate,String endDate,int userID);
     List<ScoreDetailPOJO> getScoreDetailList(UserLiveWithBLOBs id);
