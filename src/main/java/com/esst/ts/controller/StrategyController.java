@@ -151,7 +151,13 @@ public class StrategyController {
         } else {
             techPojoLst = TechnologyService.GetPojoAllList();
         }
-        taskPojolst = TaskService.GetPojoAllList(Integer.valueOf(userId));
+
+        int reqUserId=0;
+        User umod = UserService.getUserById(Integer.valueOf(userId));
+        if (null != umod && umod.getIsAdmin() == 1) {
+            reqUserId=Integer.valueOf(userId);
+        }
+        taskPojolst = TaskService.GetPojoAllList(reqUserId);
         operPojoLst = OperateService.GetPojoAllList();
         //</editor-fold>
 
@@ -221,7 +227,7 @@ public class StrategyController {
         Map<String, Object> responseDataMap = new HashMap<>();
         int rowsCount = 0;
         try {
-            UserTaskRelationService.insertTaskIds(taskIds,Integer.valueOf(userId) );
+            UserTaskRelationService.insertTaskIds(taskIds, Integer.valueOf(userId));
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
         } catch (Exception e) {
@@ -258,7 +264,7 @@ public class StrategyController {
         Map<String, Object> responseDataMap = new HashMap<>();
         int rowsCount = 0;
         try {
-            UserTaskRelationService.deleteTaskIds(taskIds,Integer.valueOf(userId) );
+            UserTaskRelationService.deleteTaskIds(taskIds, Integer.valueOf(userId));
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
         } catch (Exception e) {
@@ -290,7 +296,13 @@ public class StrategyController {
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
         List<TechnologyTaskPOJO> taskPojolst; //任务单
-        taskPojolst = TaskService.GetPojoAllList(Integer.valueOf(userId));
+
+        int reqUserId=0;
+        User umod = UserService.getUserById(Integer.valueOf(userId));
+        if (null != umod && umod.getIsAdmin() == 1) {
+            reqUserId=Integer.valueOf(userId);
+        }
+        taskPojolst = TaskService.GetPojoAllList(reqUserId);
         responseDataMap.put("dataList", taskPojolst);
         r.setData(responseDataMap);
         //</editor-fold>
@@ -529,7 +541,7 @@ public class StrategyController {
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
         try {
-            ExamService.updateStatus(exameIds, 1,Integer.valueOf(userId));
+            ExamService.updateStatus(exameIds, 1, Integer.valueOf(userId));
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
         } catch (Exception e) {
@@ -565,7 +577,7 @@ public class StrategyController {
         //<editor-fold desc="业务操作并赋值">
         Map<String, Object> responseDataMap = new HashMap<>();
         try {
-            ExamService.updateStatus(exameIds, 0,Integer.valueOf(userId));
+            ExamService.updateStatus(exameIds, 0, Integer.valueOf(userId));
             r.setMsg(requestContext.getMessage("OK"));
             r.setCode(Result.SUCCESS);
         } catch (Exception e) {
@@ -1189,13 +1201,14 @@ public class StrategyController {
         r.setData(productlistMap);
         //</editor-fold>
 
-        Operate reqMod=new Operate();
+        Operate reqMod = new Operate();
+        //只查询未删除的工况
         reqMod.setIsDeleted(0);
+        //查询任务单ID是1的工况
         reqMod.setTaskId(1);
-        List<Operate> operateList=OperateService.GetList(reqMod);
+        List<Operate> operateList = OperateService.GetList(reqMod);
         return r;
     }
-
 
     //<editor-fold desc="关于List的公用方法">
 

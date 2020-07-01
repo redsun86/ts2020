@@ -1,7 +1,5 @@
 package com.esst.ts.service.impl;
 
-import com.esst.ts.model.Exam;
-import com.esst.ts.model.ExamPOJO;
 import com.esst.ts.model.Operate;
 import com.esst.ts.model.TechnologyTaskOperatePOJO;
 import com.esst.ts.service.OperateService;
@@ -17,6 +15,7 @@ import java.util.List;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class OperateImpl implements OperateService {
+
     @Resource
     com.esst.ts.dao.OperateMapper OperateMapper;
 
@@ -34,4 +33,5 @@ public class OperateImpl implements OperateService {
     public List<Operate> GetList(Operate mod) {
         return OperateMapper.GetList(mod);
     }
+
 }

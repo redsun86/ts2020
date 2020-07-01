@@ -1,19 +1,29 @@
 package com.esst.ts.model;
 
+/**
+ * 工况实体
+ */
 public class Operate {
+    /**
+     * 主键/自动增长
+     */
     private Integer id;
-
+    /**
+     * 所属工艺id
+     */
     private Integer technologyId;
-
+    /**
+     * 工况编号
+     */
     private String operateCode;
-
+    /**
+     * 工况名称
+     */
     private String operateName;
-
     /**
      * 是否被删除（0：未删除；1：已删除）
      */
     private Integer isDeleted;
-
     /**
      * 所属任务单id
      */

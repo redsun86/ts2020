@@ -1,110 +1,110 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.esst.ts.dao.OperateMapper" >
-  <resultMap id="BaseResultMap" type="com.esst.ts.model.Operate" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="technology_id" property="technologyId" jdbcType="INTEGER" />
-    <result column="operate_code" property="operateCode" jdbcType="VARCHAR" />
-    <result column="operate_name" property="operateName" jdbcType="VARCHAR" />
-    <result column="task_id" property="taskId" jdbcType="INTEGER" />
-    <result column="is_deleted" property="isDeleted" jdbcType="INTEGER" />
-  </resultMap>
-  <sql id="Base_Column_List" >
+<mapper namespace="com.esst.ts.dao.OperateMapper">
+    <resultMap id="BaseResultMap" type="com.esst.ts.model.Operate">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="technology_id" property="technologyId" jdbcType="INTEGER"/>
+        <result column="operate_code" property="operateCode" jdbcType="VARCHAR"/>
+        <result column="operate_name" property="operateName" jdbcType="VARCHAR"/>
+        <result column="task_id" property="taskId" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     id, technology_id, operate_code, operate_name
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    from operate
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from operate
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from operate
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.esst.ts.model.Operate" >
+    <insert id="insert" parameterType="com.esst.ts.model.Operate">
     insert into operate (id, technology_id, operate_code, 
       operate_name)
     values (#{id,jdbcType=INTEGER}, #{technologyId,jdbcType=INTEGER}, #{operateCode,jdbcType=VARCHAR}, 
       #{operateName,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.esst.ts.model.Operate" >
-    insert into operate
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="technologyId != null" >
-        technology_id,
-      </if>
-      <if test="operateCode != null" >
-        operate_code,
-      </if>
-      <if test="operateName != null" >
-        operate_name,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="technologyId != null" >
-        #{technologyId,jdbcType=INTEGER},
-      </if>
-      <if test="operateCode != null" >
-        #{operateCode,jdbcType=VARCHAR},
-      </if>
-      <if test="operateName != null" >
-        #{operateName,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.Operate" >
-    update operate
-    <set >
-      <if test="technologyId != null" >
-        technology_id = #{technologyId,jdbcType=INTEGER},
-      </if>
-      <if test="operateCode != null" >
-        operate_code = #{operateCode,jdbcType=VARCHAR},
-      </if>
-      <if test="operateName != null" >
-        operate_name = #{operateName,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.Operate" >
+    <insert id="insertSelective" parameterType="com.esst.ts.model.Operate">
+        insert into operate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="technologyId != null">
+                technology_id,
+            </if>
+            <if test="operateCode != null">
+                operate_code,
+            </if>
+            <if test="operateName != null">
+                operate_name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="technologyId != null">
+                #{technologyId,jdbcType=INTEGER},
+            </if>
+            <if test="operateCode != null">
+                #{operateCode,jdbcType=VARCHAR},
+            </if>
+            <if test="operateName != null">
+                #{operateName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.Operate">
+        update operate
+        <set>
+            <if test="technologyId != null">
+                technology_id = #{technologyId,jdbcType=INTEGER},
+            </if>
+            <if test="operateCode != null">
+                operate_code = #{operateCode,jdbcType=VARCHAR},
+            </if>
+            <if test="operateName != null">
+                operate_name = #{operateName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.Operate">
     update operate
     set technology_id = #{technologyId,jdbcType=INTEGER},
       operate_code = #{operateCode,jdbcType=VARCHAR},
       operate_name = #{operateName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <select id="GetList" resultMap="BaseResultMap" parameterType="com.esst.ts.model.Operate">
-    select t.id,t.technology_id,t.operate_code,t.operate_name,t.is_deleted
-    from operate t
-    LEFT JOIN task_oper_relation tor ON t.id=tor.operate_id
-    <where>
-      t.id>0
-      <if test="id != null">
-        and t.id=#{id,jdbcType=INTEGER}
-      </if>
-      <if test="isDeleted != null">
-        and t.is_deleted=#{isDeleted,jdbcType=INTEGER}
-      </if>
-        <if test="operateCode != null">
-          and t.operate_code like CONCAT('%', #{operateCode,jdbcType=VARCHAR}, '%')
-        </if>
-      <if test="operateName != null">
-        and t.operate_name like CONCAT('%', #{operateName,jdbcType=VARCHAR}, '%')
-      </if>
-      <if test="technologyId != null">
-        and t.technology_id=#{technologyId,jdbcType=INTEGER}
-      </if>
-      <if test="taskId != null">
-        and tor.task_id=#{taskId,jdbcType=INTEGER}
-      </if>
-    </where>
-  </select>
+    <select id="GetList" resultMap="BaseResultMap" parameterType="com.esst.ts.model.Operate">
+        select t.id,t.technology_id,t.operate_code,t.operate_name,t.is_deleted
+        from operate t
+        LEFT JOIN task_oper_relation tor ON t.id=tor.operate_id
+        <where>
+            t.id>0
+            <if test="id != null">
+                and t.id=#{id,jdbcType=INTEGER}
+            </if>
+            <if test="isDeleted != null">
+                and t.is_deleted=#{isDeleted,jdbcType=INTEGER}
+            </if>
+            <if test="operateCode != null">
+                and t.operate_code like CONCAT('%', #{operateCode,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="operateName != null">
+                and t.operate_name like CONCAT('%', #{operateName,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="technologyId != null">
+                and t.technology_id=#{technologyId,jdbcType=INTEGER}
+            </if>
+            <if test="taskId != null">
+                and tor.task_id=#{taskId,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
 </mapper>
