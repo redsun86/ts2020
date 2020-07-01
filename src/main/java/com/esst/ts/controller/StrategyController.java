@@ -1,7 +1,6 @@
 package com.esst.ts.controller;
 
 import com.esst.ts.model.*;
-import com.esst.ts.service.ExamService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -16,39 +15,75 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * 策略库；策略==》strategy
- * 策略库中包含：任务库、试卷库。暂时将任务库和试卷库的接口写在“策略controller”中，如果后期有需要可以单独创建相应的Controller
- * 创建标识：梁建磊 2020-06-11
+ * <b>策略库</b>；策略==》strategy
+ * <p></p>
+ * <p>策略库中包含：任务库、试卷库。暂时将任务库和试卷库的接口写在“策略controller”中，如果后期有需要可以单独创建相应的Controller</p>
+ * <p></p>
+ * <p>创建标识：梁建磊 2020-06-11</p>
  */
 @Controller
 @RequestMapping("/web/v1/strategy")
 public class StrategyController {
     //<editor-fold desc="Service对象初始化">
+    /**
+     * 产品包——业务逻辑层接口服务
+     */
     @Resource
     private com.esst.ts.service.ProductService ProductService;
-    @Resource
-    private com.esst.ts.service.TaskService TaskService;
-    @Resource
-    private com.esst.ts.service.OperateService OperateService;
-    @Resource
-    private ExamService ExamService;
-    @Resource
-    private com.esst.ts.service.QuestionsService QuestionsService;
+    /**
+     * 工艺/单元——业务逻辑层接口服务
+     */
     @Resource
     private com.esst.ts.service.TechnologyService TechnologyService;
+    /**
+     * 任务单——业务逻辑层接口服务
+     */
+    @Resource
+    private com.esst.ts.service.TaskService TaskService;
+    /**
+     * 工况——业务逻辑层接口服务
+     */
+    @Resource
+    private com.esst.ts.service.OperateService OperateService;
+    /**
+     * 教师任务关系——业务逻辑层接口服务
+     */
+    @Resource
+    private com.esst.ts.service.UserTaskRelationService UserTaskRelationService;
+    /**
+     * 试卷——业务逻辑层接口服务
+     */
+    @Resource
+    private com.esst.ts.service.ExamService ExamService;
+    /**
+     * 试题——业务逻辑层接口服务
+     */
+    @Resource
+    private com.esst.ts.service.QuestionsService QuestionsService;
+    /**
+     * 事故策略——业务逻辑层接口服务
+     */
     @Resource
     private com.esst.ts.service.TroubleService TroubleService;
     /**
-     * [DCS风格]服务
+     * DCS风格——业务逻辑层接口服务
      */
     @Resource
     private com.esst.ts.service.StyleService StyleService;
-    @Resource
-    private com.esst.ts.service.ExamUserRelationService ExamUserRelationService;
-    @Resource
-    private com.esst.ts.service.UserTaskRelationService UserTaskRelationService;
+    /**
+     * 运行时标——业务逻辑层接口服务
+     */
     @Resource
     private com.esst.ts.service.TimescaleService TimescaleService;
+    /**
+     * 试卷用户关系——业务逻辑层接口服务
+     */
+    @Resource
+    private com.esst.ts.service.ExamUserRelationService ExamUserRelationService;
+
+    /**
+     * 用户——业务逻辑层接口服务
+     */
     @Resource
     private com.esst.ts.service.UserService UserService;
 
@@ -152,10 +187,10 @@ public class StrategyController {
             techPojoLst = TechnologyService.GetPojoAllList();
         }
 
-        int reqUserId=0;
+        int reqUserId = 0;
         User umod = UserService.getUserById(Integer.valueOf(userId));
         if (null != umod && umod.getIsAdmin() == 1) {
-            reqUserId=Integer.valueOf(userId);
+            reqUserId = Integer.valueOf(userId);
         }
         taskPojolst = TaskService.GetPojoAllList(reqUserId);
         operPojoLst = OperateService.GetPojoAllList();
@@ -297,10 +332,10 @@ public class StrategyController {
         Map<String, Object> responseDataMap = new HashMap<>();
         List<TechnologyTaskPOJO> taskPojolst; //任务单
 
-        int reqUserId=0;
+        int reqUserId = 0;
         User umod = UserService.getUserById(Integer.valueOf(userId));
         if (null != umod && umod.getIsAdmin() == 1) {
-            reqUserId=Integer.valueOf(userId);
+            reqUserId = Integer.valueOf(userId);
         }
         taskPojolst = TaskService.GetPojoAllList(reqUserId);
         responseDataMap.put("dataList", taskPojolst);

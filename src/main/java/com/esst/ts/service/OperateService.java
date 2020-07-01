@@ -6,10 +6,11 @@ import com.esst.ts.model.TechnologyTaskOperatePOJO;
 import java.util.List;
 
 /**
- * 创建标识：梁建磊 2020/6/16 16:30
+ * 工况——业务逻辑层接口定义
+ * <p>工况==》Operate</p>
+ * <p>创建标识：梁建磊 2020/6/16 15:19</p>
  */
 public interface OperateService {
-
     /**
      * 自定义方法——获取名称不为空且未删除的工况数据集合
      *

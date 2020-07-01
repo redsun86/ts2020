@@ -12,7 +12,6 @@ import java.util.List;
  * 工况数据访问层接口定义
  */
 public interface OperateMapper {
-
     int deleteByPrimaryKey(Integer id);
 
     int insert(Operate record);

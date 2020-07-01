@@ -6,7 +6,9 @@ import com.esst.ts.model.ExamPOJO;
 import java.util.List;
 
 /**
- * 创建标识：梁建磊 2020/6/15 13:54
+ * 试卷——业务逻辑层接口定义
+ * <p>试卷==》Exam</p>
+ *<p> 创建标识：梁建磊 2020/6/15 13:54</p>
  */
 public interface ExamService {
 

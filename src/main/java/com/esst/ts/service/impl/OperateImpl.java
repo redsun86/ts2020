@@ -15,7 +15,6 @@ import java.util.List;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class OperateImpl implements OperateService {
-
     @Resource
     com.esst.ts.dao.OperateMapper OperateMapper;
 

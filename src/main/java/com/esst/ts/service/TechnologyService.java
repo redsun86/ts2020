@@ -6,7 +6,9 @@ import com.esst.ts.model.TechnologyPOJO;
 import java.util.List;
 
 /**
- * 创建标识：梁建磊 2020/6/15 18:03
+ * 工艺/单元——业务逻辑层接口定义
+ * <p>工艺==》Technology</p>
+ * <p>创建标识：梁建磊 2020/6/15 18:03</p>
  */
 public interface TechnologyService {
     List<TechnologyPOJO> GetPojoAllList();
