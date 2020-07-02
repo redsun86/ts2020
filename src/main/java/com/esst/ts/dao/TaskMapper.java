@@ -2,10 +2,9 @@ package com.esst.ts.dao;
 
 import com.esst.ts.model.Task;
 import com.esst.ts.model.TechnologyTaskPOJO;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TaskMapper {
     int deleteByPrimaryKey(Integer id);
@@ -20,8 +19,11 @@ public interface TaskMapper {
 
     int updateByPrimaryKey(Task record);
 
-    @Select("select t.id,t.task_code taskCode,t.task_name taskName,t.technology_id technologyId,t.shibiao shiBiao" +
-            ",(case when ut.task_id is null then 0 else 1 end) `status` from task t left join (select task_id from " +
-            "user_task_relation where user_id=#{userId} group by task_id) ut on t.id=ut.task_id where t.id>0")
-    List<TechnologyTaskPOJO> GetPojoAllList(@Param("userId") int userId);
+    /**
+     * 常规方法——根据指定条件获取数据集合
+     *
+     * @param mapData 请求参数
+     * @return 返回数据集合
+     */
+    List<TechnologyTaskPOJO> GetListWithUserIdsAndStatus(Map mapData);
 }

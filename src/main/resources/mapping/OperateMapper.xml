@@ -82,11 +82,11 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
     <select id="GetList" resultMap="BaseResultMap" parameterType="com.esst.ts.model.Operate">
-        select t.id,t.technology_id,t.operate_code,t.operate_name,t.is_deleted
+        select t.id,t.technology_id,t.operate_code,t.operate_name,t.is_deleted,tor.task_id
         from operate t
         LEFT JOIN task_oper_relation tor ON t.id=tor.operate_id
         <where>
-            t.id>0
+            LENGTH(t.operate_name)>0 and t.is_deleted=0
             <if test="id != null">
                 and t.id=#{id,jdbcType=INTEGER}
             </if>

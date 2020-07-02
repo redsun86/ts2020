@@ -1,7 +1,6 @@
 package com.esst.ts.service.impl;
 
 import com.esst.ts.model.Operate;
-import com.esst.ts.model.TechnologyTaskOperatePOJO;
 import com.esst.ts.service.OperateService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,16 +16,6 @@ import java.util.List;
 public class OperateImpl implements OperateService {
     @Resource
     com.esst.ts.dao.OperateMapper OperateMapper;
-
-    @Override
-    public List<TechnologyTaskOperatePOJO> GetPojoAllList() {
-        return OperateMapper.GetPojoAllList();
-    }
-
-    @Override
-    public List<TechnologyTaskOperatePOJO> GetPojoList(int technologyId) {
-        return OperateMapper.GetPojoList(technologyId);
-    }
 
     @Override
     public List<Operate> GetList(Operate mod) {

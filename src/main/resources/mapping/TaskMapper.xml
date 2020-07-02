@@ -8,6 +8,14 @@
     <result column="technology_id" property="technologyId" jdbcType="INTEGER" />
     <result column="shibiao" property="shibiao" jdbcType="VARCHAR" />
   </resultMap>
+  <resultMap id="BasePOJOResultMap" type="com.esst.ts.model.TechnologyTaskPOJO" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="task_code" property="taskCode" jdbcType="VARCHAR" />
+    <result column="task_name" property="taskName" jdbcType="VARCHAR" />
+    <result column="technology_id" property="technologyId" jdbcType="INTEGER" />
+    <result column="shibiao" property="shiBiao" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
   <sql id="Base_Column_List" >
     id, task_code, task_name, technology_id, shibiao
   </sql>
@@ -90,4 +98,24 @@
       shibiao = #{shibiao,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="GetListWithUserIdsAndStatus" resultMap="BasePOJOResultMap">
+    select t.id,t.task_code,t.task_name,t.technology_id,t.shibiao
+    ,(case when ut.task_id is null then 0 else 1 end) `status`
+    from task t
+    left join (select task_id from user_task_relation where user_id in
+    <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
+      #{item,jdbcType=INTEGER}
+    </foreach>
+    group by task_id) ut on t.id=ut.task_id
+    <where>
+      t.id>0
+      <if test="status == 1">
+        and ut.task_id is not null
+      </if>
+      <if test="status == 2">
+        and ut.task_id is null
+      </if>
+    </where>
+  </select>
 </mapper>

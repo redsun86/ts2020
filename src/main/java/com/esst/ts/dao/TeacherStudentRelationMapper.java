@@ -1,10 +1,11 @@
 package com.esst.ts.dao;
 
 import com.esst.ts.model.TeacherStudentRelation;
-import com.esst.ts.model.User;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 public interface TeacherStudentRelationMapper {
     int deleteByPrimaryKey(Integer id);
@@ -25,4 +26,12 @@ public interface TeacherStudentRelationMapper {
     int updateByPrimaryKeySelective(TeacherStudentRelation record);
 
     int updateByPrimaryKey(TeacherStudentRelation record);
+
+    /**
+     * 常规方法——根据指定条件获取数据集合
+     *
+     * @param mod 请求参数
+     * @return 返回数据集合
+     */
+    List<TeacherStudentRelation> GetList(TeacherStudentRelation mod);
 }

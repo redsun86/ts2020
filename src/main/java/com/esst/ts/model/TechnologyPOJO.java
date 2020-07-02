@@ -16,7 +16,7 @@ public class TechnologyPOJO {
     private Integer productId;//` int(11) DEFAULT NULL COMMENT '产品id',
     private Product product;
     private List<TechnologyTaskPOJO> taskList;
-    private List<TechnologyTaskOperatePOJO> operateList;
+    private List<Operate> operateList;
 
     public Integer getId() {
         return id;
@@ -82,11 +82,11 @@ public class TechnologyPOJO {
         this.taskList = taskList;
     }
 
-    public List<TechnologyTaskOperatePOJO> getOperateList() {
+    public List<Operate> getOperateList() {
         return operateList;
     }
 
-    public void setOperateList(List<TechnologyTaskOperatePOJO> operateList) {
+    public void setOperateList(List<Operate> operateList) {
         this.operateList = operateList;
     }
 }

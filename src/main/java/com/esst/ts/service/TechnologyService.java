@@ -11,11 +11,10 @@ import java.util.List;
  * <p>创建标识：梁建磊 2020/6/15 18:03</p>
  */
 public interface TechnologyService {
-    List<TechnologyPOJO> GetPojoAllList();
-
-    List<TechnologyPOJO> GetPojoList(int productId);
+    List<TechnologyPOJO> GetPojoAllList(TechnologyPOJO mod);
 
     List<Technology> GetList();
+
     Integer GetTechnologyName(int technologyId);
 
 }

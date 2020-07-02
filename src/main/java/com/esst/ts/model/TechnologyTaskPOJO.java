@@ -13,7 +13,7 @@ public class TechnologyTaskPOJO {
     private Integer technologyId;//` int(11) DEFAULT NULL COMMENT '工艺ID',
     private String shiBiao;//` varchar(32) DEFAULT NULL COMMENT '时标（保留字段）',
     private Integer status;//状态（1：发布/2：未发布）
-    private List<TechnologyTaskOperatePOJO> operateList;
+    private List<Operate> operateList;
 
     public Integer getId() {
         return id;
@@ -63,11 +63,11 @@ public class TechnologyTaskPOJO {
         this.status = status;
     }
 
-    public List<TechnologyTaskOperatePOJO> getOperateList() {
+    public List<Operate> getOperateList() {
         return operateList;
     }
 
-    public void setOperateList(List<TechnologyTaskOperatePOJO> operateList) {
+    public void setOperateList(List<Operate> operateList) {
         this.operateList = operateList;
     }
 }

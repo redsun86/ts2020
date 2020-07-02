@@ -19,13 +19,8 @@ public class TechnologyImpl implements TechnologyService {
     com.esst.ts.dao.TechnologyMapper TechnologyMapper;
 
     @Override
-    public List<TechnologyPOJO> GetPojoAllList() {
-        return TechnologyMapper.GetPojoAllList();
-    }
-
-    @Override
-    public List<TechnologyPOJO> GetPojoList(int productId) {
-        return TechnologyMapper.GetPojoList(productId);
+    public List<TechnologyPOJO> GetPojoAllList(TechnologyPOJO mod) {
+        return TechnologyMapper.GetPojoAllList(mod);
     }
 
     @Override
