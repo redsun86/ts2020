@@ -11,6 +11,7 @@ public class RealTimeExcelItemPOJO {
     String loginTime;
     String learnTime;
     String taskName;
+
     public Integer getUserId() {
         return userId;
     }

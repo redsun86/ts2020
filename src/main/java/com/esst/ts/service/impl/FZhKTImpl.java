@@ -348,10 +348,43 @@ public class FZhKTImpl implements FZhKTService {
             }
             if (rte.operateList!=null) {
                 for (int i = 0; i < rte.operateList.size(); i++) {
-                    HSSFCell c6 = r1.createCell(i + 5);
+                    HSSFCell c6 = r1.createCell(i + 6);
                     c6.setCellValue(rte.operateList.get(i));
                 }
             }
+            int rownum=2;
+            if(rte.realTimeExcelItemPOJOHashMap!=null)
+            {
+                for (Map.Entry<Integer, RealTimeExcelItemPOJO> entry : rte.realTimeExcelItemPOJOHashMap.entrySet()) {
+                    RealTimeExcelItemPOJO itemPOJO=entry.getValue();
+                    HSSFRow r = sheet.createRow(rownum);
+                    HSSFCell cell0=r.createCell(0);//学号
+                    cell0.setCellValue(itemPOJO.getNum());
+                    HSSFCell cell1=r.createCell(1);//姓名
+                    cell1.setCellValue(itemPOJO.getStudentName());
+                    HSSFCell cell2=r.createCell(2);//机器号
+                    cell2.setCellValue(itemPOJO.getMachineNum());
+                    HSSFCell cell3=r.createCell(3);//登录时间
+                    cell3.setCellValue(itemPOJO.getLoginTime());
+
+                    HSSFCell cell4=r.createCell(4);//学习时长
+                    cell4.setCellValue(itemPOJO.getLearnTime());
+                    HSSFCell cell5=r.createCell(5);//任务单
+                    cell5.setCellValue(itemPOJO.getTaskName());
+
+                    for (Map.Entry<Integer, Integer> entryoperate : rte.operateIndexList.entrySet()) {
+                        HSSFCell cell6=r.createCell(entryoperate.getValue()+6);
+                        if(itemPOJO.operateScoremap.containsKey(entryoperate.getKey())) {
+                            cell6.setCellValue(itemPOJO.operateScoremap.get(entryoperate.getKey()));
+                        }else {
+                            cell6.setCellValue(0);
+                        }
+
+                    }
+                rownum++;
+                }
+            }
+
         }
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         HttpHeaders headers = new HttpHeaders();

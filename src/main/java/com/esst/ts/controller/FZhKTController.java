@@ -6,6 +6,8 @@ import com.esst.ts.dao.UserLiveMapper;
 import com.esst.ts.dao.UserMapper;
 import com.esst.ts.model.*;
 import com.esst.ts.service.FZhKTService;
+import com.esst.ts.service.OperateService;
+import com.esst.ts.service.QuestionsService;
 import com.github.pagehelper.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,10 @@ public class FZhKTController {
     private UserLiveMapper userliveservice;
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private OperateService operateService;
+    @Resource
+    private QuestionsService questionsService;
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     //@Resource
     //private UserService userService;
@@ -340,41 +346,60 @@ public class FZhKTController {
     @RequestMapping(value = "/realtimeExcel", method = RequestMethod.GET)
     public ResponseEntity<byte[]> realttimeExcel(
             @RequestParam(value = "userId", required = true) int userId,
-            @RequestParam(value = "taskId", required = true) int taskId,
             @RequestParam(value = "taskList", required = true) String taskList,
-            @RequestParam(value = "studyType", required = true) int studyType,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
-        List<User> userList =  userMapper.getUserLst(userId);
+        List<User> userList = userMapper.getUserLst(userId);
         List<taskModel> taskModelList = (List<taskModel>) JSONArray.parseArray(taskList, taskModel.class);//任务单列表
-        User teacher=userMapper.selectByPrimaryKey(userId);
+        User teacher = userMapper.selectByPrimaryKey(userId);
         //任务单或试卷报表列表，每个元素是一个sheet
         List<RealTimeEcxelPOJO> scoreexcelList = new ArrayList<>();
         //学号	姓名	机器号	登录时间（年月日，时分秒）	学习时长（min）	课题名称	氮气置换
         if ((taskModelList != null)) {
             for (taskModel tm : taskModelList) {
                 List<UserLiveDataWithBLOBs> userLiveDataWithBLOBs = new ArrayList<>();
-                userLiveDataWithBLOBs = fzhktService.getOperateMaxScore(userId,Integer.valueOf(tm.getTask_id()), Integer.valueOf(tm.getStudy_type()));
+                userLiveDataWithBLOBs = fzhktService.getOperateMaxScore(userId, Integer.valueOf(tm.getTask_id()), Integer.valueOf(tm.getStudy_type()));
                 RealTimeEcxelPOJO realTimeEcxelPOJO = new RealTimeEcxelPOJO();
-                realTimeEcxelPOJO.setStudyType(Constants.StudyType.values()[studyType]);
+                realTimeEcxelPOJO.setStudyType(Constants.StudyType.values()[Integer.valueOf(tm.getStudy_type())]);
                 realTimeEcxelPOJO.setTaskName(tm.getTask_name());
                 realTimeEcxelPOJO.setTeacherName(teacher.getRelName());
-                Operate reqMod=new Operate();
-////只查询未删除的工况
-//                reqMod.setIsDeleted(0);
-////查询任务单ID是1的工况
-//                reqMod.setTaskId(1);
-//                List<Operate> operateList= OperateService.GetList(reqMod);
-//                realTimeEcxelPOJO.operateList=
+                Operate reqMod = new Operate();
+                reqMod.setIsDeleted(0);
+                reqMod.setTaskId(Integer.valueOf(tm.getTask_id()));
+
+
+                if(Integer.valueOf(tm.getStudy_type())==Constants.StudyType.TASK.ordinal()) {//任务单
+                    List<Operate> operateList = operateService.GetList(reqMod);
+                    if (operateList != null) {
+                        for (int i = 0; i < operateList.size(); i++) {
+                            Operate operate = operateList.get(i);
+                            realTimeEcxelPOJO.operateList.add(operate.getOperateName());
+                            realTimeEcxelPOJO.operateIndexList.put(operate.getId(), i);
+
+                        }
+                    }
+                }else{
+                    List<QuestionsPOJO> questLST=questionsService.GetList(0,Integer.valueOf(tm.getTask_id()));
+                    if (questLST != null) {
+                        for (int i = 0; i < questLST.size(); i++) {
+                            QuestionsPOJO operate = questLST.get(i);
+                            realTimeEcxelPOJO.operateList.add(operate.getOperateName());
+                            realTimeEcxelPOJO.operateIndexList.put(operate.getId(), i);
+
+                        }
+                    }
+                }
+                //realTimeEcxelPOJO.operateList=operateList;
                 if (userList != null) {
                     for (User user : userList) {
                         RealTimeExcelItemPOJO scoreexcelitem = new RealTimeExcelItemPOJO();
                         //填充数据
                         scoreexcelitem.setNum(user.getStNum());//学号
                         scoreexcelitem.setStudentName(user.getRelName());//姓名
-                        scoreexcelitem.setLoginTime("123");//登录时间
+                        scoreexcelitem.setLoginTime("2020:07:03 0:0:0");//登录时间
                         scoreexcelitem.setTaskName(tm.getTask_name());//任务单
+                        //scoreexcelitem.operateScoremap
                         realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.put(user.getId(), scoreexcelitem);
 
                     }
@@ -382,8 +407,10 @@ public class FZhKTController {
                 if (userLiveDataWithBLOBs != null) {
                     for (UserLiveDataWithBLOBs usld : userLiveDataWithBLOBs) {
                         RealTimeExcelItemPOJO rtitem = realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.get(usld.getUserId());
-                        rtitem.setLearnTime(String.format("%.2f", usld.getStudyDuration()/60000));//学习时长
+                        rtitem.setLearnTime(String.format("%.2f", usld.getStudyDuration() / 60000));//学习时长
+                        rtitem.setMachineNum(usld.getMacAddress());
                         rtitem.operateScoremap.put(usld.getOperateId(), usld.getCurrentScore());
+                        realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.put(usld.getUserId(),rtitem);
                     }
                 }
 
@@ -392,5 +419,10 @@ public class FZhKTController {
         }
         //fzhktService.exportReatimeScore(scoreexcelList);
         return fzhktService.exportReatimeScore(scoreexcelList);
+    }
+
+    class operateexcel_stuct {
+        int indexexcel;
+        String Name;
     }
 }

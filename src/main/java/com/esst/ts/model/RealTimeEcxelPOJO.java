@@ -40,5 +40,6 @@ public class RealTimeEcxelPOJO {
     public Constants.StudyType studyType;
     public List<String> classList = new ArrayList<>();
     public List<String> operateList = new ArrayList<>();
+    public Map<Integer,Integer>operateIndexList= new HashMap<>();
     public Map<Integer, RealTimeExcelItemPOJO> realTimeExcelItemPOJOHashMap = new HashMap<>();
 }
