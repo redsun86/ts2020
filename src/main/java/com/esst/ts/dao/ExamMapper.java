@@ -26,6 +26,7 @@ public interface ExamMapper {
     Exam getInsertModel(Exam record);
 
     List<ExamPOJO> GetList(Exam mod);
+    List<ExamPOJO> GetListWithStudent(Exam mod);
 
     @Update("UPDATE exam SET is_deleted=1 WHERE id=#{id}")
     int deleteWithId(@Param("id") int id);

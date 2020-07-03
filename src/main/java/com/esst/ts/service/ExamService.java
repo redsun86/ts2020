@@ -23,4 +23,5 @@ public interface ExamService {
     Exam getInsertModel(Exam mod);
 
     List<ExamPOJO> GetList(Exam mod);
+    List<ExamPOJO> GetListWithStudent(Exam mod);
 }

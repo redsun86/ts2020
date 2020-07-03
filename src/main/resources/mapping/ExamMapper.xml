@@ -135,5 +135,39 @@
         <if test="createUser != null">
             and e.create_user=#{createUser,jdbcType=INTEGER}
         </if>
+        <if test='status != null'>
+            and e.`status`=#{status,jdbcType=INTEGER}
+        </if>
+    </select>
+    <select id="GetListWithStudent" resultMap="BaseResultPOJOMap" parameterType="com.esst.ts.model.Exam">
+        select e.id,e.exam_name,e.`status`,e.create_user,ifnull(uc.user_count,0) user_count,e.exam_attribute
+        ,(case e.`status` when 1 then '发布' else '未发布' end) status_name,ifnull(eq.questionsCount,0) questionsCount
+        ,concat((case e.exam_attribute when 1 then '考试' else '联合操作' end),'，',ifnull(eq.questionsCount,0),'题'
+        ,(case e.exam_attribute when 1 then CONCAT('，',ifnull(eq.time_limit,0),'分钟') else '，不限时' end)) edit_info
+        from exam e
+        LEFT JOIN (select exam_id,count(distinct user_id) user_count from exam_user_relation group by exam_id) uc
+        on e.id=uc.exam_id
+        LEFT JOIN (select exame_id,count(id) questionsCount,sum(time_limit) time_limit
+        from questions where is_deleted=0 GROUP BY exame_id) eq on eq.exame_id=e.id
+        <if test='createUser != null'>
+            LEFT JOIN (select exam_id,user_id from exam_user_relation GROUP BY exam_id,user_id) eur on eur.exam_id=e.id
+            and eur.user_id=#{createUser,jdbcType=INTEGER}
+        </if>
+        where e.id>0
+        <if test="id != null">
+            and e.id=#{id,jdbcType=INTEGER}
+        </if>
+        <if test="isDeleted != null">
+            and e.is_deleted=#{isDeleted,jdbcType=INTEGER}
+        </if>
+        <if test="examName != null">
+            and e.exam_name like CONCAT('%', #{examName,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="createUser != null">
+            and eur.user_id>0
+        </if>
+        <if test='status != null'>
+            and e.`status`=#{status,jdbcType=INTEGER}
+        </if>
     </select>
 </mapper>

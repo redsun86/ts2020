@@ -462,13 +462,16 @@ public class StrategyController {
         //List<ExamPOJO> questLst = new ArrayList<ExamPOJO>();
         try {
             Exam reqMod = new Exam();
+            reqMod.setCreateUser(Integer.valueOf((userId)));
             reqMod.setIsDeleted(0);
             reqMod.setExamName(examName);
+            List<ExamPOJO> examsLst=new ArrayList<>();
             User umod = UserService.getUserById(Integer.valueOf(userId));
-            if (null != umod && umod.getIsAdmin() == 1) {
-                reqMod.setCreateUser(Integer.valueOf((userId)));
+            if (null != umod && umod.getIsAdmin() != 1) {
+                examsLst = ExamService.GetListWithStudent(reqMod);
+            }else{
+                examsLst = ExamService.GetList(reqMod);
             }
-            List<ExamPOJO> examsLst = ExamService.GetList(reqMod);
             int questionsCount = 0;
             for (ExamPOJO mod : examsLst) {
                 questionsCount += Integer.valueOf(mod.getQuestionsCount());
