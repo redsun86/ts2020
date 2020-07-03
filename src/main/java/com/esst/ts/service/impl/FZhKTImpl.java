@@ -186,15 +186,16 @@ public class FZhKTImpl implements FZhKTService {
                 usr.setIpAddress(uld.getIdAddress());
                 userScoreRecordMapper.insert(usr);
             }
-            userlivedata.deletUserlivaByteacherid(userId);
-            userliveScore.deletUserlivaByteacherid(userId);
+            userlivedata.deletUserliveByteacherid(userId);
+            userliveScore.deletUserliveByteacherid(userId);
         }
     }
 
     @Override
-    public void deletelivedataTorecord(int userId) {
-        userlivedata.deletUserlivaByteacherid(userId);
-        userliveScore.deletUserlivaByteacherid(userId);
+    public int deletelivedataTorecord(int userId) {
+        int i=userlivedata.deletUserliveByteacherid(userId);
+        int j=userliveScore.deletUserliveByteacherid(userId);
+        return i+j;
     }
 
     @Override

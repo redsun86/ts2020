@@ -44,7 +44,7 @@ public interface UserLiveMapper {
     List<UserLiveWithBLOBs> getUserLiveByTeacherId(@Param("teacherId") String userId);
 
     @Delete("delete from user_live where user_id in (select student_id from teacher_student_relation WHERE teacher_id=#{userId})")
-    int deletUserlivaByteacherid(@Param("userId") int userId);
+    int deletUserliveByteacherid(@Param("userId") int userId);
 
     @Select("SELECT * FROM user_live where  FROM_UNIXTIME(start_time / 1000,'%Y-%m-%d %h:%m:%s')>=#{beginDate} and FROM_UNIXTIME(start_time / 1000,'%Y-%m-%d %h:%m:%s')<=#{endDate} AND user_id in(select student_id from teacher_student_relation where teacher_id=#{userId})")
     @ResultMap("BaseResultMap")

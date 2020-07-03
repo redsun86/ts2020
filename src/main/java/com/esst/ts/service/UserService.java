@@ -71,4 +71,5 @@ public interface UserService {
     List<User> getUserByTrueName(String userTrueName);
 
     List<UserLoginLogPOJO> getUserLogByUserId(Integer userId,String BeginDate,String endDate);
+
 }

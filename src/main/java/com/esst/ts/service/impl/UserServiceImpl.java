@@ -92,6 +92,7 @@ public class UserServiceImpl implements UserService {
         return userLoginLogMapper.getUserLogByUserId(userId,beginDate,endDate);
     }
 
+
     @Override
     public int updatePassword(User record) {
         return userMapper.updateByPrimaryKeySelective(record);

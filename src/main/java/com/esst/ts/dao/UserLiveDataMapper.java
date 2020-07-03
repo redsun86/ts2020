@@ -32,8 +32,8 @@ public interface UserLiveDataMapper {
     @Select("select u.* from user_live_data u LEFT JOIN teacher_student_relation t on u.user_id=t.student_id WHERE t.teacher_id=#{userId} AND u.score_statues=2")
     @ResultMap("ResultMapWithBLOBs")
     List<UserLiveDataWithBLOBs> getUserlivaByteacherid(@Param("userId") int userId);
-    @Select("select u.* from user_live_data u LEFT JOIN teacher_student_relation t on u.user_id=t.student_id WHERE t.teacher_id=#{userId} AND u.score_statues=2")
-    @ResultMap("ResultMapWithBLOBs")
+//    @Select("select u.* from user_live_data u LEFT JOIN teacher_student_relation t on u.user_id=t.student_id WHERE t.teacher_id=#{userId} AND u.score_statues=2")
+//    @ResultMap("ResultMapWithBLOBs")
     @Delete("delete from user_live_data where user_id in (select student_id from teacher_student_relation WHERE teacher_id=#{userId})")
-    int deletUserlivaByteacherid(@Param("userId") int userId);
+    int deletUserliveByteacherid(@Param("userId") int userId);
 }

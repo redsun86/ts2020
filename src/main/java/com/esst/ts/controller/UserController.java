@@ -6,6 +6,7 @@ import com.esst.ts.service.FZhKTService;
 import com.esst.ts.service.UserService;
 import com.esst.ts.service.UserTokenService;
 import com.esst.ts.utils.*;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -40,6 +41,9 @@ public class UserController {
     private UserTokenService userTokenService;
     @Resource
     private FZhKTService fZhKTService;
+    @Resource
+    private SqlSessionTemplate sqlSessionTemplate;
+
     /**
      * 判断当前学员是否在线
      *
@@ -48,11 +52,11 @@ public class UserController {
     @ResponseBody
     @RequestMapping("/checkLogin")
     public Result checkLogin(@RequestParam(value = "userId") Integer userId,
-                              @RequestParam(value = "token") String token,
-                            HttpServletRequest request){
+                             @RequestParam(value = "token") String token,
+                             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
-        UserToken userToken = userTokenService.checkUserTokenIsLogin(userId,token);
+        UserToken userToken = userTokenService.checkUserTokenIsLogin(userId, token);
         if (userToken != null) {
             r.setMsg("OK");
             r.setCode(0);
@@ -72,15 +76,21 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping("/delRecord")
-    public Result delRecord(@RequestParam(value = "userId") Integer userId,
-                             @RequestParam(value = "token") String token,
-                             HttpServletRequest request){
+    public Result delRecord(@RequestParam(value = "userId") int userId,
+                            @RequestParam(value = "token") String token,
+                            HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
-        fZhKTService.deletelivedataTorecord(userId);
-        r.setMsg("OK");
-        r.setCode(0);
-        r.setData("清除实时记录成功");
+        int s = fZhKTService.deletelivedataTorecord(userId);
+        if (s > 0) {
+            r.setMsg("OK");
+            r.setCode(0);
+            r.setData("清除实时记录成功");
+        } else {
+            r.setMsg("Err");
+            r.setCode(0);
+            r.setData("清除实时记录失败");
+        }
         return r;
     }
 
@@ -95,14 +105,14 @@ public class UserController {
     public Result userLogin(@RequestParam(value = "userName") String userName,
                             @RequestParam(value = "passWord") String passWord,
                             @RequestParam(value = "type") Integer type,
-                            @RequestParam(value = "ipAddress",required = false) String ipAddress,
-                            @RequestParam(value = "macAddress",required = false) String macAddress,
+                            @RequestParam(value = "ipAddress", required = false) String ipAddress,
+                            @RequestParam(value = "macAddress", required = false) String macAddress,
                             HttpServletRequest request) throws ParseException {
 
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
         User user;
-        int loginCount=0;
+        int loginCount = 0;
         if (type == 0) {
             //教师登录
             user = userService.loginByTeacher(userName, MD5Code.encodeByMD5(passWord));
@@ -113,20 +123,18 @@ public class UserController {
                 return r;
             } else {
                 //判断教师当天第几次登录
-                Date date=new Date();
+                Date date = new Date();
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                String beginDate=formatter.format(date)+" 00:00:00";
-                String endDate=formatter.format(date)+" 23:59:59";
-                List<UserLoginLogPOJO> userLoginLog=userService.getUserLogByUserId(user.getId(),beginDate,endDate);
-                if(userLoginLog.size()>0){
+                String beginDate = formatter.format(date) + " 00:00:00";
+                String endDate = formatter.format(date) + " 23:59:59";
+                List<UserLoginLogPOJO> userLoginLog = userService.getUserLogByUserId(user.getId(), beginDate, endDate);
+                if (userLoginLog.size() > 0) {
                     //不是第一次登录,判断当天是否有该教师名下的学员实时数据
-                    List<UserLive> userlive=fZhKTService.checkIsRecordByTeacherId(beginDate,endDate,user.getId());
-                    if(userlive.size()>0) {
+                    List<UserLive> userlive = fZhKTService.checkIsRecordByTeacherId(beginDate, endDate, user.getId());
+                    if (userlive.size() > 0) {
                         loginCount = 1;
                     }
-                }
-                else
-                {
+                } else {
                     //第一次登录
                     //清除实时数据中非当天的数据
                     fZhKTService.deletelivedataTorecord(user.getId());
@@ -215,15 +223,15 @@ public class UserController {
     @RequestMapping(value = "/logOut", method = RequestMethod.POST)
     public Result logOut(@RequestParam(value = "userId") int userId,
                          @RequestParam(value = "token") String token,
-                         @RequestParam(value = "ipAddress",required = false) String ipAddress,
-                         @RequestParam(value = "macAddress",required = false) String macAddress,
+                         @RequestParam(value = "ipAddress", required = false) String ipAddress,
+                         @RequestParam(value = "macAddress", required = false) String macAddress,
                          HttpServletRequest request) throws ParseException {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
-        Integer result=userTokenService.invalidToken(userId, 1); // 登出成功删除用户的token
-        if(result>0){
+        Integer result = userTokenService.invalidToken(userId, 1); // 登出成功删除用户的token
+        if (result > 0) {
             //查询当前用户是教师还是学员
-            User u=userService.getUserById(userId);
+            User u = userService.getUserById(userId);
             //记录登出日志
             UserLoginLog userLoginLogModel = new UserLoginLog();
             userLoginLogModel.setUserId(userId);
@@ -231,12 +239,11 @@ public class UserController {
             userLoginLogModel.setStatus(2);
             userLoginLogModel.setMacAddress(macAddress);
             userLoginLogModel.setIpAddress(ipAddress);
-            if(u.getIsAdmin()==1){
+            if (u.getIsAdmin() == 1) {
                 //教师
                 userLoginLogModel.setisAdmin(1);
                 //fZhKTService.userlivedataTorecord(userId); //废弃掉退出教师站的时候统计历史数据
-            }else
-            {
+            } else {
                 userLoginLogModel.setisAdmin(0);
             }
             int j = userService.insert(userLoginLogModel);
@@ -298,7 +305,7 @@ public class UserController {
     /**
      * 删除我的学员信息
      *
-     * @param id 学员ID
+     * @param id     学员ID
      * @param userId 教师ID
      */
     @ResponseBody
@@ -336,7 +343,7 @@ public class UserController {
                 return r;
             }
         } else {
-            int result = userService.delete(Integer.valueOf(id),userId);
+            int result = userService.delete(Integer.valueOf(id), userId);
             Result r = new Result();
             if (result > 0) {
                 r.setMsg(requestContext.getMessage("OK"));
@@ -462,7 +469,7 @@ public class UserController {
                     m.setIsAdmin(Short.parseShort("0"));
                     //判断当前学员是否存在
                     User newUser = userService.getCheckUserByNum(m.getStNum());
-                    if(newUser!=null){
+                    if (newUser != null) {
                         //存在 更新用户信息
                         newUser.setUserName(m.getUserName());
                         newUser.setRelName(m.getRelName());
@@ -473,25 +480,22 @@ public class UserController {
                         newUser.setRoleName(m.getRoleName());
                         userService.update(newUser);
                         //查询当前教师是否已导入该学号
-                        User newUsers = userService.getUserByNum(m.getStNum(),userId);
+                        User newUsers = userService.getUserByNum(m.getStNum(), userId);
                         if (newUsers == null) {
                             TeacherStudentRelation teacherStudentRelation = new TeacherStudentRelation();
                             teacherStudentRelation.setStudentId(newUser.getId());
                             teacherStudentRelation.setTeacherId(userId);
                             teacherStudentRelation.setIsDel(0);
                             userService.insert(teacherStudentRelation);
-                        }
-                        else
-                        {
+                        } else {
                             //更新
-                            TeacherStudentRelation teacherStudentRelation=userService.selectByUserAndTeacher(newUser.getId(),userId);
-                            if(teacherStudentRelation.getIsDel()==1) {
+                            TeacherStudentRelation teacherStudentRelation = userService.selectByUserAndTeacher(newUser.getId(), userId);
+                            if (teacherStudentRelation.getIsDel() == 1) {
                                 teacherStudentRelation.setIsDel(0);
                                 userService.updateByPrimaryKey(teacherStudentRelation);
                             }
                         }
-                    }
-                    else{
+                    } else {
                         //不存在
                         int result = userService.insert(m);
                         if (result > 0) {

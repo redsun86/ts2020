@@ -60,4 +60,6 @@ public interface UserMapper {
     @Select("select * from User")
     @ResultMap("BaseResultMap")
     List<User> getUserListAll();
+
+    int importBatchInsert(List<User> list);
 }
