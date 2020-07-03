@@ -1,6 +1,7 @@
 package com.esst.ts.service;
 
 import com.esst.ts.model.*;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -46,4 +47,8 @@ public interface FZhKTService {
     List<ScoreDetailPOJO> getScoreDetailList(UserLiveWithBLOBs id);
 
     int updateUserScoreRecoredByTrainID(UserScoreRecord usrScore);
+
+    List<UserLiveDataWithBLOBs> getOperateMaxScore(int userId, int taskId, int studyType);
+
+    ResponseEntity<byte[]> exportReatimeScore(List<RealTimeEcxelPOJO> scoreexcelList);
 }

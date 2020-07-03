@@ -21,7 +21,7 @@ public interface UserLoginLogMapper {
 
     int updateByPrimaryKey(UserLoginLog record);
 
-    @Select("SELECT count(DISTINCT user_id) userCount FROM user_login_log u LEFT JOIN teacher_student_relation t ON u.user_id=t.student_id WHERE t.teacher_id=#{userId};")
+    @Select("SELECT count(DISTINCT user_id) userCount FROM user_login_log u LEFT JOIN teacher_student_relation t ON u.user_id=t.student_id WHERE t.teacher_id=#{userId} and u.create_time>CAST(SYSDATE()AS DATE);")
     int getUserLoginLogCountByTeacherID(@Param("userId") String userId);
 
     @Select("select * from user_login_log where  create_time >=#{beginDate} and create_time <=#{endDate} and status=1 and is_admin=1 GROUP BY user_id")

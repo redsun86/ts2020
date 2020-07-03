@@ -37,6 +37,6 @@ public interface UserTokenDao {
     @ResultMap("BaseResultMap")
     UserToken checkUserTokenIsLogin(@Param("userId") Integer userId, @Param("token") String token);
 
-    @Select("select ut.user_id as userId from user_token ut left JOIN teacher_student_relation t on ut.user_id=t.student_id WHERE t.teacher_id=#{teacherId};")
+    @Select("select ut.user_id as userId from user_token ut left JOIN teacher_student_relation t on ut.user_id=t.student_id WHERE t.teacher_id=#{teacherId} and ut.update_time>CAST(SYSDATE()AS DATE);")
     List<UserToken> getUserLoginByTeacherID(@Param("teacherId") String userId);
 }
