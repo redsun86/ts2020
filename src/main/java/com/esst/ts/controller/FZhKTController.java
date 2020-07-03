@@ -1,5 +1,7 @@
 package com.esst.ts.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.esst.ts.constants.Constants;
 import com.esst.ts.dao.UserLiveMapper;
 import com.esst.ts.dao.UserMapper;
 import com.esst.ts.model.*;
@@ -7,6 +9,7 @@ import com.esst.ts.service.FZhKTService;
 import com.github.pagehelper.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -335,17 +338,59 @@ public class FZhKTController {
      */
     @ResponseBody
     @RequestMapping(value = "/realtimeExcel", method = RequestMethod.GET)
-    public Result realttimeExcel(
+    public ResponseEntity<byte[]> realttimeExcel(
             @RequestParam(value = "userId", required = true) int userId,
             @RequestParam(value = "taskId", required = true) int taskId,
+            @RequestParam(value = "taskList", required = true) String taskList,
             @RequestParam(value = "studyType", required = true) int studyType,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
-        //key operateId,value userlivedata
-        Map<String, Object> operaMaxmap = new HashMap<>();
+        List<User> userList =  userMapper.getUserLst(userId);
+        List<taskModel> taskModelList = (List<taskModel>) JSONArray.parseArray(taskList, taskModel.class);//任务单列表
+        User teacher=userMapper.selectByPrimaryKey(userId);
+        //任务单或试卷报表列表，每个元素是一个sheet
+        List<RealTimeEcxelPOJO> scoreexcelList = new ArrayList<>();
+        //学号	姓名	机器号	登录时间（年月日，时分秒）	学习时长（min）	课题名称	氮气置换
+        if ((taskModelList != null)) {
+            for (taskModel tm : taskModelList) {
+                List<UserLiveDataWithBLOBs> userLiveDataWithBLOBs = new ArrayList<>();
+                userLiveDataWithBLOBs = fzhktService.getOperateMaxScore(userId,Integer.valueOf(tm.getTask_id()), Integer.valueOf(tm.getStudy_type()));
+                RealTimeEcxelPOJO realTimeEcxelPOJO = new RealTimeEcxelPOJO();
+                realTimeEcxelPOJO.setStudyType(Constants.StudyType.values()[studyType]);
+                realTimeEcxelPOJO.setTaskName(tm.getTask_name());
+                realTimeEcxelPOJO.setTeacherName(teacher.getRelName());
+                Operate reqMod=new Operate();
+////只查询未删除的工况
+//                reqMod.setIsDeleted(0);
+////查询任务单ID是1的工况
+//                reqMod.setTaskId(1);
+//                List<Operate> operateList= OperateService.GetList(reqMod);
+//                realTimeEcxelPOJO.operateList=
+                if (userList != null) {
+                    for (User user : userList) {
+                        RealTimeExcelItemPOJO scoreexcelitem = new RealTimeExcelItemPOJO();
+                        //填充数据
+                        scoreexcelitem.setNum(user.getStNum());//学号
+                        scoreexcelitem.setStudentName(user.getRelName());//姓名
+                        scoreexcelitem.setLoginTime("123");//登录时间
+                        scoreexcelitem.setTaskName(tm.getTask_name());//任务单
+                        realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.put(user.getId(), scoreexcelitem);
 
-        List<User> userList = userMapper.getUserLst(userId);
-        return r;
+                    }
+                }
+                if (userLiveDataWithBLOBs != null) {
+                    for (UserLiveDataWithBLOBs usld : userLiveDataWithBLOBs) {
+                        RealTimeExcelItemPOJO rtitem = realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.get(usld.getUserId());
+                        rtitem.setLearnTime(String.format("%.2f", usld.getStudyDuration()/60000));//学习时长
+                        rtitem.operateScoremap.put(usld.getOperateId(), usld.getCurrentScore());
+                    }
+                }
+
+                scoreexcelList.add(realTimeEcxelPOJO);
+            }
+        }
+        //fzhktService.exportReatimeScore(scoreexcelList);
+        return fzhktService.exportReatimeScore(scoreexcelList);
     }
 }
