@@ -35,4 +35,8 @@ public interface UserLoginLogMapper {
     @Select("select id,date_format(create_time,'%Y-%m-%d %h:%m:%s') AS newcreate_time FROM user_login_log where is_admin=1 and status=1 and user_id=#{userId} and create_time >=#{beginDate} and create_time <=#{endDate}")
     @ResultMap("BasePOJOResultMap")
     List<UserLoginLogPOJO> getUserLogByUserId(@Param("userId") Integer userId,@Param("beginDate") String beginDate, @Param("endDate") String endDate);
+
+    @Select("SELECT u.user_id,MIN(u.create_time) create_time FROM user_login_log u LEFT JOIN teacher_student_relation t ON u.user_id=t.student_id WHERE t.teacher_id=#{userId} and u.create_time>CAST(SYSDATE()AS DATE) GROUP BY u.user_id")
+    @ResultMap("BaseResultMap")
+    List<UserLoginLog> getUserLoginLogByTeacherID(@Param("userId") int userId);
 }

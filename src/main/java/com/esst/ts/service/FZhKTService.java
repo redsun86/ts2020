@@ -51,4 +51,6 @@ public interface FZhKTService {
     List<UserLiveDataWithBLOBs> getOperateMaxScore(int userId, int taskId, int studyType);
 
     ResponseEntity<byte[]> exportReatimeScore(List<RealTimeEcxelPOJO> scoreexcelList);
+
+    List<UserLoginLog> getUserLoginLogeacherID(int userId);
 }

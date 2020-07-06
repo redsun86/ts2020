@@ -12,6 +12,15 @@ public class RealTimeExcelItemPOJO {
     String learnTime;
     String taskName;
 
+    public Double getTotalScore() {
+        return totalScore;
+    }
+
+    public void setTotalScore(Double totalScore) {
+        this.totalScore = totalScore;
+    }
+
+    Double totalScore=0.00;
     public Integer getUserId() {
         return userId;
     }

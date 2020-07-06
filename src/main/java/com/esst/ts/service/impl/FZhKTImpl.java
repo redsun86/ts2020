@@ -9,6 +9,7 @@ import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -205,9 +206,9 @@ public class FZhKTImpl implements FZhKTService {
 
     @Override
     public int deletelivedataTorecord(int userId) {
-        int i=userlivedata.deletUserliveByteacherid(userId);
-        int j=userliveScore.deletUserliveByteacherid(userId);
-        return i+j;
+        int i = userlivedata.deletUserliveByteacherid(userId);
+        int j = userliveScore.deletUserliveByteacherid(userId);
+        return i + j;
     }
 
     @Override
@@ -230,8 +231,8 @@ public class FZhKTImpl implements FZhKTService {
     }
 
     @Override
-    public List<UserLive> checkIsRecordByTeacherId(String beginDate,String endDate,int userID) {
-        return userliveScore.checkIsRecordByTeacherId(beginDate,endDate,userID);
+    public List<UserLive> checkIsRecordByTeacherId(String beginDate, String endDate, int userID) {
+        return userliveScore.checkIsRecordByTeacherId(beginDate, endDate, userID);
     }
 
     @Override
@@ -249,7 +250,7 @@ public class FZhKTImpl implements FZhKTService {
         scordetail.setLearnTime(String.valueOf(ulwb.getStudyDuration() / 1000));
         //DateFormat df=new SimpleDateFormat("yyyy-MM-dd 00:00:00");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String studydate=sdf.format(new Date(ulwb.getStartTime()));
+        String studydate = sdf.format(new Date(ulwb.getStartTime()));
         scordetail.setStudyDate(studydate);
         scordetail.setScore(ulwb.getCurrentScore().toString());
 
@@ -282,7 +283,7 @@ public class FZhKTImpl implements FZhKTService {
 
     @Override
     public List<UserLiveDataWithBLOBs> getOperateMaxScore(int userId, int taskId, int studyType) {
-        return userlivedata.getOperateMaxScore(userId,taskId,studyType);
+        return userlivedata.getOperateMaxScore(userId, taskId, studyType);
     }
 
     @Override
@@ -323,7 +324,36 @@ public class FZhKTImpl implements FZhKTService {
 
         for (RealTimeEcxelPOJO rte : scoreexcelList) {
             HSSFSheet sheet = hssfWorkbook.createSheet(rte.getTaskName());
+            sheet.setColumnWidth(0, 25 * 256);
+            sheet.setColumnWidth(3, 25 * 256);
+            sheet.setColumnWidth(4, 13 * 256);
+            //第一行
             HSSFRow r0 = sheet.createRow(0);
+            if (rte.getStudyType() == StudyType.TASK) {
+                HSSFCell c0 = r0.createCell(0);
+                c0.setCellValue("任务单名称:" + rte.getTaskName());
+            } else {
+                HSSFCell c0 = r0.createCell(0);
+                c0.setCellValue("试卷名称:" + rte.getTaskName());
+            }
+            r0.createCell(1).setCellValue("");
+            r0.createCell(2).setCellValue("");
+            HSSFCell c01 = r0.createCell(3);
+            c01.setCellValue("教师名称:" + rte.getTeacherName());
+            HSSFCell c04 = r0.createCell(4);
+            //c01.setCellValue("班级名称:"+ StringUtils.join(rte.classList, ","));
+            String ClassName = "";
+
+            for (String str : rte.ClassNameMap) {
+                ClassName += str + " ";
+            }
+            c04.setCellValue("班级名称:" + ClassName);
+            r0.createCell(5).setCellValue("");
+            CellRangeAddress region1 = new CellRangeAddress(0, 0, (short) 0, (short) 2); //参数1：起始行 参数2：终止行 参数3：起始列 参数4：终止列
+            sheet.addMergedRegion(region1);
+            CellRangeAddress region2 = new CellRangeAddress(0, 0, (short) 4, (short) 5); //参数1：起始行 参数2：终止行 参数3：起始列 参数4：终止列
+            sheet.addMergedRegion(region2);
+            //第二行表头
             HSSFRow r1 = sheet.createRow(1);
             HSSFCell c0 = r1.createCell(0);
             c0.setCellValue("学号");
@@ -339,49 +369,44 @@ public class FZhKTImpl implements FZhKTService {
 
             HSSFCell c4 = r1.createCell(4);
             c4.setCellValue("学习时长(min)");
-            if (rte.getStudyType() == StudyType.TASK) {
-                HSSFCell c5 = r1.createCell(5);
-                c5.setCellValue("任务单名称");
-            } else {
-                HSSFCell c5 = r1.createCell(5);
-                c5.setCellValue("试卷名称");
-            }
-            if (rte.operateList!=null) {
+            HSSFCell c5 = r1.createCell(5);
+            c5.setCellValue("总成绩");
+
+            if (rte.operateList != null) {
                 for (int i = 0; i < rte.operateList.size(); i++) {
                     HSSFCell c6 = r1.createCell(i + 6);
                     c6.setCellValue(rte.operateList.get(i));
                 }
             }
-            int rownum=2;
-            if(rte.realTimeExcelItemPOJOHashMap!=null)
-            {
+            int rownum = 2;
+            if (rte.realTimeExcelItemPOJOHashMap != null) {
                 for (Map.Entry<Integer, RealTimeExcelItemPOJO> entry : rte.realTimeExcelItemPOJOHashMap.entrySet()) {
-                    RealTimeExcelItemPOJO itemPOJO=entry.getValue();
+                    RealTimeExcelItemPOJO itemPOJO = entry.getValue();
                     HSSFRow r = sheet.createRow(rownum);
-                    HSSFCell cell0=r.createCell(0);//学号
+                    HSSFCell cell0 = r.createCell(0);//学号
                     cell0.setCellValue(itemPOJO.getNum());
-                    HSSFCell cell1=r.createCell(1);//姓名
+                    HSSFCell cell1 = r.createCell(1);//姓名
                     cell1.setCellValue(itemPOJO.getStudentName());
-                    HSSFCell cell2=r.createCell(2);//机器号
+                    HSSFCell cell2 = r.createCell(2);//机器号
                     cell2.setCellValue(itemPOJO.getMachineNum());
-                    HSSFCell cell3=r.createCell(3);//登录时间
+                    HSSFCell cell3 = r.createCell(3);//登录时间
                     cell3.setCellValue(itemPOJO.getLoginTime());
 
-                    HSSFCell cell4=r.createCell(4);//学习时长
+                    HSSFCell cell4 = r.createCell(4);//学习时长
                     cell4.setCellValue(itemPOJO.getLearnTime());
-                    HSSFCell cell5=r.createCell(5);//任务单
-                    cell5.setCellValue(itemPOJO.getTaskName());
+                    HSSFCell cell5 = r.createCell(5);//任务单
+                    cell5.setCellValue(itemPOJO.getTotalScore());
 
                     for (Map.Entry<Integer, Integer> entryoperate : rte.operateIndexList.entrySet()) {
-                        HSSFCell cell6=r.createCell(entryoperate.getValue()+6);
-                        if(itemPOJO.operateScoremap.containsKey(entryoperate.getKey())) {
+                        HSSFCell cell6 = r.createCell(entryoperate.getValue() + 6);
+                        if (itemPOJO.operateScoremap.containsKey(entryoperate.getKey())) {
                             cell6.setCellValue(itemPOJO.operateScoremap.get(entryoperate.getKey()));
-                        }else {
+                        } else {
                             cell6.setCellValue(0);
                         }
 
                     }
-                rownum++;
+                    rownum++;
                 }
             }
 
@@ -399,7 +424,12 @@ public class FZhKTImpl implements FZhKTService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new ResponseEntity<byte[]>(stream.toByteArray(),headers, HttpStatus.CREATED);
+        return new ResponseEntity<byte[]>(stream.toByteArray(), headers, HttpStatus.CREATED);
+    }
+
+    @Override
+    public List<UserLoginLog> getUserLoginLogeacherID(int userId) {
+        return userLoginLogMapper.getUserLoginLogByTeacherID(userId);
     }
 
     @Override

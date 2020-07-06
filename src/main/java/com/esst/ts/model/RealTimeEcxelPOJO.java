@@ -2,10 +2,7 @@ package com.esst.ts.model;
 
 import com.esst.ts.constants.Constants;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RealTimeEcxelPOJO {
     public String getTaskName() {
@@ -42,4 +39,5 @@ public class RealTimeEcxelPOJO {
     public List<String> operateList = new ArrayList<>();
     public Map<Integer,Integer>operateIndexList= new HashMap<>();
     public Map<Integer, RealTimeExcelItemPOJO> realTimeExcelItemPOJOHashMap = new HashMap<>();
+    public HashSet<String> ClassNameMap = new HashSet<>();
 }
