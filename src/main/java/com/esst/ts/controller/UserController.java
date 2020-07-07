@@ -408,7 +408,7 @@ public class UserController {
                 for (int j = 0; j < cell.size(); j++) {
                     int h = i + 1;
                     int l = j + 1;
-                    if (j <= 3) {
+                    if (j <= 2) {
                         if (j == 0) {
                             //判断当前行的第一列学号是否重名
                             if (NumAccount.toString().contains(cell.get(j))) {
@@ -419,99 +419,106 @@ public class UserController {
                         if (cell.get(j).length() == 0) {
                             contents.append("第").append(h).append("行的第").append(l).append("列为空\r\n");
                         }
-                        if (j == 3) {
-                            //判断当前行的第四列账号是否重名
-                            if (LoginAccount.toString().contains(cell.get(j))) {
-                                contents.append("第").append(h).append("行的第").append(l).append("列已存在相同值\r\n");
-                            }
-                            LoginAccount.append(cell.get(j)).append(",");
-                        }
+//                        if (j == 3) {
+//                            //判断当前行的第四列账号是否重名
+//                            if (LoginAccount.toString().contains(cell.get(j))) {
+//                                contents.append("第").append(h).append("行的第").append(l).append("列已存在相同值\r\n");
+//                            }
+//                            LoginAccount.append(cell.get(j)).append(",");
+//                        }
                     }
                 }
             }
             if (contents.length() == 0) {
                 //插入数据库数据
-                for (List<String> cell : row) {
-                    for (int j = 0; j < cell.size(); j++) {
-                        //获取用户实体
-                        switch (j) {
-                            case 0:
-                                m.setStNum(cell.get(j));
-                                break;
-                            case 1:
-                                m.setRelName(cell.get(j));
-                                break;
-                            case 2:
-                                m.setClassName(cell.get(j));
-                                break;
-                            case 3:
-                                m.setUserName(cell.get(j));
-                                break;
-                            case 4:
-                                m.setMobile(cell.get(j));
-                                break;
-                            case 5:
-                                m.setGroupName(cell.get(j));
-                                break;
-                            case 6:
-                                m.setOperateMode(cell.get(j));
-                                break;
-                            case 7:
-                                m.setRoleName(cell.get(j));
-                                break;
-                        }
-                    }
-                    m.setPassword(MD5Code.encodeByMD5("000000"));
-                    m.setStatus(Short.parseShort("0"));
-                    m.setCreateTime(DateUtils.stringToDate());
-                    m.setCreateUser(userId);
-                    m.setIsDel(Short.parseShort("0"));
-                    m.setIsAdmin(Short.parseShort("0"));
-                    //判断当前学员是否存在
-                    User newUser = userService.getCheckUserByNum(m.getStNum());
-                    if (newUser != null) {
-                        //存在 更新用户信息
-                        newUser.setUserName(m.getUserName());
-                        newUser.setRelName(m.getRelName());
-                        newUser.setClassName(m.getClassName());
-                        newUser.setMobile(m.getMobile());
-                        newUser.setGroupName(m.getGroupName());
-                        newUser.setOperateMode(m.getOperateMode());
-                        newUser.setRoleName(m.getRoleName());
-                        userService.update(newUser);
-                        //查询当前教师是否已导入该学号
-                        User newUsers = userService.getUserByNum(m.getStNum(), userId);
-                        if (newUsers == null) {
-                            TeacherStudentRelation teacherStudentRelation = new TeacherStudentRelation();
-                            teacherStudentRelation.setStudentId(newUser.getId());
-                            teacherStudentRelation.setTeacherId(userId);
-                            teacherStudentRelation.setIsDel(0);
-                            userService.insert(teacherStudentRelation);
-                        } else {
-                            //更新
-                            TeacherStudentRelation teacherStudentRelation = userService.selectByUserAndTeacher(newUser.getId(), userId);
-                            if (teacherStudentRelation.getIsDel() == 1) {
-                                teacherStudentRelation.setIsDel(0);
-                                userService.updateByPrimaryKey(teacherStudentRelation);
+                try {
+                    for (List<String> cell : row) {
+                        for (int j = 0; j < cell.size(); j++) {
+                            //获取用户实体
+                            switch (j) {
+                                case 0:
+                                    m.setStNum(cell.get(j));
+                                    break;
+                                case 1:
+                                    m.setRelName(cell.get(j));
+                                    break;
+                                case 2:
+                                    m.setClassName(cell.get(j));
+                                    break;
+                                case 3:
+                                    m.setUserName(cell.get(j));
+                                    break;
+                                case 4:
+                                    m.setMobile(cell.get(j));
+                                    break;
+                                case 5:
+                                    m.setGroupName(cell.get(j));
+                                    break;
+                                case 6:
+                                    m.setOperateMode(cell.get(j));
+                                    break;
+                                case 7:
+                                    m.setRoleName(cell.get(j));
+                                    break;
                             }
                         }
-                    } else {
-                        //不存在
-                        int result = userService.insert(m);
-                        if (result > 0) {
-                            //查询刚刚添加的学员ID
-                            User user = userService.getUserLastRecord();
-                            TeacherStudentRelation teacherStudentRelation = new TeacherStudentRelation();
-                            teacherStudentRelation.setStudentId(user.getId());
-                            teacherStudentRelation.setTeacherId(userId);
-                            teacherStudentRelation.setIsDel(0);
-                            userService.insert(teacherStudentRelation);
+                        m.setPassword(MD5Code.encodeByMD5("000000"));
+                        m.setStatus(Short.parseShort("0"));
+                        m.setCreateTime(DateUtils.stringToDate());
+                        m.setCreateUser(userId);
+                        m.setIsDel(Short.parseShort("0"));
+                        m.setIsAdmin(Short.parseShort("0"));
+                        //判断当前学员是否存在
+                        User newUser = userService.getCheckUserByNum(m.getStNum());
+                        if (newUser != null) {
+                            //存在 更新用户信息
+                            newUser.setUserName(m.getUserName());
+                            newUser.setRelName(m.getRelName());
+                            newUser.setClassName(m.getClassName());
+                            newUser.setMobile(m.getMobile());
+                            newUser.setGroupName(m.getGroupName());
+                            newUser.setOperateMode(m.getOperateMode());
+                            newUser.setRoleName(m.getRoleName());
+                            userService.update(newUser);
+                            //查询当前教师是否已导入该学号
+                            User newUsers = userService.getUserByNum(m.getStNum(), userId);
+                            if (newUsers == null) {
+                                TeacherStudentRelation teacherStudentRelation = new TeacherStudentRelation();
+                                teacherStudentRelation.setStudentId(newUser.getId());
+                                teacherStudentRelation.setTeacherId(userId);
+                                teacherStudentRelation.setIsDel(0);
+                                userService.insert(teacherStudentRelation);
+                            } else {
+                                //更新
+                                TeacherStudentRelation teacherStudentRelation = userService.selectByUserAndTeacher(newUser.getId(), userId);
+                                if (teacherStudentRelation.getIsDel() == 1) {
+                                    teacherStudentRelation.setIsDel(0);
+                                    userService.updateByPrimaryKey(teacherStudentRelation);
+                                }
+                            }
+                        } else {
+                            //不存在
+                            int result = userService.insert(m);
+                            if (result > 0) {
+                                //查询刚刚添加的学员ID
+                                User user = userService.getUserLastRecord();
+                                TeacherStudentRelation teacherStudentRelation = new TeacherStudentRelation();
+                                teacherStudentRelation.setStudentId(user.getId());
+                                teacherStudentRelation.setTeacherId(userId);
+                                teacherStudentRelation.setIsDel(0);
+                                userService.insert(teacherStudentRelation);
+                            }
                         }
                     }
+                    r.setMsg(requestContext.getMessage("OK"));
+                    r.setCode(200);
+                    r.setData("导入学员成功");
+                }catch (Exception e){
+                    r.setMsg(requestContext.getMessage("Err"));
+                    r.setCode(201);
+                    r.setData("导入学员失败"+e.getMessage());
                 }
-                r.setMsg(requestContext.getMessage("OK"));
-                r.setCode(200);
-                r.setData("导入学员成功");
+
             } else {
                 String num = UUID.randomUUID().toString();  //生成一个随机数用作用户名
                 String pathName = Constants.UPLOAD_PIC_URL + "/" + num + ".txt";  //生成文件存储在服务器的完整路径 如 /upload/3355d8d7-51c2-488a-80f4-ea97b2e93a30.jpg
