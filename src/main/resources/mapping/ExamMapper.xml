@@ -140,11 +140,12 @@
         </if>
     </select>
     <select id="GetListWithStudent" resultMap="BaseResultPOJOMap" parameterType="com.esst.ts.model.Exam">
-        select e.id,e.exam_name,e.`status`,e.create_user,ifnull(uc.user_count,0) user_count,e.exam_attribute
+        select e.id,concat(u.rel_name,'老师：',e.exam_name) exam_name,e.`status`,e.create_user,ifnull(uc.user_count,0) user_count,e.exam_attribute
         ,(case e.`status` when 1 then '发布' else '未发布' end) status_name,ifnull(eq.questionsCount,0) questionsCount
         ,concat((case e.exam_attribute when 1 then '考试' else '联合操作' end),'，',ifnull(eq.questionsCount,0),'题'
         ,(case e.exam_attribute when 1 then CONCAT('，',ifnull(eq.time_limit,0),'分钟') else '，不限时' end)) edit_info
         from exam e
+        LEFT JOIN `user` u ON e.create_user=u.id
         LEFT JOIN (select exam_id,count(distinct user_id) user_count from exam_user_relation group by exam_id) uc
         on e.id=uc.exam_id
         LEFT JOIN (select exame_id,count(id) questionsCount,sum(time_limit) time_limit

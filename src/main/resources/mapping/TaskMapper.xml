@@ -100,14 +100,18 @@
   </update>
 
   <select id="GetListWithUserIdsAndStatus" resultMap="BasePOJOResultMap">
-    select t.id,t.task_code,t.task_name,t.technology_id,t.shibiao
+    select t.id,t.task_code,concat(ut.rel_name,'老师：',t.task_name) task_name,t.technology_id,t.shibiao
     ,(case when ut.task_id is null then 0 else 1 end) `status`
     from task t
-    left join (select task_id from user_task_relation where user_id in
+    left join (
+    select u.rel_name,utr.user_id,utr.task_id from user_task_relation utr
+    LEFT JOIN `user` u ON utr.user_id=u.id
+    WHERE utr.user_id in
     <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
       #{item,jdbcType=INTEGER}
     </foreach>
-    group by task_id) ut on t.id=ut.task_id
+    GROUP BY u.rel_name,utr.user_id,utr.task_id
+    ) ut on t.id=ut.task_id
     <where>
       t.id>0
       <if test="status == 1">
@@ -117,5 +121,6 @@
         and ut.task_id is null
       </if>
     </where>
+    ORDER BY ut.rel_name,t.id
   </select>
 </mapper>
