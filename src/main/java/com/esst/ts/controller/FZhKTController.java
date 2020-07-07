@@ -181,38 +181,16 @@ public class FZhKTController {
             //</editor-fold>
             datalist.add(_score);
         }
-        //</editor-fold>
-//        for (Task obj: tasklistsql) {
-//            try {
-//                if()
-//                System.out.println(obj);
-//                BeanUtils.copyProperties(userlivedatelist.get(obj.getId()), obj);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-
         //<editor-fold desc="实时数据列表赋值：datalist">
         //tasklist=tasklist.stream().collect(Collectors.groupingBy(taskModel::getTask_id,taskModel::getStudy_type));
         tasklist = tasklist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getTask_id() + ";" + o.getStudy_type()))), ArrayList::new));
-
-        //<editor-fold desc="临时数据">
-        List<String> stuLst = new ArrayList<String>();
-        stuLst.add("李智");
-        stuLst.add("梁建磊");
-        stuLst.add("曹瑞卿");
-        stuLst.add("史红阳");
-        stuLst.add("专家");
-        //</editor-fold>
 
         //</editor-fold>
 
 
         //</editor-fold>
         //<editor-fold desc="统计数据赋值">
-        String class_name;      //班级名称
         String teacher_name;    //教师名称
-        class_name = "班级名称";
         teacher_name = "教师名称";
         //</editor-fold>
         //<editor-fold desc="返回参数赋值">
