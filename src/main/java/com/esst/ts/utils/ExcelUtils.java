@@ -40,18 +40,30 @@ public class ExcelUtils {
             //获取第一张工作表
             Sheet sheet = workbook.getSheetAt(1);
             //从第二行开始获取
-            for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
+            //int aa=sheet.getPhysicalNumberOfRows();
+            //int bb=sheet.getLastRowNum();
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
                 //循环获取工作表的每一行
-                Row sheetRow = sheet.getRow(i);
-                //循环获取每一列
-                ArrayList<String> cell = new ArrayList<>();
-                for (int j = 0; j < sheetRow.getPhysicalNumberOfCells(); j++) {
-                    //将每一个单元格的值装入列集合
-                    cell.add(sheetRow.getCell(j).getStringCellValue());
+                if(sheet.getRow(i)==null){}
+                else{
+                    Row sheetRow = sheet.getRow(i);
+                    //循环获取每一列
+                    ArrayList<String> cell = new ArrayList<>();
+                    //int ssss1=sheetRow.getPhysicalNumberOfCells();
+                    //int ssss2=sheetRow.getLastCellNum();
+                    for (int j = 0; j < 9; j++) {
+                        //将每一个单元格的值装入列集合
+                        if(sheetRow.getCell(j)==null){
+                            cell.add("");
+                        }
+                        else{
+                            cell.add(sheetRow.getCell(j).getStringCellValue());
+                        }
+                    }
+                    //将装有每一列的集合装入大集合
+                    row.add(cell);
+                    //关闭资源
                 }
-                //将装有每一列的集合装入大集合
-                row.add(cell);
-                //关闭资源
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

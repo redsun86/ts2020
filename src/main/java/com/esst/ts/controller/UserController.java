@@ -408,7 +408,7 @@ public class UserController {
                 for (int j = 0; j < cell.size(); j++) {
                     int h = i + 1;
                     int l = j + 1;
-                    if (j <= 3) {
+                    if (j <= 2) {
                         if (j == 0) {
                             //判断当前行的第一列学号是否重名
                             if (NumAccount.toString().contains(cell.get(j))) {
@@ -419,13 +419,13 @@ public class UserController {
                         if (cell.get(j).length() == 0) {
                             contents.append("第").append(h).append("行的第").append(l).append("列为空\r\n");
                         }
-                        if (j == 3) {
-                            //判断当前行的第四列账号是否重名
-                            if (LoginAccount.toString().contains(cell.get(j))) {
-                                contents.append("第").append(h).append("行的第").append(l).append("列已存在相同值\r\n");
-                            }
-                            LoginAccount.append(cell.get(j)).append(",");
-                        }
+//                        if (j == 3) {
+//                            //判断当前行的第四列账号是否重名
+//                            if (LoginAccount.toString().contains(cell.get(j))) {
+//                                contents.append("第").append(h).append("行的第").append(l).append("列已存在相同值\r\n");
+//                            }
+//                            LoginAccount.append(cell.get(j)).append(",");
+//                        }
                     }
                 }
             }
