@@ -108,6 +108,9 @@
             <if test="exameId != null">
                 exame_id = #{exameId,jdbcType=INTEGER},
             </if>
+            <if test="questionName != null">
+                question_name = #{questionName,jdbcType=INTEGER},
+            </if>
             <if test="operateId != null">
                 operate_id = #{operateId,jdbcType=INTEGER},
             </if>
