@@ -322,7 +322,7 @@ public class FZhKTController {
      * @return studyType 学习类型
      */
     @ResponseBody
-    @RequestMapping(value = "/realtimeExcel", method = RequestMethod.GET)
+    @RequestMapping(value = "/realtimeExcel", method = RequestMethod.POST)
     public ResponseEntity<byte[]> realttimeExcel(
             @RequestParam(value = "userId", required = true) int userId,
             @RequestParam(value = "taskList", required = true) String taskList,
