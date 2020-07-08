@@ -1,10 +1,7 @@
 package com.esst.ts.dao;
 
 import com.esst.ts.model.User;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.ResultMap;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.*;
 
@@ -50,7 +47,8 @@ public interface UserMapper {
     @Update("update user set password = #{password} where id = #{userId}")
     int updateUserPwd(@Param("userId") int userId,@Param("password") String password);
 
-    @Update("update teacher_student_relation set is_del=1 where student_id = #{studentId} and teacher_id=#{teacherId}")
+    //@Update("update teacher_student_relation set is_del=1 where student_id = #{studentId} and teacher_id=#{teacherId}")
+    @Delete("delete from teacher_student_relation where student_id = #{studentId} and teacher_id=#{teacherId}")
     int deleteUserById(@Param("studentId") int studentId,@Param("teacherId") int teacherId);
 
     @Select("select * from user order by id DESC limit 1")
