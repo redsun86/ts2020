@@ -101,7 +101,7 @@
         from (
         select studybv.user_id,studybv.task_id,sum(uld.study_duration) study_duration
         ,(case
-        when sum(uld.study_duration)>=10*60*1000 then 1
+        when 10*60*1000>=sum(uld.study_duration) then 1
         when sum(uld.study_duration)>10*60*1000 and 20*60*1000 >= sum(uld.study_duration) then 2
         when sum(uld.study_duration)>20*60*1000 and 30*60*1000 >= sum(uld.study_duration) then 3
         when sum(uld.study_duration)>30*60*1000 and 40*60*1000 >= sum(uld.study_duration) then 4
@@ -133,7 +133,7 @@
         select avgv.xAxis_id,count(0) yAxis from (
         select studybv.user_id,studybv.task_id,sum(studybv.current_score) current_score
         ,(case
-        when sum(studybv.current_score) >= 50 then 1
+        when 50>=sum(studybv.current_score) then 1
         when sum(studybv.current_score) > 50 and 100 >= sum(studybv.current_score) then 2
         when sum(studybv.current_score) > 100 and 150 >= sum(studybv.current_score) then 3
         when sum(studybv.current_score) > 150 and 200 >= sum(studybv.current_score) then 4
