@@ -42,13 +42,19 @@ public class ExamImpl implements ExamService {
     public List<ExamPOJO> GetList(Exam mod) {
         return ExamMapper.GetList(mod);
     }
+
+    @Override
+    public List<ExamPOJO> GetListWithDefault(Exam mod) {
+        return ExamMapper.GetListWithDefault(mod);
+    }
+
     @Override
     public List<ExamPOJO> GetListWithStudent(Exam mod) {
         return ExamMapper.GetListWithStudent(mod);
     }
 
     @Override
-    public int updateStatus(String ids, int status,int userId) {
+    public int updateStatus(String ids, int status, int userId) {
         int retVal = 0;
         if (ids != null && ids != "") {
             ids = ids.replaceAll("\\，", "\\,");

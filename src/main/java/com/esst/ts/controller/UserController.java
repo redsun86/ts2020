@@ -490,11 +490,11 @@ public class UserController {
                                 userService.insert(teacherStudentRelation);
                             } else {
                                 //更新
-                                TeacherStudentRelation teacherStudentRelation = userService.selectByUserAndTeacher(newUser.getId(), userId);
-                                if (teacherStudentRelation.getIsDel() == 1) {
-                                    teacherStudentRelation.setIsDel(0);
-                                    userService.updateByPrimaryKey(teacherStudentRelation);
-                                }
+                                //TeacherStudentRelation teacherStudentRelation = userService.selectByUserAndTeacher(newUser.getId(), userId);
+                                //if (teacherStudentRelation.getIsDel() == 1) {
+                                  //  teacherStudentRelation.setIsDel(0);
+                                    //userService.updateByPrimaryKey(teacherStudentRelation);
+                                //}
                             }
                         } else {
                             //不存在

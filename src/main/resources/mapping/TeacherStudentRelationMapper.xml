@@ -86,22 +86,26 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
     <select id="GetList" resultMap="BaseResultMap" parameterType="com.esst.ts.model.TeacherStudentRelation">
-        select
-        <include refid="Base_Column_List"/>
-        from teacher_student_relation
+        select tsr.id,tsr.student_id,tsr.teacher_id,tsr.is_del,ifnull(lg.`status`,0) is_online
+        from teacher_student_relation tsr
+        left join (select user_id,max(id) id from user_login_log group by user_id) ulg on tsr.Teacher_id=ulg.user_id
+        left join user_login_log lg on ulg.id=lg.id
         <where>
-            id>0
+            tsr.id>0
             <if test="id != null">
-                and id=#{id,jdbcType=INTEGER}
+                and tsr.id=#{id,jdbcType=INTEGER}
             </if>
             <if test="isDel != null">
-                and is_del=#{isDel,jdbcType=INTEGER}
+                and tsr.is_del=#{isDel,jdbcType=INTEGER}
             </if>
             <if test="studentId != null">
-                and student_id=#{studentId,jdbcType=INTEGER}
+                and tsr.student_id=#{studentId,jdbcType=INTEGER}
             </if>
             <if test="teacherId != null">
-                and teacher_id=#{teacherId,jdbcType=INTEGER}
+                and tsr.teacher_id=#{teacherId,jdbcType=INTEGER}
+            </if>
+            <if test="isOnline != null">
+                and ifnull(lg.`status`,0)=#{isOnline,jdbcType=INTEGER}
             </if>
         </where>
     </select>

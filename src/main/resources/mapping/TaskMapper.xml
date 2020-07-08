@@ -1,96 +1,96 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.esst.ts.dao.TaskMapper" >
-  <resultMap id="BaseResultMap" type="com.esst.ts.model.Task" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="task_code" property="taskCode" jdbcType="VARCHAR" />
-    <result column="task_name" property="taskName" jdbcType="VARCHAR" />
-    <result column="technology_id" property="technologyId" jdbcType="INTEGER" />
-    <result column="shibiao" property="shibiao" jdbcType="VARCHAR" />
-  </resultMap>
-  <resultMap id="BasePOJOResultMap" type="com.esst.ts.model.TechnologyTaskPOJO" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="task_code" property="taskCode" jdbcType="VARCHAR" />
-    <result column="task_name" property="taskName" jdbcType="VARCHAR" />
-    <result column="technology_id" property="technologyId" jdbcType="INTEGER" />
-    <result column="shibiao" property="shiBiao" jdbcType="VARCHAR" />
-    <result column="status" property="status" jdbcType="INTEGER" />
-  </resultMap>
-  <sql id="Base_Column_List" >
+<mapper namespace="com.esst.ts.dao.TaskMapper">
+    <resultMap id="BaseResultMap" type="com.esst.ts.model.Task">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="task_code" property="taskCode" jdbcType="VARCHAR"/>
+        <result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+        <result column="technology_id" property="technologyId" jdbcType="INTEGER"/>
+        <result column="shibiao" property="shibiao" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="BasePOJOResultMap" type="com.esst.ts.model.TechnologyTaskPOJO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="task_code" property="taskCode" jdbcType="VARCHAR"/>
+        <result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+        <result column="technology_id" property="technologyId" jdbcType="INTEGER"/>
+        <result column="shibiao" property="shiBiao" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     id, task_code, task_name, technology_id, shibiao
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    from task
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from task
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from task
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.esst.ts.model.Task" >
+    <insert id="insert" parameterType="com.esst.ts.model.Task">
     insert into task (id, task_code, task_name, 
       technology_id, shibiao)
     values (#{id,jdbcType=INTEGER}, #{taskCode,jdbcType=VARCHAR}, #{taskName,jdbcType=VARCHAR}, 
       #{technologyId,jdbcType=INTEGER}, #{shibiao,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.esst.ts.model.Task" >
-    insert into task
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="taskCode != null" >
-        task_code,
-      </if>
-      <if test="taskName != null" >
-        task_name,
-      </if>
-      <if test="technologyId != null" >
-        technology_id,
-      </if>
-      <if test="shibiao != null" >
-        shibiao,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="taskCode != null" >
-        #{taskCode,jdbcType=VARCHAR},
-      </if>
-      <if test="taskName != null" >
-        #{taskName,jdbcType=VARCHAR},
-      </if>
-      <if test="technologyId != null" >
-        #{technologyId,jdbcType=INTEGER},
-      </if>
-      <if test="shibiao != null" >
-        #{shibiao,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.Task" >
-    update task
-    <set >
-      <if test="taskCode != null" >
-        task_code = #{taskCode,jdbcType=VARCHAR},
-      </if>
-      <if test="taskName != null" >
-        task_name = #{taskName,jdbcType=VARCHAR},
-      </if>
-      <if test="technologyId != null" >
-        technology_id = #{technologyId,jdbcType=INTEGER},
-      </if>
-      <if test="shibiao != null" >
-        shibiao = #{shibiao,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.Task" >
+    <insert id="insertSelective" parameterType="com.esst.ts.model.Task">
+        insert into task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="taskCode != null">
+                task_code,
+            </if>
+            <if test="taskName != null">
+                task_name,
+            </if>
+            <if test="technologyId != null">
+                technology_id,
+            </if>
+            <if test="shibiao != null">
+                shibiao,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="taskCode != null">
+                #{taskCode,jdbcType=VARCHAR},
+            </if>
+            <if test="taskName != null">
+                #{taskName,jdbcType=VARCHAR},
+            </if>
+            <if test="technologyId != null">
+                #{technologyId,jdbcType=INTEGER},
+            </if>
+            <if test="shibiao != null">
+                #{shibiao,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.Task">
+        update task
+        <set>
+            <if test="taskCode != null">
+                task_code = #{taskCode,jdbcType=VARCHAR},
+            </if>
+            <if test="taskName != null">
+                task_name = #{taskName,jdbcType=VARCHAR},
+            </if>
+            <if test="technologyId != null">
+                technology_id = #{technologyId,jdbcType=INTEGER},
+            </if>
+            <if test="shibiao != null">
+                shibiao = #{shibiao,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.Task">
     update task
     set task_code = #{taskCode,jdbcType=VARCHAR},
       task_name = #{taskName,jdbcType=VARCHAR},
@@ -99,23 +99,58 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="GetListWithUserIdsAndStatus" resultMap="BasePOJOResultMap">
-    select t.id,t.task_code,t.task_name,t.technology_id,t.shibiao
-    ,(case when ut.task_id is null then 0 else 1 end) `status`
-    from task t
-    left join (select task_id from user_task_relation where user_id in
-    <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
-      #{item,jdbcType=INTEGER}
-    </foreach>
-    group by task_id) ut on t.id=ut.task_id
-    <where>
-      t.id>0
-      <if test="status == 1">
-        and ut.task_id is not null
-      </if>
-      <if test="status == 2">
-        and ut.task_id is null
-      </if>
-    </where>
-  </select>
+    <select id="GetList" resultMap="BasePOJOResultMap">
+        select t.id,t.task_code,t.task_name,t.technology_id,t.shibiao
+        ,1 `status`
+        from task t
+        <where>
+            t.id>0
+        </where>
+        ORDER BY t.id
+    </select>
+    <select id="GetListWithStudentIdsAndStatus" resultMap="BasePOJOResultMap">
+        select t.id,t.task_code,concat(ut.rel_name,'老师：',t.task_name) task_name,t.technology_id,t.shibiao
+        ,(case when ut.task_id is null then 0 else 1 end) `status`
+        from task t right join (
+        select u.rel_name,utr.user_id,utr.task_id from user_task_relation utr
+        LEFT JOIN `user` u ON utr.user_id=u.id
+        WHERE utr.user_id in
+        <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
+            #{item,jdbcType=INTEGER}
+        </foreach>
+        GROUP BY u.rel_name,utr.user_id,utr.task_id
+        ) ut on t.id=ut.task_id
+        <where>
+            t.id>0
+            <if test="status == 1">
+                and ut.task_id is not null
+            </if>
+            <if test="status == 2">
+                and ut.task_id is null
+            </if>
+        </where>
+        ORDER BY ut.rel_name,t.id
+    </select>
+    <select id="GetListWithTeacherIdsAndStatus" resultMap="BasePOJOResultMap">
+        select t.id,t.task_code,t.task_name,t.technology_id,t.shibiao
+        ,(case when ut.task_id is null then 0 else 1 end) `status`
+        from task t left join (
+        select utr.user_id,utr.task_id from user_task_relation utr
+        WHERE utr.user_id in
+        <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
+            #{item,jdbcType=INTEGER}
+        </foreach>
+        GROUP BY utr.user_id,utr.task_id
+        ) ut on t.id=ut.task_id
+        <where>
+            t.id>0
+            <if test="status == 1">
+                and ut.task_id is not null
+            </if>
+            <if test="status == 2">
+                and ut.task_id is null
+            </if>
+        </where>
+        ORDER BY t.id
+    </select>
 </mapper>

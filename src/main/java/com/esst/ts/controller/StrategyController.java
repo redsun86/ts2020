@@ -10,6 +10,7 @@ import org.springframework.web.servlet.support.RequestContext;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -87,6 +88,11 @@ public class StrategyController {
      */
     @Resource
     private com.esst.ts.service.UserService UserService;
+    /**
+     * 图表统计——业务逻辑层接口服务
+     */
+    @Resource
+    private com.esst.ts.service.StatisticalService StatisticalService;
     /**
      * 教师学生关系——业务逻辑层接口服务
      */
@@ -187,9 +193,9 @@ public class StrategyController {
         List<Operate> operLst; //工况
 
         //<editor-fold desc="从数据库中读取 工艺/单元、任务单、工况">
-        TechnologyPOJO reqMod=new TechnologyPOJO();
+        TechnologyPOJO reqMod = new TechnologyPOJO();
         if (productId != null && productId != "" && productId != "0") {
-            reqMod.setProductId(Integer.valueOf(productId) );
+            reqMod.setProductId(Integer.valueOf(productId));
         }
         techPojoLst = TechnologyService.GetPojoAllList(reqMod);
 
@@ -197,6 +203,7 @@ public class StrategyController {
         User umod = UserService.getUserById(Integer.valueOf(userId));
         if (null != umod && umod.getIsAdmin() == 1) {
             reqUserIds = userId;
+            taskPojolst = TaskService.GetList(reqUserIds, 0, 1);
         } else {
             TeacherStudentRelation reqTeacherMod = new TeacherStudentRelation();
             reqTeacherMod.setIsDel(0);
@@ -209,10 +216,10 @@ public class StrategyController {
                 }
                 if (idList.size() > 0) reqUserIds = String.join(",", idList);
             }
+            taskPojolst = TaskService.GetList(reqUserIds, 0, 0);
         }
-        taskPojolst = TaskService.GetListWithUserIdsAndStatus(reqUserIds, 0);
 
-        Operate operateReqMod=new Operate();
+        Operate operateReqMod = new Operate();
         operLst = OperateService.GetList(operateReqMod);
         //</editor-fold>
 
@@ -352,14 +359,24 @@ public class StrategyController {
         Map<String, Object> responseDataMap = new HashMap<>();
         List<TechnologyTaskPOJO> taskPojolst; //任务单
 
+        // 老师身份的用户id的集合。格式：1,2,3,4
         String reqUserIds = "";
+        // 获取指定用户信息
         User umod = UserService.getUserById(Integer.valueOf(userId));
+        // 判断指定用户身份：老师、学生
         if (null != umod && umod.getIsAdmin() == 1) {
+            // 老师身份
             reqUserIds = userId;
+            taskPojolst = TaskService.GetList(reqUserIds, 1, 1);
         } else {
+            // 学生身份 通过学生id获取所属老师的集合
             TeacherStudentRelation reqTeacherMod = new TeacherStudentRelation();
+            // 检索条件-未删除
             reqTeacherMod.setIsDel(0);
+            // 检索条件-指定学生id
             reqTeacherMod.setStudentId(Integer.valueOf(userId));
+            // 检索条件-在线
+            reqTeacherMod.setIsOnline(1);
             List<TeacherStudentRelation> teacherList = TeacherStudentRelationService.GetList(reqTeacherMod);
             if (null != teacherList && teacherList.size() > 0) {
                 List<String> idList = new ArrayList<>();
@@ -368,8 +385,8 @@ public class StrategyController {
                 }
                 if (idList.size() > 0) reqUserIds = String.join(",", idList);
             }
+            taskPojolst = TaskService.GetList(reqUserIds, 1, 0);
         }
-        taskPojolst = TaskService.GetListWithUserIdsAndStatus(reqUserIds, 1);
         responseDataMap.put("dataList", taskPojolst);
         r.setData(responseDataMap);
         //</editor-fold>
@@ -402,12 +419,12 @@ public class StrategyController {
         List<Operate> operLst; //工况
 
         //<editor-fold desc="从数据库中读取 工艺/单元、任务单、工况">
-        taskMod=TaskService.selectByPrimaryKey(Integer.valueOf(taskId));
+        taskMod = TaskService.selectByPrimaryKey(Integer.valueOf(taskId));
 
-        TechnologyPOJO reqMod=new TechnologyPOJO();
+        TechnologyPOJO reqMod = new TechnologyPOJO();
         reqMod.setId(taskMod.getTechnologyId());
         techPojoLst = TechnologyService.GetPojoAllList(reqMod);
-        Operate operateReqMod=new Operate();
+        Operate operateReqMod = new Operate();
         operateReqMod.setTaskId(Integer.valueOf(taskId));
         operLst = OperateService.GetList(operateReqMod);
         //</editor-fold>
@@ -465,12 +482,17 @@ public class StrategyController {
             reqMod.setCreateUser(Integer.valueOf((userId)));
             reqMod.setIsDeleted(0);
             reqMod.setExamName(examName);
-            List<ExamPOJO> examsLst=new ArrayList<>();
+            List<ExamPOJO> examsLst = new ArrayList<>();
             User umod = UserService.getUserById(Integer.valueOf(userId));
-            if (null != umod && umod.getIsAdmin() != 1) {
-                examsLst = ExamService.GetListWithStudent(reqMod);
-            }else{
+            if (null != umod && umod.getIsAdmin() == 1) {
                 examsLst = ExamService.GetList(reqMod);
+            } else {
+                reqMod.setStatus(1);
+                examsLst = ExamService.GetListWithStudent(reqMod);
+                if (null != examsLst && examsLst.size() > 0) {
+                } else {
+                    examsLst = ExamService.GetListWithDefault(reqMod);
+                }
             }
             int questionsCount = 0;
             for (ExamPOJO mod : examsLst) {
@@ -799,16 +821,18 @@ public class StrategyController {
         Map<String, Object> responseDataMap = new HashMap<>();
         int rowsCount = 0;
         try {
+            if (reqMod.getQuestionName() == null || reqMod.getQuestionName() == "") {
+                Operate operateReqMod = new Operate();
+                operateReqMod.setId(reqMod.getOperateId());
+                List<Operate> operLst = OperateService.GetList(operateReqMod);
+                if (null != operLst && operLst.size() > 0) {
+                    reqMod.setQuestionName(operLst.get(0).getOperateName());
+                }
+            }
+
             if (reqMod.getId() == null || reqMod.getId() == 0 || reqMod.getId() == -1) {
                 reqMod.setId(null);
-                if (reqMod.getQuestionName() == null || reqMod.getQuestionName() == "") {
-                    Operate operateReqMod=new Operate();
-                    operateReqMod.setId(reqMod.getOperateId());
-                    List<Operate> operLst = OperateService.GetList(operateReqMod);
-                    if(null!=operLst && operLst.size()>0){
-                        reqMod.setQuestionName(operLst.get(0).getOperateName());
-                    }
-                }
+
                 Questions respObj = QuestionsService.getInsertModel(reqMod);
                 responseDataMap.put("reqMod", respObj);
                 rowsCount = respObj.getId();
@@ -921,7 +945,7 @@ public class StrategyController {
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
 
-        Operate operateReqMod=new Operate();
+        Operate operateReqMod = new Operate();
         operateReqMod.setTechnologyId(Integer.valueOf(technologyId));
         List<Operate> operLst = OperateService.GetList(operateReqMod);
         responseDataMap.put("dataList", operLst);
@@ -1021,9 +1045,7 @@ public class StrategyController {
     @RequestMapping(value = "/getStatisticalChartDataList", method = RequestMethod.GET)
     public Result getStatisticalChartDataList(
             @RequestParam(value = "token", required = false) String strToken,
-            @RequestParam(value = "userId", required = false) String userId,
-            @RequestParam(value = "exameId", required = false) String exameId,
-            @RequestParam(value = "studyType", required = false) String studyType,
+            @ModelAttribute("reqMod") StatisticalPOJO reqMod,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
@@ -1041,7 +1063,11 @@ public class StrategyController {
 
         //<editor-fold desc="成绩达标率">
 
-
+        if (null == reqMod.getStartTime() || reqMod.getStartTime() == "") {
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            reqMod.setStartTime(df.format(new Date()));
+            reqMod.setStopTime(df.format(new Date()));
+        }
         modMap = new StatisticalChartPOJO();
         modMap.setDescribe("");
         modMap.setNotes("成绩达标率");
@@ -1050,18 +1076,24 @@ public class StrategyController {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
         dstaLst = new ArrayList<>();
+        try {
+            List<StatisticalChartDataPOJO> dblist = StatisticalService.GetListWithDaBiaoLv(reqMod);
+            if (dblist.size() > 0) {
+                StatisticalChartDataPOJO moddb = dblist.get(0);
+                mod = new StatisticalChartDataPOJO();
+                mod.setxAxis(moddb.getxAxis());
+                mod.setyAxis("未达标");
+                dstaLst.add(mod);
 
-        int intDaBiao = random.nextInt(100);
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis(String.valueOf(intDaBiao));
-        mod.setyAxis("");
-        dstaLst.add(mod);
-
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis(String.valueOf(100 - intDaBiao));
-        mod.setyAxis("");
-        dstaLst.add(mod);
-
+                mod = new StatisticalChartDataPOJO();
+                mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
+                mod.setyAxis("已达标");
+                dstaLst.add(mod);
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+            responseDataMap.put("respMsg", e.getMessage());
+        }
         modMap.setDataList(dstaLst);
 
         responseDataMap.put("upToStandard", modMap);
@@ -1072,18 +1104,24 @@ public class StrategyController {
         modMap.setNotes("报告提交率");
 
         dstaLst = new ArrayList<>();
-        int intBaoGao = random.nextInt(100);
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis(String.valueOf(intBaoGao));
-        mod.setyAxis("");
-        ;
-        dstaLst.add(mod);
+        try {
+            List<StatisticalChartDataPOJO> dblist = StatisticalService.GetListWithBaoGao(reqMod);
+            if (dblist.size() > 0) {
+                StatisticalChartDataPOJO moddb = dblist.get(0);
+                mod = new StatisticalChartDataPOJO();
+                mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
+                mod.setyAxis("未提交");
+                dstaLst.add(mod);
 
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis(String.valueOf(100 - intBaoGao));
-        mod.setyAxis("");
-        ;
-        dstaLst.add(mod);
+                mod = new StatisticalChartDataPOJO();
+                mod.setxAxis(moddb.getxAxis());
+                mod.setyAxis("已提交");
+                dstaLst.add(mod);
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+            responseDataMap.put("respMsg", e.getMessage());
+        }
 
         modMap.setDataList(dstaLst);
 
@@ -1094,31 +1132,7 @@ public class StrategyController {
         modMap.setDescribe("建议时长：90min；平均时长：85min");
         modMap.setNotes("学习时长分布");
 
-        dstaLst = new ArrayList<>();
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("课程1");
-        mod.setyAxis(decimalFormat.format(random.nextFloat() * 100));
-        dstaLst.add(mod);
-
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("课程2");
-        mod.setyAxis(decimalFormat.format(random.nextFloat() * 100));
-        dstaLst.add(mod);
-
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("课程3");
-        mod.setyAxis(decimalFormat.format(random.nextFloat() * 100));
-        dstaLst.add(mod);
-
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("课程4");
-        mod.setyAxis(decimalFormat.format(random.nextFloat() * 100));
-        dstaLst.add(mod);
-
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("课程5");
-        mod.setyAxis(decimalFormat.format(random.nextFloat() * 100));
-        dstaLst.add(mod);
+        dstaLst = StatisticalService.GetListWithShiChang(reqMod);
 
         modMap.setDataList(dstaLst);
 
@@ -1129,31 +1143,8 @@ public class StrategyController {
         modMap.setDescribe("满分：600分；平均分：80分");
         modMap.setNotes("课题成绩分布");
 
-        dstaLst = new ArrayList<>();
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("1-100");
-        mod.setyAxis(String.valueOf(random.nextInt(100)));
-        dstaLst.add(mod);
+        dstaLst = StatisticalService.GetListWithChengJi(reqMod);
 
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("100-200");
-        mod.setyAxis(String.valueOf(random.nextInt(100)));
-        dstaLst.add(mod);
-
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("200-300");
-        mod.setyAxis(String.valueOf(random.nextInt(100)));
-        dstaLst.add(mod);
-
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("300-400");
-        mod.setyAxis(String.valueOf(random.nextInt(100)));
-        dstaLst.add(mod);
-
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("400以上");
-        mod.setyAxis(String.valueOf(random.nextInt(100)));
-        dstaLst.add(mod);
         modMap.setDataList(dstaLst);
 
         responseDataMap.put("questionScore", modMap);
@@ -1163,36 +1154,7 @@ public class StrategyController {
         modMap.setDescribe("");
         modMap.setNotes("各任务平均成绩");
 
-        dstaLst = new ArrayList<>();
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("进料");
-        mod.setyAxis(decimalFormat.format(random.nextFloat() * 100));
-        dstaLst.add(mod);
-
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("加热升温");
-        mod.setyAxis(decimalFormat.format(random.nextFloat() * 100));
-        dstaLst.add(mod);
-
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("建立回流");
-        mod.setyAxis(decimalFormat.format(random.nextFloat() * 100));
-        dstaLst.add(mod);
-
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("精馏塔塔顶压力及灵敏度温度调节");
-        mod.setyAxis(decimalFormat.format(random.nextFloat() * 100));
-        dstaLst.add(mod);
-
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("出料调节");
-        mod.setyAxis(decimalFormat.format(random.nextFloat() * 100));
-        dstaLst.add(mod);
-
-        mod = new StatisticalChartDataPOJO();
-        mod.setxAxis("回流调节至正常");
-        mod.setyAxis(decimalFormat.format(random.nextFloat() * 100));
-        dstaLst.add(mod);
+        dstaLst = StatisticalService.GetListWithPingJun(reqMod);
 
         modMap.setDataList(dstaLst);
 
