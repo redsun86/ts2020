@@ -27,7 +27,7 @@ public class TaskImpl implements TaskService {
     }
 
     @Override
-    public List<TechnologyTaskPOJO> GetListWithUserIdsAndStatus(String userIds,int status) {
+    public List<TechnologyTaskPOJO> GetList(String userIds,int status,int IsAdmin) {
         List<TechnologyTaskPOJO> retVal = new ArrayList<>();
         if (userIds != null && userIds != "") {
             userIds = userIds.replaceAll("\\，", "\\,");
@@ -40,8 +40,14 @@ public class TaskImpl implements TaskService {
                 Map params = new HashMap();
                 params.put("idList", idList);
                 params.put("status", status);
-                retVal = TaskMapper.GetListWithUserIdsAndStatus(params);
+                if(IsAdmin==1) {
+                    retVal = TaskMapper.GetListWithTeacherIdsAndStatus(params);
+                }else{
+                    retVal = TaskMapper.GetListWithStudentIdsAndStatus(params);
+                }
             }
+        }else{
+            retVal = TaskMapper.GetList();
         }
         return retVal;
     }

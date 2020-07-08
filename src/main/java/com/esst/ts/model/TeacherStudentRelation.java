@@ -9,6 +9,11 @@ public class TeacherStudentRelation {
 
     private Integer isDel;
 
+    /**
+     * 是否在线：0：未登录；1：在线；2：离线
+     */
+    private Integer isOnline;
+
     public Integer getId() {
         return id;
     }
@@ -39,5 +44,13 @@ public class TeacherStudentRelation {
 
     public void setIsDel(Integer isDel) {
         this.isDel = isDel;
+    }
+
+    public Integer getIsOnline() {
+        return isOnline;
+    }
+
+    public void setIsOnline(Integer isOnline) {
+        this.isOnline = isOnline;
     }
 }

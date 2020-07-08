@@ -19,11 +19,19 @@ public interface TaskMapper {
 
     int updateByPrimaryKey(Task record);
 
+    List<TechnologyTaskPOJO> GetList();
     /**
      * 常规方法——根据指定条件获取数据集合
      *
      * @param mapData 请求参数
      * @return 返回数据集合
      */
-    List<TechnologyTaskPOJO> GetListWithUserIdsAndStatus(Map mapData);
+    List<TechnologyTaskPOJO> GetListWithStudentIdsAndStatus(Map mapData);
+    /**
+     * 常规方法——根据指定条件获取数据集合
+     *
+     * @param mapData 请求参数
+     * @return 返回数据集合
+     */
+    List<TechnologyTaskPOJO> GetListWithTeacherIdsAndStatus(Map mapData);
 }

@@ -24,5 +24,7 @@ public interface ExamService {
 
     List<ExamPOJO> GetList(Exam mod);
 
+    List<ExamPOJO> GetListWithDefault(Exam mod);
+
     List<ExamPOJO> GetListWithStudent(Exam mod);
 }

@@ -203,6 +203,7 @@ public class StrategyController {
         User umod = UserService.getUserById(Integer.valueOf(userId));
         if (null != umod && umod.getIsAdmin() == 1) {
             reqUserIds = userId;
+            taskPojolst = TaskService.GetList(reqUserIds, 0, 1);
         } else {
             TeacherStudentRelation reqTeacherMod = new TeacherStudentRelation();
             reqTeacherMod.setIsDel(0);
@@ -215,8 +216,8 @@ public class StrategyController {
                 }
                 if (idList.size() > 0) reqUserIds = String.join(",", idList);
             }
+            taskPojolst = TaskService.GetList(reqUserIds, 0, 0);
         }
-        taskPojolst = TaskService.GetListWithUserIdsAndStatus(reqUserIds, 0);
 
         Operate operateReqMod = new Operate();
         operLst = OperateService.GetList(operateReqMod);
@@ -358,14 +359,24 @@ public class StrategyController {
         Map<String, Object> responseDataMap = new HashMap<>();
         List<TechnologyTaskPOJO> taskPojolst; //任务单
 
+        // 老师身份的用户id的集合。格式：1,2,3,4
         String reqUserIds = "";
+        // 获取指定用户信息
         User umod = UserService.getUserById(Integer.valueOf(userId));
+        // 判断指定用户身份：老师、学生
         if (null != umod && umod.getIsAdmin() == 1) {
+            // 老师身份
             reqUserIds = userId;
+            taskPojolst = TaskService.GetList(reqUserIds, 1, 1);
         } else {
+            // 学生身份 通过学生id获取所属老师的集合
             TeacherStudentRelation reqTeacherMod = new TeacherStudentRelation();
+            // 检索条件-未删除
             reqTeacherMod.setIsDel(0);
+            // 检索条件-指定学生id
             reqTeacherMod.setStudentId(Integer.valueOf(userId));
+            // 检索条件-在线
+            reqTeacherMod.setIsOnline(1);
             List<TeacherStudentRelation> teacherList = TeacherStudentRelationService.GetList(reqTeacherMod);
             if (null != teacherList && teacherList.size() > 0) {
                 List<String> idList = new ArrayList<>();
@@ -374,8 +385,8 @@ public class StrategyController {
                 }
                 if (idList.size() > 0) reqUserIds = String.join(",", idList);
             }
+            taskPojolst = TaskService.GetList(reqUserIds, 1, 0);
         }
-        taskPojolst = TaskService.GetListWithUserIdsAndStatus(reqUserIds, 1);
         responseDataMap.put("dataList", taskPojolst);
         r.setData(responseDataMap);
         //</editor-fold>
@@ -473,11 +484,15 @@ public class StrategyController {
             reqMod.setExamName(examName);
             List<ExamPOJO> examsLst = new ArrayList<>();
             User umod = UserService.getUserById(Integer.valueOf(userId));
-            if (null != umod && umod.getIsAdmin() != 1) {
+            if (null != umod && umod.getIsAdmin() == 1) {
+                examsLst = ExamService.GetList(reqMod);
+            } else {
                 reqMod.setStatus(1);
                 examsLst = ExamService.GetListWithStudent(reqMod);
-            } else {
-                examsLst = ExamService.GetList(reqMod);
+                if (null != examsLst && examsLst.size() > 0) {
+                } else {
+                    examsLst = ExamService.GetListWithDefault(reqMod);
+                }
             }
             int questionsCount = 0;
             for (ExamPOJO mod : examsLst) {
@@ -1048,7 +1063,7 @@ public class StrategyController {
 
         //<editor-fold desc="成绩达标率">
 
-        if(null==reqMod.getStartTime() || reqMod.getStartTime()==""){
+        if (null == reqMod.getStartTime() || reqMod.getStartTime() == "") {
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             reqMod.setStartTime(df.format(new Date()));
             reqMod.setStopTime(df.format(new Date()));
@@ -1139,7 +1154,7 @@ public class StrategyController {
         modMap.setDescribe("");
         modMap.setNotes("各任务平均成绩");
 
-        dstaLst =StatisticalService.GetListWithPingJun(reqMod);
+        dstaLst = StatisticalService.GetListWithPingJun(reqMod);
 
         modMap.setDataList(dstaLst);
 

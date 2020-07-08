@@ -19,5 +19,5 @@ public interface TaskService {
      * @param status 必填 发布状态；0：忽略此条件，1：发布，2：未发布
      * @return 返回数据集合
      */
-    List<TechnologyTaskPOJO> GetListWithUserIdsAndStatus(String userIds,int status);
+    List<TechnologyTaskPOJO> GetList(String userIds,int status,int IsAdmin);
 }
