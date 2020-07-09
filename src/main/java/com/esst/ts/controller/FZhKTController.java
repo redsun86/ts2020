@@ -400,9 +400,8 @@ public class FZhKTController {
                 if (userLiveDataWithBLOBs != null) {
                     for (UserLiveDataWithBLOBs usld : userLiveDataWithBLOBs) {
                         RealTimeExcelItemPOJO rtitem = realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.get(usld.getUserId());
-                        rtitem.setLearnTime(String.format("%.2f", usld.getStudyDuration() / 60000));//学习时长
-                        rtitem.setMachineNum(usld.getMacAddress());
-                        rtitem.operateScoremap.put(usld.getOperateId(), usld.getCurrentScore());
+                        String learntime=String.format("%.2f",Double.valueOf(rtitem.getLearnTime())+usld.getStudyDuration()/60000);
+                        rtitem.setLearnTime(learntime);
                         double toutalscore = rtitem.getTotalScore().doubleValue() + usld.getCurrentScore();
                         rtitem.setTotalScore((double) Math.round(toutalscore * 100) / 100);
                         realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.put(usld.getUserId(), rtitem);

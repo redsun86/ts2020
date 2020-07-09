@@ -9,7 +9,7 @@ public class RealTimeExcelItemPOJO {
     String studentName;
     String machineNum;
     String loginTime;
-    String learnTime;
+    String learnTime="0";
     String taskName;
 
     public Double getTotalScore() {
