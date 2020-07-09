@@ -70,4 +70,6 @@ public interface StatisticalService {
      * @return
      */
     List<StatisticalChartDataPOJO> GetListWithPingJun(StatisticalPOJO mod);
+
+    StatisticalChartDataPOJO GetDefaultModel(StatisticalPOJO mod);
 }

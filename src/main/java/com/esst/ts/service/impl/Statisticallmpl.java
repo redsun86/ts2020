@@ -54,4 +54,8 @@ public class Statisticallmpl implements StatisticalService {
         else
             return StatisticalMapper.GetListWithPingJun2(mod);
     }
+    @Override
+    public StatisticalChartDataPOJO GetDefaultModel(StatisticalPOJO mod) {
+        return StatisticalMapper.GetDefaultModel(mod);
+    }
 }

@@ -1064,10 +1064,31 @@ public class StrategyController {
         //<editor-fold desc="成绩达标率">
 
         if (null == reqMod.getStartTime() || reqMod.getStartTime() == "") {
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-            reqMod.setStartTime(df.format(new Date()));
-            reqMod.setStopTime(df.format(new Date()));
+            SimpleDateFormat dfStart = new SimpleDateFormat("yyyy-MM-01");
+            SimpleDateFormat dfStop = new SimpleDateFormat("yyyy-MM-dd");
+            reqMod.setStartTime(dfStop.format(new Date()));
+            reqMod.setStopTime(dfStop.format(new Date()));
         }
+
+        int currentExameId = 0;
+        int currentStudyType = 0;
+        if (null != reqMod && null != reqMod.getExameId() && reqMod.getExameId() > 0) {
+            currentExameId = 0;
+        } else {
+            StatisticalChartDataPOJO defaultMod = StatisticalService.GetDefaultModel(reqMod);
+            if (null != defaultMod) {
+                reqMod.setExameId(Integer.valueOf(defaultMod.getxAxis()));
+                reqMod.setStudyType(Integer.valueOf(defaultMod.getyAxis()));
+                currentExameId = Integer.valueOf(defaultMod.getxAxis());
+                currentStudyType = Integer.valueOf(defaultMod.getyAxis());
+            } else {
+                reqMod.setExameId(0);
+                reqMod.setStudyType(1);
+                currentExameId = 0;
+                currentStudyType = 1;
+            }
+        }
+
         modMap = new StatisticalChartPOJO();
         modMap.setDescribe("");
         modMap.setNotes("成绩达标率");
@@ -1163,6 +1184,13 @@ public class StrategyController {
 
         responseDataMap.put("loginUserCount", "2");
         responseDataMap.put("onlineUserCount", "7");
+        if (currentExameId > 0) {
+            responseDataMap.put("currentExameId", currentExameId);
+            responseDataMap.put("currentStudyType", currentStudyType);
+        } else {
+            responseDataMap.put("currentExameId", null);
+            responseDataMap.put("currentStudyType", null);
+        }
         r.setData(responseDataMap);
         //</editor-fold>
         return r;

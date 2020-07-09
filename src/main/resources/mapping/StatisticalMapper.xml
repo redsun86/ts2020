@@ -195,4 +195,14 @@
         group by studybv.task_id,studybv.operate_id,studybv.study_type
         ) bv on bv.operate_id=o.id;
     </select>
+    <select id="GetDefaultModel" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
+        select uld.task_id xAxis,uld.study_type yAxis,count(distinct uld.user_id) userCount,date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') study_date
+        from user_live_data uld
+        where date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
+            and date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d')
+        GROUP BY uld.task_id,uld.study_type,date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d')
+        ORDER BY userCount DESC
+        limit 0,1
+    </select>
+
 </mapper>

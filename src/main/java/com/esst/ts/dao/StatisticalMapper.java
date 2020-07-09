@@ -21,4 +21,6 @@ public interface StatisticalMapper {
     List<StatisticalChartDataPOJO> GetListWithPingJun1(StatisticalPOJO mod);
 
     List<StatisticalChartDataPOJO> GetListWithPingJun2(StatisticalPOJO mod);
+
+    StatisticalChartDataPOJO GetDefaultModel(StatisticalPOJO mod);
 }
