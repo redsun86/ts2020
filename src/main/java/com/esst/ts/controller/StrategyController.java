@@ -1060,16 +1060,23 @@ public class StrategyController {
         StatisticalChartPOJO modMap;
         List<StatisticalChartDataPOJO> dstaLst;
         StatisticalChartDataPOJO mod;
-
-        //<editor-fold desc="成绩达标率">
-
+        //<editor-fold desc="是否历史数据默认值">
+        if (null == reqMod.getIsHistory()) {
+            reqMod.setIsHistory(0);
+        }
+        //</editor-fold>
+        //<editor-fold desc="日期默认值">
         if (null == reqMod.getStartTime() || reqMod.getStartTime() == "") {
             SimpleDateFormat dfStart = new SimpleDateFormat("yyyy-MM-01");
             SimpleDateFormat dfStop = new SimpleDateFormat("yyyy-MM-dd");
             reqMod.setStartTime(dfStop.format(new Date()));
             reqMod.setStopTime(dfStop.format(new Date()));
         }
-
+        if (null == reqMod.getStopTime() || reqMod.getStopTime() == "") {
+            reqMod.setStopTime(reqMod.getStartTime());
+        }
+        //</editor-fold>
+        //<editor-fold desc="图表数据展示默认值">
         int currentExameId = 0;
         int currentStudyType = 0;
         if (null != reqMod && null != reqMod.getExameId() && reqMod.getExameId() > 0) {
@@ -1088,7 +1095,9 @@ public class StrategyController {
                 currentStudyType = 1;
             }
         }
+        //</editor-fold>
 
+        //<editor-fold desc="成绩达标率">
         modMap = new StatisticalChartPOJO();
         modMap.setDescribe("");
         modMap.setNotes("成绩达标率");

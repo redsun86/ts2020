@@ -7,6 +7,10 @@ public class StatisticalPOJO {
     private Integer studyType;
     private Integer exameId;
     private Integer userId;
+    /**
+     * 是否历史数据。0：否；1：是；
+     */
+    private Integer isHistory;
     private String startTime;
     private String stopTime;
 
@@ -32,6 +36,14 @@ public class StatisticalPOJO {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public Integer getIsHistory() {
+        return isHistory;
+    }
+
+    public void setIsHistory(Integer isHistory) {
+        this.isHistory = isHistory;
     }
 
     public String getStartTime() {
