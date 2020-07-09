@@ -92,7 +92,19 @@ public class StudyRecordController {
                         listitems.add(li);
                         l.setListsitem(listitems);
                         c++;
-                        if(!t.toString().contains(userLoginLogListForUserId.get(j).getUserId().toString())){
+                        if(t.contains(",")){
+                            int d=0;
+                            String[] str = t.split(",");
+                            for (int ss=0;ss<str.length;ss++) {
+                                if(userLoginLogListForUserId.get(j).getUserId().toString().equals(str[ss])){
+                                    d++;
+                                    break;
+                                }
+                            }
+                            if(d==0){
+                                t+=userLoginLogListForUserId.get(j).getUserId()+",";
+                            }
+                        }else{
                             t+=userLoginLogListForUserId.get(j).getUserId()+",";
                         }
                     }
@@ -105,6 +117,7 @@ public class StudyRecordController {
         if(t.contains(",")){
             int j = 0;
             String[] str = t.split(",");
+
             for (String s : str) {
                 UserLoginLogListitem li=new UserLoginLogListitem();
                 li.setuserId(Integer.valueOf(s));
@@ -289,8 +302,7 @@ public class StudyRecordController {
             for (UserScoreRecordPOJO learnTimes : learnTime) {
                 leartime+=learnTimes.getEndTime()-learnTimes.getBeginTime();
             }
-            m.setLearnTime(leartime/1000);
-
+            m.setLearnTime(Long.valueOf(String.format("%.2f",leartime/60000)));
             m.settGroupName(u.getGroupName());
             if(newuserScoreRecordPOJO.getStudyType()==0){
                 //任务
@@ -379,13 +391,16 @@ public class StudyRecordController {
     @ResponseBody
     @RequestMapping(value = "/selectPersonScore", method = RequestMethod.POST)
     public Result selectPersonScore(@RequestParam(value = "userTrueName") String userTrueName,
-                                         @RequestParam(value = "token") String token,
-                                         HttpServletRequest request) throws ParseException {
+                                @RequestParam(value = "taskId") Integer taskId,
+                                @RequestParam(value = "studyType") String studyType,
+                                @RequestParam(value = "token") String token,
+                                HttpServletRequest request) throws ParseException {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
+        List<taskModel> tasklist = new ArrayList<taskModel>();
         List<Task> tasklistsql = fzhktService.getTaskListAll();
         Map<Integer, Task> task_map = tasklistsql.stream().collect(Collectors.toMap(Task::getId, Function.identity(), (key1, key2) -> key2));
         List<Exam> examList=fzhktService.getExamListAll();
@@ -396,7 +411,7 @@ public class StudyRecordController {
         for (User user : userList) {
             strUserId+=user.getId();
         }
-        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfoforPerson(strUserId);
+        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfoforPerson(strUserId,taskId,studyType);
         List<UserScoreRecordPOJO> dataList = new ArrayList<UserScoreRecordPOJO>();
         for (UserScoreRecordPOJO newuserScoreRecordPOJO : userScoreRecordPOJO) {
             UserScoreRecordPOJO m = new UserScoreRecordPOJO();
@@ -419,6 +434,22 @@ public class StudyRecordController {
                 }else{
                     m.setTaskName(t.getTaskName());
                 }
+                int c=0;
+                for(int i=0;i<tasklist.size();i++){
+                    String a=tasklist.get(i).getStudy_type();
+                    String b=tasklist.get(i).getTask_id();
+                    String d=newuserScoreRecordPOJO.getTaskId().toString();
+                    if(tasklist.get(i).getStudy_type()=="0" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJO.getTaskId().toString())){
+                        c++;
+                    }
+                }
+                if(c==0) {
+                    taskModel taskModel = new taskModel();
+                    taskModel.setTask_id(t.getId().toString());
+                    taskModel.setTask_name(t.getTaskName());
+                    taskModel.setStudy_type("0");
+                    tasklist.add(taskModel);
+                }
             }
             else if(newuserScoreRecordPOJO.getStudyType()==1){
                 //试卷
@@ -427,6 +458,19 @@ public class StudyRecordController {
                     m.setTaskName("");//试卷
                 }else{
                     m.setTaskName(e.getExamName());//试卷
+                }
+                int c=0;
+                for(int i=0;i<tasklist.size();i++){
+                    if(tasklist.get(i).getStudy_type()=="1" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJO.getTaskId().toString())){
+                        c++;
+                    }
+                }
+                if(c==0) {
+                    taskModel taskModel = new taskModel();
+                    taskModel.setTask_id(e.getId().toString());
+                    taskModel.setTask_name(e.getExamName());
+                    taskModel.setStudy_type("1");
+                    tasklist.add(taskModel);
                 }
             }
             m.setIpAddress(newuserScoreRecordPOJO.getIpAddress());//IP地址
@@ -449,6 +493,7 @@ public class StudyRecordController {
             dataList.add(m);
         }
         responseDataMap.put("list", dataList);
+        responseDataMap.put("taskList", tasklist);
         r.setData(responseDataMap);
         return r;
     }
@@ -459,6 +504,8 @@ public class StudyRecordController {
     @ResponseBody
     @RequestMapping(value = "/personScoreExcel", method = RequestMethod.POST)
     public ResponseEntity<byte[]> personScoreExcel(@RequestParam(value = "userTrueName") String userTrueName,
+                                                   @RequestParam(value = "taskId") Integer taskId,
+                                                   @RequestParam(value = "studyType") String studyType,
                                                    @RequestParam(value = "token") String token,
                                                   HttpServletRequest request) throws ParseException {
         RequestContext requestContext = new RequestContext(request);
@@ -477,7 +524,7 @@ public class StudyRecordController {
         for (User user : userList) {
             strUserId+=user.getId();
         }
-        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfoforPerson(strUserId);
+        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfoforPerson(strUserId,taskId,studyType);
         List<UserScoreRecordPOJO> dataList = new ArrayList<UserScoreRecordPOJO>();
         for (UserScoreRecordPOJO newuserScoreRecordPOJO : userScoreRecordPOJO) {
             User u=new User();
@@ -497,6 +544,7 @@ public class StudyRecordController {
 
             double score=0;
             long leartime=0;
+            String studyTime="";
             //根据用户id和日期和任务单id进行分组查询对应的任务
             List<UserScoreRecordPOJO> operateid=studyRecordService.getoperateid(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
             for (UserScoreRecordPOJO operateidlist : operateid) {
@@ -510,7 +558,7 @@ public class StudyRecordController {
             for (UserScoreRecordPOJO learnTimes : learnTime) {
                 leartime+=learnTimes.getEndTime()-learnTimes.getBeginTime();
             }
-            m.setLearnTime(leartime/1000);
+            m.setLearnTime(Long.valueOf(String.format("%.2f",leartime/60000)));
             m.settGroupName(u.getGroupName());
             if(newuserScoreRecordPOJO.getStudyType()==0) {
                 //任务单
