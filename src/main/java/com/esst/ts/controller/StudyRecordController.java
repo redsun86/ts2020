@@ -16,8 +16,6 @@ import org.springframework.web.servlet.support.RequestContext;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -155,6 +153,43 @@ public class StudyRecordController {
         List<Exam> examList=fzhktService.getExamListAll();
         Map<Integer,Exam> examMap=examList.stream().collect(Collectors.toMap(Exam::getId, Function.identity(), (key1, key2) -> key2));
         List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfo(beginDate,endDate,userId,studyType,taskId);
+        List<UserScoreRecordPOJO> userScoreRecordPOJOTask=studyRecordService.getUserStudyRecordAndUserInfoTask(beginDate,endDate);
+        for(UserScoreRecordPOJO newuserScoreRecordPOJOTask:userScoreRecordPOJOTask){
+            if(newuserScoreRecordPOJOTask.getStudyType()==0){
+                //任务
+                Task t = task_map.get(newuserScoreRecordPOJOTask.getTaskId());
+                int c=0;
+                for(int i=0;i<tasklist.size();i++){
+                    if(tasklist.get(i).getStudy_type()=="0" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJOTask.getTaskId().toString())){
+                        c++;
+                    }
+                }
+                if(c==0) {
+                    taskModel taskModel = new taskModel();
+                    taskModel.setTask_id(t.getId().toString());
+                    taskModel.setTask_name(t.getTaskName());
+                    taskModel.setStudy_type("0");
+                    tasklist.add(taskModel);
+                }
+            }
+            else if(newuserScoreRecordPOJOTask.getStudyType()==1){
+                //试卷
+                Exam e=examMap.get(newuserScoreRecordPOJOTask.getTaskId());
+                int c=0;
+                for(int i=0;i<tasklist.size();i++){
+                    if(tasklist.get(i).getStudy_type()=="1" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJOTask.getTaskId().toString())){
+                        c++;
+                    }
+                }
+                if(c==0) {
+                    taskModel taskModel = new taskModel();
+                    taskModel.setTask_id(e.getId().toString());
+                    taskModel.setTask_name(e.getExamName());
+                    taskModel.setStudy_type("1");
+                    tasklist.add(taskModel);
+                }
+            }
+        }
         List<UserScoreRecordPOJO> dataList = new ArrayList<UserScoreRecordPOJO>();
         for (UserScoreRecordPOJO newuserScoreRecordPOJO : userScoreRecordPOJO) {
             User u=new User();
@@ -198,22 +233,6 @@ public class StudyRecordController {
                 }else{
                     m.setTaskName(t.getTaskName());
                 }
-                int c=0;
-                for(int i=0;i<tasklist.size();i++){
-                    String a=tasklist.get(i).getStudy_type();
-                    String b=tasklist.get(i).getTask_id();
-                    String d=newuserScoreRecordPOJO.getTaskId().toString();
-                    if(tasklist.get(i).getStudy_type()=="0" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJO.getTaskId().toString())){
-                        c++;
-                    }
-                }
-                if(c==0) {
-                    taskModel taskModel = new taskModel();
-                    taskModel.setTask_id(t.getId().toString());
-                    taskModel.setTask_name(t.getTaskName());
-                    taskModel.setStudy_type("0");
-                    tasklist.add(taskModel);
-                }
             }
             else if(newuserScoreRecordPOJO.getStudyType()==1){
                 //试卷
@@ -223,19 +242,6 @@ public class StudyRecordController {
                 }
                 else {
                     m.setTaskName(e.getExamName());
-                }
-                int c=0;
-                for(int i=0;i<tasklist.size();i++){
-                    if(tasklist.get(i).getStudy_type()=="1" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJO.getTaskId().toString())){
-                        c++;
-                    }
-                }
-                if(c==0) {
-                    taskModel taskModel = new taskModel();
-                    taskModel.setTask_id(e.getId().toString());
-                    taskModel.setTask_name(e.getExamName());
-                    taskModel.setStudy_type("1");
-                    tasklist.add(taskModel);
                 }
             }
             dataList.add(m);
@@ -302,7 +308,7 @@ public class StudyRecordController {
             for (UserScoreRecordPOJO learnTimes : learnTime) {
                 leartime+=learnTimes.getEndTime()-learnTimes.getBeginTime();
             }
-            m.setLearnTime(Long.valueOf(String.format("%.2f",leartime/60000)));
+            m.setLearnTime(leartime/60000);
             m.settGroupName(u.getGroupName());
             if(newuserScoreRecordPOJO.getStudyType()==0){
                 //任务
@@ -411,6 +417,43 @@ public class StudyRecordController {
         for (User user : userList) {
             strUserId+=user.getId();
         }
+        List<UserScoreRecordPOJO> userScoreRecordPOJOTask=studyRecordService.getUserStudyRecordAndUserInfoforPersonTask(strUserId);
+        for(UserScoreRecordPOJO newuserScoreRecordPOJOTask:userScoreRecordPOJOTask){
+            if(newuserScoreRecordPOJOTask.getStudyType()==0){
+                //任务
+                Task t = task_map.get(newuserScoreRecordPOJOTask.getTaskId());
+                int c=0;
+                for(int i=0;i<tasklist.size();i++){
+                    if(tasklist.get(i).getStudy_type()=="0" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJOTask.getTaskId().toString())){
+                        c++;
+                    }
+                }
+                if(c==0) {
+                    taskModel taskModel = new taskModel();
+                    taskModel.setTask_id(t.getId().toString());
+                    taskModel.setTask_name(t.getTaskName());
+                    taskModel.setStudy_type("0");
+                    tasklist.add(taskModel);
+                }
+            }
+            else if(newuserScoreRecordPOJOTask.getStudyType()==1){
+                //试卷
+                Exam e=examMap.get(newuserScoreRecordPOJOTask.getTaskId());
+                int c=0;
+                for(int i=0;i<tasklist.size();i++){
+                    if(tasklist.get(i).getStudy_type()=="1" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJOTask.getTaskId().toString())){
+                        c++;
+                    }
+                }
+                if(c==0) {
+                    taskModel taskModel = new taskModel();
+                    taskModel.setTask_id(e.getId().toString());
+                    taskModel.setTask_name(e.getExamName());
+                    taskModel.setStudy_type("1");
+                    tasklist.add(taskModel);
+                }
+            }
+        }
         List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfoforPerson(strUserId,taskId,studyType);
         List<UserScoreRecordPOJO> dataList = new ArrayList<UserScoreRecordPOJO>();
         for (UserScoreRecordPOJO newuserScoreRecordPOJO : userScoreRecordPOJO) {
@@ -434,22 +477,6 @@ public class StudyRecordController {
                 }else{
                     m.setTaskName(t.getTaskName());
                 }
-                int c=0;
-                for(int i=0;i<tasklist.size();i++){
-                    String a=tasklist.get(i).getStudy_type();
-                    String b=tasklist.get(i).getTask_id();
-                    String d=newuserScoreRecordPOJO.getTaskId().toString();
-                    if(tasklist.get(i).getStudy_type()=="0" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJO.getTaskId().toString())){
-                        c++;
-                    }
-                }
-                if(c==0) {
-                    taskModel taskModel = new taskModel();
-                    taskModel.setTask_id(t.getId().toString());
-                    taskModel.setTask_name(t.getTaskName());
-                    taskModel.setStudy_type("0");
-                    tasklist.add(taskModel);
-                }
             }
             else if(newuserScoreRecordPOJO.getStudyType()==1){
                 //试卷
@@ -458,19 +485,6 @@ public class StudyRecordController {
                     m.setTaskName("");//试卷
                 }else{
                     m.setTaskName(e.getExamName());//试卷
-                }
-                int c=0;
-                for(int i=0;i<tasklist.size();i++){
-                    if(tasklist.get(i).getStudy_type()=="1" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJO.getTaskId().toString())){
-                        c++;
-                    }
-                }
-                if(c==0) {
-                    taskModel taskModel = new taskModel();
-                    taskModel.setTask_id(e.getId().toString());
-                    taskModel.setTask_name(e.getExamName());
-                    taskModel.setStudy_type("1");
-                    tasklist.add(taskModel);
                 }
             }
             m.setIpAddress(newuserScoreRecordPOJO.getIpAddress());//IP地址
@@ -558,7 +572,7 @@ public class StudyRecordController {
             for (UserScoreRecordPOJO learnTimes : learnTime) {
                 leartime+=learnTimes.getEndTime()-learnTimes.getBeginTime();
             }
-            m.setLearnTime(Long.valueOf(String.format("%.2f",leartime/60000)));
+            m.setLearnTime(leartime/60000);
             m.settGroupName(u.getGroupName());
             if(newuserScoreRecordPOJO.getStudyType()==0) {
                 //任务单

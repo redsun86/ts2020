@@ -19,6 +19,8 @@ public interface StudyRecordService {
 
     List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoforPerson(String userId,Integer taskId,String studyType);
 
+    List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoforPersonTask(String userId);
+
     List<UserScoreRecordPOJO> getoperateid(String beginDate, Integer userId,Integer taskId);
 
     List<UserScoreRecordPOJO> getmaxscore(String beginDate, Integer userId,Integer taskId,Integer operateId);
@@ -26,4 +28,6 @@ public interface StudyRecordService {
     List<UserScoreRecordPOJO> getLearnTime(String beginDate, Integer userId,Integer taskId);
 
     List<UserScoreRecordPOJO> getUserStudyRecordDetail(String date, Integer userId,Integer taskId,Integer studyType);
+
+    List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoTask(String beginDate, String endDate);
 }

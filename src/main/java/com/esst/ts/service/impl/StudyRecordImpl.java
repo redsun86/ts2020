@@ -39,6 +39,10 @@ public class StudyRecordImpl implements StudyRecordService {
     }
 
     @Override
+    public List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoTask(String beginDate, String endDate) {
+        return userScoreRecordMapper.getUserStudyRecordAndUserInfoAll(beginDate, endDate);
+    }
+    @Override
     public List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfo(String beginDate, String endDate, Integer userId,String studyType,Integer taskId) {
         if(studyType== null || studyType.length() == 0){
             if(userId==0){
@@ -80,12 +84,27 @@ public class StudyRecordImpl implements StudyRecordService {
 
     @Override
     public List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoforPerson(String userId,Integer taskId,String studyType) {
-        if(taskId==0){
-            return userScoreRecordMapper.getUserStudyRecordAndUserInfoforPerson(userId);
+        if(studyType==null || studyType.length()==0){
+            if(taskId==0){
+                return userScoreRecordMapper.getUserStudyRecordAndUserInfoforPerson(userId);
+            }
+            else{
+                return userScoreRecordMapper.getUserStudyRecordAndUserInfoforPersonByTaskId(userId,taskId);
+            }
         }
         else{
-            return userScoreRecordMapper.getUserStudyRecordAndUserInfoforPersonByTaskId(userId,taskId,studyType);
+            if(taskId==0){
+                return userScoreRecordMapper.getUserStudyRecordAndUserInfoforPersonAndStudyType(userId,studyType);
+            }
+            else{
+                return userScoreRecordMapper.getUserStudyRecordAndUserInfoforPersonByTaskIdAndStudyType(userId,taskId,studyType);
+            }
         }
+    }
+
+    @Override
+    public List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoforPersonTask(String userId) {
+        return userScoreRecordMapper.getUserStudyRecordAndUserInfoforPerson(userId);
     }
 
     @Override
