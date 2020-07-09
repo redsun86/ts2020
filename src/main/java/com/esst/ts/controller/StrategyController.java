@@ -1080,14 +1080,14 @@ public class StrategyController {
             List<StatisticalChartDataPOJO> dblist = StatisticalService.GetListWithDaBiaoLv(reqMod);
             if (dblist.size() > 0) {
                 StatisticalChartDataPOJO moddb = dblist.get(0);
-                mod = new StatisticalChartDataPOJO();
-                mod.setxAxis(moddb.getxAxis());
-                mod.setyAxis("未达标");
-                dstaLst.add(mod);
 
                 mod = new StatisticalChartDataPOJO();
                 mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
                 mod.setyAxis("已达标");
+                dstaLst.add(mod);
+                mod = new StatisticalChartDataPOJO();
+                mod.setxAxis(moddb.getxAxis());
+                mod.setyAxis("未达标");
                 dstaLst.add(mod);
             }
         } catch (Exception e) {
@@ -1108,14 +1108,14 @@ public class StrategyController {
             List<StatisticalChartDataPOJO> dblist = StatisticalService.GetListWithBaoGao(reqMod);
             if (dblist.size() > 0) {
                 StatisticalChartDataPOJO moddb = dblist.get(0);
-                mod = new StatisticalChartDataPOJO();
-                mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
-                mod.setyAxis("未提交");
-                dstaLst.add(mod);
 
                 mod = new StatisticalChartDataPOJO();
                 mod.setxAxis(moddb.getxAxis());
                 mod.setyAxis("已提交");
+                dstaLst.add(mod);
+                mod = new StatisticalChartDataPOJO();
+                mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
+                mod.setyAxis("未提交");
                 dstaLst.add(mod);
             }
         } catch (Exception e) {
