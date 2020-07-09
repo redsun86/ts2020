@@ -79,8 +79,13 @@ public class StudyRecordImpl implements StudyRecordService {
     }
 
     @Override
-    public List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoforPerson(String userId) {
-        return userScoreRecordMapper.getUserStudyRecordAndUserInfoforPerson(userId);
+    public List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoforPerson(String userId,Integer taskId,String studyType) {
+        if(taskId==0){
+            return userScoreRecordMapper.getUserStudyRecordAndUserInfoforPerson(userId);
+        }
+        else{
+            return userScoreRecordMapper.getUserStudyRecordAndUserInfoforPersonByTaskId(userId,taskId,studyType);
+        }
     }
 
     @Override
