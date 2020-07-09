@@ -117,6 +117,7 @@ public class StudyRecordController {
         if(t.contains(",")){
             int j = 0;
             String[] str = t.split(",");
+
             for (String s : str) {
                 UserLoginLogListitem li=new UserLoginLogListitem();
                 li.setuserId(Integer.valueOf(s));
@@ -301,8 +302,7 @@ public class StudyRecordController {
             for (UserScoreRecordPOJO learnTimes : learnTime) {
                 leartime+=learnTimes.getEndTime()-learnTimes.getBeginTime();
             }
-            m.setLearnTime(leartime/60000);
-
+            m.setLearnTime(Long.valueOf(String.format("%.2f",leartime/60000)));
             m.settGroupName(u.getGroupName());
             if(newuserScoreRecordPOJO.getStudyType()==0){
                 //任务
@@ -558,25 +558,7 @@ public class StudyRecordController {
             for (UserScoreRecordPOJO learnTimes : learnTime) {
                 leartime+=learnTimes.getEndTime()-learnTimes.getBeginTime();
             }
-//            leartime=leartime/1000;
-//            int theTime1;
-//            int theTime;
-//            if(leartime > 60) {
-//                theTime1 = parseInt(leartime/60);
-//                theTime = parseInt(leartime%60);
-//            }
-//            if(theTime == 0){
-//                return "0秒";
-//            }else {
-//                var result = '';
-//                if (theTime > 0) {
-//                    result = "" + parseInt(theTime) + "秒";
-//                }
-//                if (theTime1 > 0) {
-//                    result = "" + theTime1 + "分" + result;
-//                }
-//            }
-            m.setLearnTime(leartime/60000);
+            m.setLearnTime(Long.valueOf(String.format("%.2f",leartime/60000)));
             m.settGroupName(u.getGroupName());
             if(newuserScoreRecordPOJO.getStudyType()==0) {
                 //任务单
