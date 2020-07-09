@@ -109,7 +109,7 @@ public class FZhKTController {
             _score.setScore(uld.getCurrentScore().toString());
             //_score.setTotal_score(uld.getTotalScore().toString());
             double totlscore = fzhktService.getTaskTotal_score(uld);
-            _score.setTotal_score(String.format("%.2f", totlscore));
+            _score.setTotal_score(String.valueOf(totlscore));
 
             _score.setLearning_time(String.valueOf(uld.getStudyDuration() / 1000));
             _score.setStudy_type(uld.getStudyType());
