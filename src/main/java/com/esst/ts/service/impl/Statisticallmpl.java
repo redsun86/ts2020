@@ -28,27 +28,24 @@ public class Statisticallmpl implements StatisticalService {
             if (mod.getStudyType() == 1)
                 return StatisticalMapper.GetListWithDaBiaoLv1(mod);
             else
-                return StatisticalMapper.GetListWithDaBiaoLv2(mod);
+                return StatisticalMapper.GetListWithDaBiaoLv0(mod);
         } else {
             if (mod.getStudyType() == 1)
                 return StatisticalHistoryMapper.GetListWithDaBiaoLv1(mod);
             else
-                return StatisticalHistoryMapper.GetListWithDaBiaoLv2(mod);
+                return StatisticalHistoryMapper.GetListWithDaBiaoLv0(mod);
         }
     }
 
     @Override
     public List<StatisticalChartDataPOJO> GetListWithBaoGao(StatisticalPOJO mod) {
         if (mod.getIsHistory() == 0) {
-            if (mod.getStudyType() == 1)
-                return StatisticalMapper.GetListWithBaoGao1(mod);
-            else
-                return StatisticalMapper.GetListWithBaoGao2(mod);
+            return StatisticalMapper.GetListWithBaoGao(mod);
         } else {
             if (mod.getStudyType() == 1)
                 return StatisticalHistoryMapper.GetListWithBaoGao1(mod);
             else
-                return StatisticalHistoryMapper.GetListWithBaoGao2(mod);
+                return StatisticalHistoryMapper.GetListWithBaoGao0(mod);
         }
     }
 
@@ -76,12 +73,12 @@ public class Statisticallmpl implements StatisticalService {
             if (mod.getStudyType() == 1)
                 return StatisticalMapper.GetListWithPingJun1(mod);
             else
-                return StatisticalMapper.GetListWithPingJun2(mod);
+                return StatisticalMapper.GetListWithPingJun0(mod);
         } else {
             if (mod.getStudyType() == 1)
                 return StatisticalHistoryMapper.GetListWithPingJun1(mod);
             else
-                return StatisticalHistoryMapper.GetListWithPingJun2(mod);
+                return StatisticalHistoryMapper.GetListWithPingJun0(mod);
         }
     }
 

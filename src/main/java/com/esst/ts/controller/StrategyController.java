@@ -1140,11 +1140,11 @@ public class StrategyController {
                 StatisticalChartDataPOJO moddb = dblist.get(0);
 
                 mod = new StatisticalChartDataPOJO();
-                mod.setxAxis(moddb.getxAxis());
+                mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
                 mod.setyAxis("已提交");
                 dstaLst.add(mod);
                 mod = new StatisticalChartDataPOJO();
-                mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
+                mod.setxAxis(moddb.getxAxis());
                 mod.setyAxis("未提交");
                 dstaLst.add(mod);
             }

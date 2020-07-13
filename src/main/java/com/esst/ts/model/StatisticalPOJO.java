@@ -4,6 +4,9 @@ package com.esst.ts.model;
  * 创建标识：梁建磊 2020/7/7 13:23
  */
 public class StatisticalPOJO {
+    /**
+     * 学习类型。0：任务单；1：试卷
+     */
     private Integer studyType;
     private Integer exameId;
     private Integer userId;
