@@ -155,7 +155,8 @@
         ) bv on o.xAxis_id=bv.xAxis_id;
     </select>
     <select id="GetListWithPingJun1" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
-        select o.question_name xAxis,ifnull(bv.avg_score,0) yAxis from (select * from questions where exame_id=#{exameId,jdbcType=INTEGER}) o
+        select o.question_name xAxis,ifnull(bv.avg_score,0) yAxis
+        from (select * from questions where exame_id=#{exameId,jdbcType=INTEGER}) o
         left join
         (
         select studybv.task_id,studybv.operate_id,studybv.study_type

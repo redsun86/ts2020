@@ -1159,7 +1159,7 @@ public class StrategyController {
         //</editor-fold>
         //<editor-fold desc="学习时长分布">
         modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("建议时长：90min；平均时长：85min");
+        modMap.setDescribe("平均时长：85min");
         modMap.setNotes("学习时长分布");
 
         dstaLst = StatisticalService.GetListWithShiChang(reqMod);
@@ -1168,10 +1168,10 @@ public class StrategyController {
 
         responseDataMap.put("learningTime", modMap);
         //</editor-fold>
-        //<editor-fold desc="课题成绩分布">
+        //<editor-fold desc="任务单/试卷成绩分布">
         modMap = new StatisticalChartPOJO();
         modMap.setDescribe("满分：600分；平均分：80分");
-        modMap.setNotes("课题成绩分布");
+        modMap.setNotes("任务单/试卷成绩分布");
 
         dstaLst = StatisticalService.GetListWithChengJi(reqMod);
 
@@ -1179,10 +1179,10 @@ public class StrategyController {
 
         responseDataMap.put("questionScore", modMap);
         //</editor-fold>
-        //<editor-fold desc="各任务平均成绩">
+        //<editor-fold desc="各任务/试题平均成绩">
         modMap = new StatisticalChartPOJO();
         modMap.setDescribe("");
-        modMap.setNotes("各任务平均成绩");
+        modMap.setNotes("各任务/试题平均成绩");
 
         dstaLst = StatisticalService.GetListWithPingJun(reqMod);
 
@@ -1190,7 +1190,7 @@ public class StrategyController {
 
         responseDataMap.put("averageScore", modMap);
         //</editor-fold>
-
+        //<editor-fold desc="附件参数赋值">
         responseDataMap.put("loginUserCount", "2");
         responseDataMap.put("onlineUserCount", "7");
         if (currentExameId > 0) {
@@ -1201,6 +1201,7 @@ public class StrategyController {
             responseDataMap.put("currentStudyType", null);
         }
         r.setData(responseDataMap);
+        //</editor-fold>
         //</editor-fold>
         return r;
     }
@@ -1283,6 +1284,16 @@ public class StrategyController {
         productlistMap.put("测试newLst", newLst);
         r.setData(productlistMap);
         //</editor-fold>
+
+        int expression;
+        expression=1;
+        switch (expression){
+            case 1:
+                break;
+            case 2:
+                break;
+        }
+
 
         Operate reqMod = new Operate();
         //只查询未删除的工况
