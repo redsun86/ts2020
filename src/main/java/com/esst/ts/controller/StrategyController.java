@@ -1179,10 +1179,10 @@ public class StrategyController {
 
         responseDataMap.put("questionScore", modMap);
         //</editor-fold>
-        //<editor-fold desc="各任务/试题平均成绩">
+        //<editor-fold desc="各任务/试题平均成绩分布">
         modMap = new StatisticalChartPOJO();
         modMap.setDescribe("");
-        modMap.setNotes("各任务/试题平均成绩");
+        modMap.setNotes("各任务/试题平均成绩分布");
 
         dstaLst = StatisticalService.GetListWithPingJun(reqMod);
 
