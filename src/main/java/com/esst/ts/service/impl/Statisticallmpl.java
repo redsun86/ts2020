@@ -1,5 +1,6 @@
 package com.esst.ts.service.impl;
 
+import com.esst.ts.model.StatisticalChartAvgPOJO;
 import com.esst.ts.model.StatisticalChartDataPOJO;
 import com.esst.ts.model.StatisticalPOJO;
 import com.esst.ts.service.StatisticalService;
@@ -88,6 +89,21 @@ public class Statisticallmpl implements StatisticalService {
             return StatisticalMapper.GetDefaultModel(mod);
         } else {
             return StatisticalHistoryMapper.GetDefaultModel(mod);
+        }
+    }
+
+    @Override
+    public StatisticalChartAvgPOJO GetAvgModel(StatisticalPOJO mod) {
+        if (mod.getIsHistory() == 0) {
+            if (mod.getStudyType() == 1)
+                return StatisticalMapper.GetAvgModel1(mod);
+            else
+                return StatisticalMapper.GetAvgModel0(mod);
+        } else {
+            if (mod.getStudyType() == 1)
+                return StatisticalHistoryMapper.GetAvgModel1(mod);
+            else
+                return StatisticalHistoryMapper.GetAvgModel0(mod);
         }
     }
 }

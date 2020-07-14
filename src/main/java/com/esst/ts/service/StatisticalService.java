@@ -1,5 +1,6 @@
 package com.esst.ts.service;
 
+import com.esst.ts.model.StatisticalChartAvgPOJO;
 import com.esst.ts.model.StatisticalChartDataPOJO;
 import com.esst.ts.model.StatisticalPOJO;
 
@@ -62,4 +63,12 @@ public interface StatisticalService {
      * @return
      */
     StatisticalChartDataPOJO GetDefaultModel(StatisticalPOJO mod);
+
+    /**
+     * 平均时长 平均成绩 总成绩
+     *
+     * @param mod
+     * @return
+     */
+    StatisticalChartAvgPOJO GetAvgModel(StatisticalPOJO mod);
 }

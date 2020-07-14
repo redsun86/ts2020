@@ -9,7 +9,6 @@ import org.springframework.web.servlet.support.RequestContext;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
@@ -1097,13 +1096,16 @@ public class StrategyController {
         }
         //</editor-fold>
 
+        //<editor-fold desc="平均时长 平均成绩 总成绩">
+
+        StatisticalChartAvgPOJO avgMod=StatisticalService.GetAvgModel(reqMod);
+
+        //</editor-fold>
+
         //<editor-fold desc="成绩达标率">
         modMap = new StatisticalChartPOJO();
         modMap.setDescribe("");
         modMap.setNotes("成绩达标率");
-
-        Random random = new Random();
-        DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
         dstaLst = new ArrayList<>();
         try {
@@ -1157,9 +1159,10 @@ public class StrategyController {
 
         responseDataMap.put("submit", modMap);
         //</editor-fold>
+
         //<editor-fold desc="学习时长分布">
         modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("平均时长：85min");
+        modMap.setDescribe("平均时长："+avgMod.getAvgDuration()+"min");
         modMap.setNotes("学习时长分布");
 
         dstaLst = StatisticalService.GetListWithShiChang(reqMod);
@@ -1170,7 +1173,7 @@ public class StrategyController {
         //</editor-fold>
         //<editor-fold desc="任务单/试卷成绩分布">
         modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("满分：600分；平均分：80分");
+        modMap.setDescribe("满分："+avgMod.getSumScore()+"分；平均分："+avgMod.getAvgScore()+"分");
         modMap.setNotes("任务单/试卷成绩分布");
 
         dstaLst = StatisticalService.GetListWithChengJi(reqMod);
@@ -1286,8 +1289,8 @@ public class StrategyController {
         //</editor-fold>
 
         int expression;
-        expression=1;
-        switch (expression){
+        expression = 1;
+        switch (expression) {
             case 1:
                 break;
             case 2:

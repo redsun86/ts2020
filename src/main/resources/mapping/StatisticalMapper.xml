@@ -6,6 +6,11 @@
         <result column="xAxis" property="xAxis" jdbcType="VARCHAR"/>
         <result column="yAxis" property="yAxis" jdbcType="VARCHAR"/>
     </resultMap>
+    <resultMap id="BaseResultAvgMap" type="com.esst.ts.model.StatisticalChartAvgPOJO">
+        <result column="avg_duration" property="avgDuration" jdbcType="VARCHAR"/>
+        <result column="avg_score" property="avgScore" jdbcType="VARCHAR"/>
+        <result column="sum_score" property="sumScore" jdbcType="VARCHAR"/>
+    </resultMap>
     <select id="GetListWithDaBiaoLv0" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
         select sum(case when wdb.user_id is null then 0 else 1 end) xAxis,count(distinct u.user_id) yAxis from (
         select user_id from user_live_data
@@ -186,5 +191,54 @@
         GROUP BY uld.task_id,uld.study_type,date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d')
         ORDER BY userCount DESC
         limit 0,1
+    </select>
+    <select id="GetAvgModel0" resultMap="BaseResultAvgMap" parameterType="com.esst.ts.model.StatisticalPOJO">
+        select count(distinct tbv.user_id) user_count
+            ,cast(AVG(ifnull(tbv.study_duration,0))/1000/60 as DECIMAL(18,2)) avg_duration
+            ,cast(AVG(ifnull(tbv.current_score,0)) as DECIMAL(18,2)) avg_score
+            ,cast(ifnull(tbv.current_score,0) as DECIMAL(18,2)) sum_score
+        from (
+            select opbv.user_id,opbv.task_id,opbv.study_type
+                ,SUM(ifnull(opbv.study_duration,0)) study_duration
+                ,SUM(ifnull(opbv.current_score,0)) current_score
+            from (
+                select uld.user_id,uld.task_id,uld.operate_id,uld.study_type
+                    ,max(uld.study_duration) study_duration
+                    ,max(uld.current_score) current_score
+                from (
+                    select max(id) id	from user_live_data
+                    where study_type=#{studyType,jdbcType=INTEGER} and task_id=#{exameId,jdbcType=INTEGER}
+                    and date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
+                    and date_format(#{stopTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')
+                    group by user_id,task_id,operate_id,study_type,train_id
+                ) maxbv left join user_live_data uld on uld.id=maxbv.id
+                group by uld.user_id,uld.task_id,uld.operate_id,uld.study_type
+            ) opbv group by opbv.user_id,opbv.task_id,opbv.study_type
+        ) tbv
+    </select>
+    <select id="GetAvgModel1" resultMap="BaseResultAvgMap" parameterType="com.esst.ts.model.StatisticalPOJO">
+       select count(distinct tbv.user_id) user_count
+            ,cast(AVG(ifnull(tbv.study_duration,0))/1000/60 as DECIMAL(18,2)) avg_duration
+            ,cast(AVG(ifnull(tbv.current_score,0)) as DECIMAL(18,2)) avg_score
+            ,cast(ifnull(tbv.current_score,0) as DECIMAL(18,2)) sum_score
+        from (
+            select opbv.user_id,opbv.task_id,opbv.study_type
+                ,SUM(ifnull(opbv.study_duration,0)) study_duration
+                ,SUM(ifnull(opbv.current_score,0)*ifnull(opbv.proportion,0)) current_score
+            from (
+                select uld.user_id,uld.task_id,uld.operate_id,uld.study_type,o.proportion
+                    ,max(uld.study_duration) study_duration
+                    ,max(uld.current_score) current_score
+                from (
+                    select max(id) id	from user_live_data
+                    where study_type=#{studyType,jdbcType=INTEGER} and task_id=#{exameId,jdbcType=INTEGER}
+                    and date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
+                    and date_format(#{stopTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')
+                    group by user_id,task_id,operate_id,study_type,train_id
+                ) maxbv left join user_live_data uld on uld.id=maxbv.id
+                    left join questions o on o.exame_id=uld.task_id and o.id=uld.operate_id
+                group by uld.user_id,uld.task_id,uld.operate_id,uld.study_type,o.proportion
+            ) opbv group by opbv.user_id,opbv.task_id,opbv.study_type
+        ) tbv
     </select>
 </mapper>
