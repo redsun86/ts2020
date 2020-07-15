@@ -44,7 +44,7 @@ public class StudyRecordImpl implements StudyRecordService {
             return userScoreRecordMapper.getUserStudyRecordAndUserInfoAll(beginDate, endDate);
         }
         else{
-            return userScoreRecordMapper.getUserStudyRecordAndUserInfoAll(beginDate, endDate,userId);
+            return userScoreRecordMapper.getUserStudyRecordAndUserInfoByUserAndDate(beginDate, endDate,userId);
         }
     }
     @Override

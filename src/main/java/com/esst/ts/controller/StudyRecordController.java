@@ -217,7 +217,7 @@ public class StudyRecordController {
                 List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
                 score+=maxscore.get(0).getScore();
             }
-            m.setScore(Double.parseDouble(String.format("%.3f",score)));
+            m.setScore(Double.parseDouble(String.format("%.2f",score)));
             //根据用户id和日期和任务单id进行查询对应的任务
             List<UserScoreRecordPOJO> learnTime=studyRecordService.getLearnTime(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
             for (UserScoreRecordPOJO learnTimes : learnTime) {
@@ -303,7 +303,7 @@ public class StudyRecordController {
                 List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
                 score+=maxscore.get(0).getScore();
             }
-            m.setScore(Double.parseDouble(String.format("%.3f",score)));
+            m.setScore(Double.parseDouble(String.format("%.2f",score)));
             //根据用户id和日期和任务单id进行查询对应的任务
             List<UserScoreRecordPOJO> learnTime=studyRecordService.getLearnTime(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
             for (UserScoreRecordPOJO learnTimes : learnTime) {
@@ -384,7 +384,7 @@ public class StudyRecordController {
             }
 
             m.setLearnTime(newuserScoreRecordPOJO.getLearnTime()/1000);
-            m.setScore(Double.parseDouble(String.format("%.3f",newuserScoreRecordPOJO.getScore())));
+            m.setScore(Double.parseDouble(String.format("%.2f",newuserScoreRecordPOJO.getScore())));
             dataList.add(m);
         }
         responseDataMap.put("list", dataList);
@@ -498,7 +498,7 @@ public class StudyRecordController {
                 List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
                 score+=maxscore.get(0).getScore();
             }
-            m.setScore(Double.parseDouble(String.format("%.3f",score)));
+            m.setScore(Double.parseDouble(String.format("%.2f",score)));
             //根据用户id和日期和任务单id进行查询对应的任务
             List<UserScoreRecordPOJO> learnTime=studyRecordService.getLearnTime(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
             for (UserScoreRecordPOJO learnTimes : learnTime) {
@@ -568,7 +568,7 @@ public class StudyRecordController {
                 List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
                 score+=maxscore.get(0).getScore();
             }
-            m.setScore(Double.parseDouble(String.format("%.3f",score)));
+            m.setScore(Double.parseDouble(String.format("%.2f",score)));
             //根据用户id和日期和任务单id进行查询对应的任务
             List<UserScoreRecordPOJO> learnTime=studyRecordService.getLearnTime(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
             for (UserScoreRecordPOJO learnTimes : learnTime) {
@@ -646,7 +646,7 @@ public class StudyRecordController {
             }
 
             m.setLearnTime(newuserScoreRecordPOJO.getLearnTime()/1000);
-            m.setScore(Double.parseDouble(String.format("%.3f",newuserScoreRecordPOJO.getScore())));
+            m.setScore(Double.parseDouble(String.format("%.2f",newuserScoreRecordPOJO.getScore())));
             dataList.add(m);
         }
         responseDataMap.put("list", dataList);
