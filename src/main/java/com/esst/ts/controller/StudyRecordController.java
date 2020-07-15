@@ -153,7 +153,7 @@ public class StudyRecordController {
         List<Exam> examList=fzhktService.getExamListAll();
         Map<Integer,Exam> examMap=examList.stream().collect(Collectors.toMap(Exam::getId, Function.identity(), (key1, key2) -> key2));
         List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfo(beginDate,endDate,userId,studyType,taskId);
-        List<UserScoreRecordPOJO> userScoreRecordPOJOTask=studyRecordService.getUserStudyRecordAndUserInfoTask(beginDate,endDate);
+        List<UserScoreRecordPOJO> userScoreRecordPOJOTask=studyRecordService.getUserStudyRecordAndUserInfoTask(beginDate,endDate,userId);
         for(UserScoreRecordPOJO newuserScoreRecordPOJOTask:userScoreRecordPOJOTask){
             if(newuserScoreRecordPOJOTask.getStudyType()==0){
                 //任务

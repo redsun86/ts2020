@@ -38,6 +38,10 @@ public interface UserScoreRecordMapper {
 
     @Select("SELECT r.*,r.end_time-r.begin_time as learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') >=#{beginDate} AND FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') <= #{endDate} AND r.user_id IN (SELECT student_id FROM teacher_student_relation WHERE teacher_id =#{userId}) GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id ORDER BY begin_time DESC")
     @ResultMap("BasePOJOResultMap")
+    List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoAll(@Param("beginDate") String beginDate, @Param("endDate") String endDate,@Param("userId") int userId);
+
+    @Select("SELECT r.*,r.end_time-r.begin_time as learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') >=#{beginDate} AND FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') <= #{endDate} AND r.user_id IN (SELECT student_id FROM teacher_student_relation WHERE teacher_id =#{userId}) GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id ORDER BY begin_time DESC")
+    @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoByUserIdAll(@Param("beginDate") String beginDate, @Param("endDate") String endDate, @Param("userId") int userId);
 
     @Select("SELECT r.*,r.end_time-r.begin_time as learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') >=#{beginDate} AND FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') <= #{endDate} AND r.user_id IN (SELECT student_id FROM teacher_student_relation WHERE teacher_id =#{userId}) AND r.task_id=#{taskId} GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id ORDER BY begin_time DESC")
