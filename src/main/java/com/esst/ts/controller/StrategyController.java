@@ -1049,7 +1049,7 @@ public class StrategyController {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
 
-        //        Date StartTime = new Date();
+        Date StartTime = new Date();
 
 
         //<editor-fold desc="返回参数初始化">
@@ -1211,13 +1211,13 @@ public class StrategyController {
         //</editor-fold>
 
 
-        //        Date StopTime = new Date();
-        //        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        //        double millisecond = StopTime.getTime() - StartTime.getTime();
-        //        System.out.println("getStatisticalChartDataList");
-        //        System.out.println("StartTime：" + simpleDateFormat.format(StartTime));
-        //        System.out.println("StopTime：" + simpleDateFormat.format(StopTime));
-        //        System.out.println("millisecond：" + millisecond + "\n");
+        Date StopTime = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        double millisecond = StopTime.getTime() - StartTime.getTime();
+        System.out.println("getStatisticalChartDataList");
+        System.out.println("StartTime：" + simpleDateFormat.format(StartTime));
+        System.out.println("StopTime：" + simpleDateFormat.format(StopTime));
+        System.out.println("millisecond：" + millisecond + "\n");
         return r;
     }
 

@@ -18,14 +18,9 @@ public interface StatisticalHistoryMapper {
     List<StatisticalChartDataPOJO> GetListWithDaBiaoLv1(StatisticalPOJO mod);
 
     /**
-     * 实时数据统计图表 任务单 提交报告
+     * 实时数据统计图表  提交报告
      */
-    List<StatisticalChartDataPOJO> GetListWithBaoGao0(StatisticalPOJO mod);
-
-    /**
-     * 实时数据统计图表 试卷 提交报告
-     */
-    List<StatisticalChartDataPOJO> GetListWithBaoGao1(StatisticalPOJO mod);
+    List<StatisticalChartDataPOJO> GetListWithBaoGao(StatisticalPOJO mod);
 
     /**
      * 实时数据统计图表 任务单+试卷 学习时长

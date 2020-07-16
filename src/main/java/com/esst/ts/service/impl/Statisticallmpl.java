@@ -43,10 +43,7 @@ public class Statisticallmpl implements StatisticalService {
         if (mod.getIsHistory() == 0) {
             return StatisticalMapper.GetListWithBaoGao(mod);
         } else {
-            if (mod.getStudyType() == 1)
-                return StatisticalHistoryMapper.GetListWithBaoGao1(mod);
-            else
-                return StatisticalHistoryMapper.GetListWithBaoGao0(mod);
+            return StatisticalHistoryMapper.GetListWithBaoGao(mod);
         }
     }
 
