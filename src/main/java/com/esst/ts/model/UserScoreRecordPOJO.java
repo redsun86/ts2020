@@ -23,6 +23,8 @@ public class UserScoreRecordPOJO {
 
     private Long learnTime;
 
+    private Double learnTimes;
+
     private Integer studyType;
 
     private String macAddress;
@@ -124,6 +126,15 @@ public class UserScoreRecordPOJO {
     public void setLearnTime(Long learnTime) {
         this.learnTime = learnTime;
     }
+
+    public Double getLearnTimes() {
+        return learnTimes;
+    }
+
+    public void setLearnTimes(Double learnTimes) {
+        this.learnTimes = learnTimes;
+    }
+
     public Integer getStudyType() {
         return studyType;
     }

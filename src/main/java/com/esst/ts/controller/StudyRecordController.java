@@ -153,7 +153,7 @@ public class StudyRecordController {
         List<Exam> examList=fzhktService.getExamListAll();
         Map<Integer,Exam> examMap=examList.stream().collect(Collectors.toMap(Exam::getId, Function.identity(), (key1, key2) -> key2));
         List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfo(beginDate,endDate,userId,studyType,taskId);
-        List<UserScoreRecordPOJO> userScoreRecordPOJOTask=studyRecordService.getUserStudyRecordAndUserInfoTask(beginDate,endDate);
+        List<UserScoreRecordPOJO> userScoreRecordPOJOTask=studyRecordService.getUserStudyRecordAndUserInfoTask(beginDate,endDate,userId);
         for(UserScoreRecordPOJO newuserScoreRecordPOJOTask:userScoreRecordPOJOTask){
             if(newuserScoreRecordPOJOTask.getStudyType()==0){
                 //任务
@@ -217,7 +217,7 @@ public class StudyRecordController {
                 List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
                 score+=maxscore.get(0).getScore();
             }
-            m.setScore(Double.parseDouble(String.format("%.3f",score)));
+            m.setScore(Double.parseDouble(String.format("%.2f",score)));
             //根据用户id和日期和任务单id进行查询对应的任务
             List<UserScoreRecordPOJO> learnTime=studyRecordService.getLearnTime(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
             for (UserScoreRecordPOJO learnTimes : learnTime) {
@@ -295,6 +295,7 @@ public class StudyRecordController {
 
             double score=0;
             long leartime=0;
+            double leartimes=0.0;
             //根据用户id和日期和任务单id进行分组查询对应的任务
             List<UserScoreRecordPOJO> operateid=studyRecordService.getoperateid(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
             for (UserScoreRecordPOJO operateidlist : operateid) {
@@ -302,13 +303,13 @@ public class StudyRecordController {
                 List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
                 score+=maxscore.get(0).getScore();
             }
-            m.setScore(Double.parseDouble(String.format("%.3f",score)));
+            m.setScore(Double.parseDouble(String.format("%.2f",score)));
             //根据用户id和日期和任务单id进行查询对应的任务
             List<UserScoreRecordPOJO> learnTime=studyRecordService.getLearnTime(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
             for (UserScoreRecordPOJO learnTimes : learnTime) {
-                leartime+=learnTimes.getEndTime()-learnTimes.getBeginTime();
+                leartimes+=learnTimes.getEndTime()-learnTimes.getBeginTime();
             }
-            m.setLearnTime(leartime/60000);
+            m.setLearnTimes(Double.parseDouble(String.format("%.2f",leartimes/60000)));
             m.settGroupName(u.getGroupName());
             if(newuserScoreRecordPOJO.getStudyType()==0){
                 //任务
@@ -325,10 +326,10 @@ public class StudyRecordController {
                 //试卷
                 Exam e=examMap.get(newuserScoreRecordPOJO.getTaskId());
                 if(e==null) {
-                    m.setTaskName(e.getExamName());
+                    m.setTaskName("");
                 }
                 else{
-                    m.setTaskName("");
+                    m.setTaskName(e.getExamName());
                 }
             }
             dataList.add(m);
@@ -383,7 +384,7 @@ public class StudyRecordController {
             }
 
             m.setLearnTime(newuserScoreRecordPOJO.getLearnTime()/1000);
-            m.setScore(Double.parseDouble(String.format("%.3f",newuserScoreRecordPOJO.getScore())));
+            m.setScore(Double.parseDouble(String.format("%.2f",newuserScoreRecordPOJO.getScore())));
             dataList.add(m);
         }
         responseDataMap.put("list", dataList);
@@ -497,7 +498,7 @@ public class StudyRecordController {
                 List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
                 score+=maxscore.get(0).getScore();
             }
-            m.setScore(Double.parseDouble(String.format("%.3f",score)));
+            m.setScore(Double.parseDouble(String.format("%.2f",score)));
             //根据用户id和日期和任务单id进行查询对应的任务
             List<UserScoreRecordPOJO> learnTime=studyRecordService.getLearnTime(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
             for (UserScoreRecordPOJO learnTimes : learnTime) {
@@ -558,6 +559,7 @@ public class StudyRecordController {
 
             double score=0;
             long leartime=0;
+            double leartimes=0.0;
             String studyTime="";
             //根据用户id和日期和任务单id进行分组查询对应的任务
             List<UserScoreRecordPOJO> operateid=studyRecordService.getoperateid(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
@@ -566,13 +568,13 @@ public class StudyRecordController {
                 List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
                 score+=maxscore.get(0).getScore();
             }
-            m.setScore(Double.parseDouble(String.format("%.3f",score)));
+            m.setScore(Double.parseDouble(String.format("%.2f",score)));
             //根据用户id和日期和任务单id进行查询对应的任务
             List<UserScoreRecordPOJO> learnTime=studyRecordService.getLearnTime(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
             for (UserScoreRecordPOJO learnTimes : learnTime) {
-                leartime+=learnTimes.getEndTime()-learnTimes.getBeginTime();
+                leartimes+=learnTimes.getEndTime()-learnTimes.getBeginTime();
             }
-            m.setLearnTime(leartime/60000);
+            m.setLearnTimes(Double.parseDouble(String.format("%.2f",leartimes/60000)));
             m.settGroupName(u.getGroupName());
             if(newuserScoreRecordPOJO.getStudyType()==0) {
                 //任务单
@@ -644,7 +646,7 @@ public class StudyRecordController {
             }
 
             m.setLearnTime(newuserScoreRecordPOJO.getLearnTime()/1000);
-            m.setScore(Double.parseDouble(String.format("%.3f",newuserScoreRecordPOJO.getScore())));
+            m.setScore(Double.parseDouble(String.format("%.2f",newuserScoreRecordPOJO.getScore())));
             dataList.add(m);
         }
         responseDataMap.put("list", dataList);
