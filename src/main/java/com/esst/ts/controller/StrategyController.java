@@ -1049,6 +1049,9 @@ public class StrategyController {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
 
+        //        Date StartTime = new Date();
+
+
         //<editor-fold desc="返回参数初始化">
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
@@ -1098,7 +1101,7 @@ public class StrategyController {
 
         //<editor-fold desc="平均时长 平均成绩 总成绩">
 
-        StatisticalChartAvgPOJO avgMod=StatisticalService.GetAvgModel(reqMod);
+        StatisticalChartAvgPOJO avgMod = StatisticalService.GetAvgModel(reqMod);
 
         //</editor-fold>
 
@@ -1162,7 +1165,7 @@ public class StrategyController {
 
         //<editor-fold desc="学习时长分布">
         modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("平均时长："+avgMod.getAvgDuration()+"min");
+        modMap.setDescribe("平均时长：" + avgMod.getAvgDuration() + "min");
         modMap.setNotes("学习时长分布");
 
         dstaLst = StatisticalService.GetListWithShiChang(reqMod);
@@ -1173,7 +1176,7 @@ public class StrategyController {
         //</editor-fold>
         //<editor-fold desc="任务单/试卷成绩分布">
         modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("满分："+avgMod.getSumScore()+"分；平均分："+avgMod.getAvgScore()+"分");
+        modMap.setDescribe("满分：" + avgMod.getSumScore() + "分；平均分：" + avgMod.getAvgScore() + "分");
         modMap.setNotes("任务单/试卷成绩分布");
 
         dstaLst = StatisticalService.GetListWithChengJi(reqMod);
@@ -1206,6 +1209,15 @@ public class StrategyController {
         r.setData(responseDataMap);
         //</editor-fold>
         //</editor-fold>
+
+
+        //        Date StopTime = new Date();
+        //        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        //        double millisecond = StopTime.getTime() - StartTime.getTime();
+        //        System.out.println("getStatisticalChartDataList");
+        //        System.out.println("StartTime：" + simpleDateFormat.format(StartTime));
+        //        System.out.println("StopTime：" + simpleDateFormat.format(StopTime));
+        //        System.out.println("millisecond：" + millisecond + "\n");
         return r;
     }
 
