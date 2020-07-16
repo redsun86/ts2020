@@ -196,7 +196,7 @@
         select count(distinct tbv.user_id) user_count
             ,cast(AVG(ifnull(tbv.study_duration,0))/1000/60 as DECIMAL(18,2)) avg_duration
             ,cast(AVG(ifnull(tbv.current_score,0)) as DECIMAL(18,2)) avg_score
-            ,cast(ifnull(tbv.current_score,0) as DECIMAL(18,2)) sum_score
+		    ,cast(ifnull(taskscore.sum_score,0) as DECIMAL(18,2)) sum_score
         from (
             select opbv.user_id,opbv.task_id,opbv.study_type
                 ,SUM(ifnull(opbv.study_duration,0)) study_duration
@@ -214,13 +214,17 @@
                 ) maxbv left join user_live_data uld on uld.id=maxbv.id
                 group by uld.user_id,uld.task_id,uld.operate_id,uld.study_type
             ) opbv group by opbv.user_id,opbv.task_id,opbv.study_type
-        ) tbv
+        ) tbv left join (
+            select tor.task_id,count(distinct o.id)*100 sum_score  from task_oper_relation tor left join operate o on tor.operate_id=o.id
+            -- where tor.task_id=3
+            group by tor.task_id
+        ) taskscore on tbv.task_id=taskscore.task_id
     </select>
     <select id="GetAvgModel1" resultMap="BaseResultAvgMap" parameterType="com.esst.ts.model.StatisticalPOJO">
        select count(distinct tbv.user_id) user_count
             ,cast(AVG(ifnull(tbv.study_duration,0))/1000/60 as DECIMAL(18,2)) avg_duration
             ,cast(AVG(ifnull(tbv.current_score,0)) as DECIMAL(18,2)) avg_score
-            ,cast(ifnull(tbv.current_score,0) as DECIMAL(18,2)) sum_score
+		    ,cast(ifnull(taskscore.sum_score,0) as DECIMAL(18,2)) sum_score
         from (
             select opbv.user_id,opbv.task_id,opbv.study_type
                 ,SUM(ifnull(opbv.study_duration,0)) study_duration
@@ -239,6 +243,10 @@
                     left join questions o on o.exame_id=uld.task_id and o.id=uld.operate_id
                 group by uld.user_id,uld.task_id,uld.operate_id,uld.study_type,o.proportion
             ) opbv group by opbv.user_id,opbv.task_id,opbv.study_type
-        ) tbv
+        ) tbv left join (
+            select o.exame_id task_id,sum(round(100*o.proportion/100,2)) sum_score from questions o
+            -- where o.exame_id=150
+            GROUP BY o.exame_id
+        ) taskscore on tbv.task_id=taskscore.task_id
     </select>
 </mapper>
