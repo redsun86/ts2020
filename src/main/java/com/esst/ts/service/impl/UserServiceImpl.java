@@ -39,7 +39,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User loginByStudent(String trueName, String num) {
-        return userMapper.loginByStudent(trueName, num);
+        return userMapper.loginByStudents(trueName, num);
+    }
+
+    @Override
+    public User loginByStudent(String num) {
+        return userMapper.loginByStudent(num);
     }
 
     @Override
