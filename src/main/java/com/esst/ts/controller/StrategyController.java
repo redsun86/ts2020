@@ -9,7 +9,6 @@ import org.springframework.web.servlet.support.RequestContext;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
@@ -1050,6 +1049,9 @@ public class StrategyController {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
 
+        //        Date StartTime = new Date();
+
+
         //<editor-fold desc="返回参数初始化">
         r.setMsg(requestContext.getMessage("OK"));
         r.setCode(Result.SUCCESS);
@@ -1060,16 +1062,23 @@ public class StrategyController {
         StatisticalChartPOJO modMap;
         List<StatisticalChartDataPOJO> dstaLst;
         StatisticalChartDataPOJO mod;
-
-        //<editor-fold desc="成绩达标率">
-
+        //<editor-fold desc="是否历史数据默认值">
+        if (null == reqMod.getIsHistory()) {
+            reqMod.setIsHistory(0);
+        }
+        //</editor-fold>
+        //<editor-fold desc="日期默认值">
         if (null == reqMod.getStartTime() || reqMod.getStartTime() == "") {
             SimpleDateFormat dfStart = new SimpleDateFormat("yyyy-MM-01");
             SimpleDateFormat dfStop = new SimpleDateFormat("yyyy-MM-dd");
             reqMod.setStartTime(dfStop.format(new Date()));
             reqMod.setStopTime(dfStop.format(new Date()));
         }
-
+        if (null == reqMod.getStopTime() || reqMod.getStopTime() == "") {
+            reqMod.setStopTime(reqMod.getStartTime());
+        }
+        //</editor-fold>
+        //<editor-fold desc="图表数据展示默认值">
         int currentExameId = 0;
         int currentStudyType = 0;
         if (null != reqMod && null != reqMod.getExameId() && reqMod.getExameId() > 0) {
@@ -1088,13 +1097,18 @@ public class StrategyController {
                 currentStudyType = 1;
             }
         }
+        //</editor-fold>
 
+        //<editor-fold desc="平均时长 平均成绩 总成绩">
+
+        StatisticalChartAvgPOJO avgMod = StatisticalService.GetAvgModel(reqMod);
+
+        //</editor-fold>
+
+        //<editor-fold desc="成绩达标率">
         modMap = new StatisticalChartPOJO();
         modMap.setDescribe("");
         modMap.setNotes("成绩达标率");
-
-        Random random = new Random();
-        DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
         dstaLst = new ArrayList<>();
         try {
@@ -1131,11 +1145,11 @@ public class StrategyController {
                 StatisticalChartDataPOJO moddb = dblist.get(0);
 
                 mod = new StatisticalChartDataPOJO();
-                mod.setxAxis(moddb.getxAxis());
+                mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
                 mod.setyAxis("已提交");
                 dstaLst.add(mod);
                 mod = new StatisticalChartDataPOJO();
-                mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
+                mod.setxAxis(moddb.getxAxis());
                 mod.setyAxis("未提交");
                 dstaLst.add(mod);
             }
@@ -1148,9 +1162,10 @@ public class StrategyController {
 
         responseDataMap.put("submit", modMap);
         //</editor-fold>
+
         //<editor-fold desc="学习时长分布">
         modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("建议时长：90min；平均时长：85min");
+        modMap.setDescribe("平均时长：" + avgMod.getAvgDuration() + "min");
         modMap.setNotes("学习时长分布");
 
         dstaLst = StatisticalService.GetListWithShiChang(reqMod);
@@ -1159,10 +1174,10 @@ public class StrategyController {
 
         responseDataMap.put("learningTime", modMap);
         //</editor-fold>
-        //<editor-fold desc="课题成绩分布">
+        //<editor-fold desc="任务单/试卷成绩分布">
         modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("满分：600分；平均分：80分");
-        modMap.setNotes("课题成绩分布");
+        modMap.setDescribe("满分：" + avgMod.getSumScore() + "分；平均分：" + avgMod.getAvgScore() + "分");
+        modMap.setNotes("任务单/试卷成绩分布");
 
         dstaLst = StatisticalService.GetListWithChengJi(reqMod);
 
@@ -1170,10 +1185,10 @@ public class StrategyController {
 
         responseDataMap.put("questionScore", modMap);
         //</editor-fold>
-        //<editor-fold desc="各任务平均成绩">
+        //<editor-fold desc="各任务/试题平均成绩分布">
         modMap = new StatisticalChartPOJO();
         modMap.setDescribe("");
-        modMap.setNotes("各任务平均成绩");
+        modMap.setNotes("各任务/试题平均成绩分布");
 
         dstaLst = StatisticalService.GetListWithPingJun(reqMod);
 
@@ -1181,7 +1196,7 @@ public class StrategyController {
 
         responseDataMap.put("averageScore", modMap);
         //</editor-fold>
-
+        //<editor-fold desc="附件参数赋值">
         responseDataMap.put("loginUserCount", "2");
         responseDataMap.put("onlineUserCount", "7");
         if (currentExameId > 0) {
@@ -1193,6 +1208,16 @@ public class StrategyController {
         }
         r.setData(responseDataMap);
         //</editor-fold>
+        //</editor-fold>
+
+
+        //        Date StopTime = new Date();
+        //        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        //        double millisecond = StopTime.getTime() - StartTime.getTime();
+        //        System.out.println("getStatisticalChartDataList");
+        //        System.out.println("StartTime：" + simpleDateFormat.format(StartTime));
+        //        System.out.println("StopTime：" + simpleDateFormat.format(StopTime));
+        //        System.out.println("millisecond：" + millisecond + "\n");
         return r;
     }
 
@@ -1274,6 +1299,16 @@ public class StrategyController {
         productlistMap.put("测试newLst", newLst);
         r.setData(productlistMap);
         //</editor-fold>
+
+        int expression;
+        expression = 1;
+        switch (expression) {
+            case 1:
+                break;
+            case 2:
+                break;
+        }
+
 
         Operate reqMod = new Operate();
         //只查询未删除的工况
