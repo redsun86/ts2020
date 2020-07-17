@@ -20,6 +20,10 @@ public interface UserMapper {
 
     int updateByPrimaryKey(User record);
 
+    @Select("select * from user where is_admin=-1")
+    @ResultMap("BaseResultMap")
+    User selectTeacher();
+
     @Select("select * from user where st_num = #{num} and id in(select student_id from teacher_student_relation where teacher_id = #{userId})")
     @ResultMap("BaseResultMap")
     User selectByNum(@Param("num") String num,@Param("userId") int userId);

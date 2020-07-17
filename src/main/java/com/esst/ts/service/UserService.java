@@ -10,7 +10,7 @@ import java.util.List;
 public interface UserService {
 
     User getUserById(Integer userId);
-
+    User getTeacherInfo();
     /**
      * 更新密码
      *
