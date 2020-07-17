@@ -25,6 +25,10 @@ public class UserScoreRecord {
 
     private  String trainId;
 
+    private  String report;
+
+    private  Integer teacherId;
+
     public Integer getId() {
         return id;
     }
@@ -119,5 +123,21 @@ public class UserScoreRecord {
 
     public void setTrainId(String trainId) {
         this.trainId = trainId;
+    }
+
+    public String getReport() {
+        return report;
+    }
+
+    public void setReport(String report) {
+        this.report = report;
+    }
+
+    public Integer getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(Integer teacherId) {
+        this.teacherId = teacherId;
     }
 }

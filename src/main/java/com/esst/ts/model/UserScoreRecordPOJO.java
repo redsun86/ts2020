@@ -31,6 +31,10 @@ public class UserScoreRecordPOJO {
 
     private String ipAddress;
 
+    private  String report;
+
+    private  Integer teacherId;
+
     private String userTrueName;
 
     private String userStNum;
@@ -157,6 +161,18 @@ public class UserScoreRecordPOJO {
 
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
+    }
+
+    public void setReport(String report) {
+        this.report = report;
+    }
+
+    public Integer getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(Integer teacherId) {
+        this.teacherId = teacherId;
     }
 
     public String getUserTrueName() {
