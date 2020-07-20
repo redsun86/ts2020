@@ -44,6 +44,85 @@ public class UserController {
     @Resource
     private SqlSessionTemplate sqlSessionTemplate;
 
+
+    /**
+     * 修改用户资料
+     *
+     * @param userId 用户ID
+     * @param trueName 用户名称
+     * @param mobile 用户名称
+     * @param loginName 用户名称
+     */
+    @ResponseBody
+    @RequestMapping(value = "/updateUserInfo", method = RequestMethod.POST)
+    public Result updateUserInfo(@RequestParam(value = "userId") Integer userId,
+                            @RequestParam(value = "trueName") String trueName,
+                            @RequestParam(value = "mobile") String mobile,
+                            @RequestParam(value = "loginName") String loginName,
+                            @RequestParam(value = "token") String token,
+                            HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        int i = userService.updateUserInfo(userId,trueName,mobile,loginName);
+        if (i>0) {
+            r.setMsg("OK");
+            r.setCode(0);
+            r.setData("用户信息修改成功");
+        }
+        else
+        {
+            r.setMsg("Err");
+            r.setCode(2);
+            r.setData("用户信息修改失败");
+        }
+        return r;
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param userId 用户ID
+     */
+    @ResponseBody
+    @RequestMapping(value = "/updatePwd", method = RequestMethod.POST)
+    public Result updatePwd(@RequestParam(value = "userId") Integer userId,
+                            @RequestParam(value = "oldPwd") String oldPwd,
+                            @RequestParam(value = "newPwd") String newPwd,
+                            @RequestParam(value = "token") String token,
+                             HttpServletRequest request) {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        User user = userService.getUserById(userId);
+        if (user != null) {
+            if(user.getPassword()==MD5Code.encodeByMD5(oldPwd)){
+                //修改密码
+                int i=userService.updateUserPwd(userId,MD5Code.encodeByMD5(newPwd));
+                if(i>0) {
+                    r.setMsg("OK");
+                    r.setCode(0);
+                    r.setData("密码修改成功");
+                }
+                else{
+                    r.setMsg("Err");
+                    r.setCode(3);
+                    r.setData("密码修改失败");
+                }
+            }
+            else
+            {
+                r.setMsg("Err");
+                r.setCode(2);
+                r.setData("旧密码错误");
+            }
+        } else {
+            r.setMsg("Err");
+            r.setCode(1);
+            r.setData("系统错误");
+        }
+        return r;
+    }
+
+
     /**
      * 判断当前学员是否在线
      *

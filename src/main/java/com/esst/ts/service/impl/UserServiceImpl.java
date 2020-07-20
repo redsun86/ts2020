@@ -98,6 +98,10 @@ public class UserServiceImpl implements UserService {
         return userLoginLogMapper.getUserLogByUserId(userId,beginDate,endDate);
     }
 
+    @Override
+    public int updateUserInfo(Integer userId,String trueName,String mobile,String loginName) {
+        return userMapper.updateUserInfo(userId,trueName,mobile,loginName);
+    }
 
     @Override
     public int updatePassword(User record) {

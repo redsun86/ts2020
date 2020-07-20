@@ -1,9 +1,6 @@
 package com.esst.ts.service;
 
-import com.esst.ts.model.User;
-import com.esst.ts.model.TeacherStudentRelation;
-import com.esst.ts.model.UserLoginLog;
-import com.esst.ts.model.UserLoginLogPOJO;
+import com.esst.ts.model.*;
 
 import java.util.List;
 
@@ -71,5 +68,14 @@ public interface UserService {
     List<User> getUserByTrueName(String userTrueName);
 
     List<UserLoginLogPOJO> getUserLogByUserId(Integer userId,String BeginDate,String endDate);
-
+    /**
+     * 修改用户信息
+     *
+     * @param userId
+     * @param trueName
+     * @param mobile
+     * @param loginName
+     * @return
+     */
+    int updateUserInfo(Integer userId,String trueName,String mobile,String loginName);
 }
