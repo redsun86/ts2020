@@ -75,8 +75,8 @@ public class FZhKTController {
         Map<String, String> classnamemap = new HashMap<>();
         List<taskModel> tasklist = new ArrayList<taskModel>();
         //<editor-fold desc="获得属于此老师的学生在线人数">
-        List<UserToken> userLoginLogsList = fzhktService.getUserLoginByTeacherID(userId);
-        online_num = userLoginLogsList.size();
+        List<UserToken> userLoginLogsList = fzhktService.getUserLoginList();
+        //online_num = userLoginLogsList.size();
         total_num = fzhktService.getUserLoginLogCountByTeacherID(userId);
         //</editor-fold>
         List<scoreModel> datalist = new ArrayList();
@@ -87,7 +87,7 @@ public class FZhKTController {
         List<User> userList = fzhktService.getUserListAll();
         List<Exam> examList = fzhktService.getExamListAll();
         List<Questions> questionsList = fzhktService.getQuestionListAll();
-
+        List<User> userListTeacher = userMapper.getUserLst(Integer.valueOf(userId));
         Map<Integer, UserToken> userTokenMap = userLoginLogsList.stream().collect(Collectors.toMap(UserToken::getUserId, Function.identity(), (key1, key2) -> key2));
         Map<Integer, UserLiveData> userlivedate_map = new HashMap<Integer, UserLiveData>();
         Map<Integer, User> userMap = userList.stream().collect(Collectors.toMap(User::getId, Function.identity(), (key1, key2) -> key2));
@@ -97,20 +97,29 @@ public class FZhKTController {
         Map<Integer, UserLiveWithBLOBs> userLive_map = userLivelist.stream().collect(Collectors.toMap(UserLiveWithBLOBs::getId, Function.identity(), (key1, key2) -> key2));
         Map<Integer, Exam> examMap = examList.stream().collect(Collectors.toMap(Exam::getId, Function.identity(), (key1, key2) -> key2));
         Map<Integer, Questions> questionsMap = questionsList.stream().collect(Collectors.toMap(Questions::getId, Function.identity(), (key1, key2) -> key2));
-
-        for (UserLiveWithBLOBs uld : userLivelist) {
+        Map<Integer, User> userListTeacherMap = userListTeacher.stream().collect(Collectors.toMap(User::getId, Function.identity(), (key1, key2) -> key2));
+        User guest = userMapper.selectTeacher();
+        HashSet<Integer> onlineHashSet = new HashSet();//在线人数，有学习记录人数-离线人数
+        List<UserLiveDataWithBLOBs> userLiveWithBLOBsList;
+        if (guest.getId().toString().equals(userId)) {
+            userLiveWithBLOBsList = fzhktService.getRealTimeByTeacherId("", guest.getId().toString(), templateId, study_type);
+        } else {
+            userLiveWithBLOBsList = fzhktService.getRealTimeByTeacherId(userId, guest.getId().toString(), templateId, study_type);
+        }
+        for (UserLiveDataWithBLOBs uld : userLiveWithBLOBsList) {
             scoreModel _score = new scoreModel();
             _score.setId(uld.getId().toString());
             _score.setMachine_id(uld.getMacAddress());
             User user = userMap.get(uld.getUserId());
+            if (userListTeacherMap.containsKey(user.getId())) {
+                _score.setUser_name(user.getRelName());
+            } else {
+                _score.setUser_name("*" + user.getRelName());
+            }
             classnamemap.put(user.getClassName(), "");
             _score.setStudent_num(user.getStNum());
-            _score.setUser_name(user.getRelName());
             _score.setScore(uld.getCurrentScore().toString());
-            //_score.setTotal_score(uld.getTotalScore().toString());
-            double totlscore = fzhktService.getTaskTotal_score(uld);
-           // _score.setTotal_score(String.valueOf(totlscore));
-            _score.setTotal_score(String.format("%.2f",totlscore));
+            _score.setTotal_score(String.format("%.2f", uld.getTotalScore()));
 
             _score.setLearning_time(String.valueOf(uld.getStudyDuration() / 1000));
             _score.setStudy_type(uld.getStudyType());
@@ -159,13 +168,7 @@ public class FZhKTController {
                         continue;
                 } else
                     continue;
-//                if (study_type.equals("1") && uld.getTaskId().toString().equals(templateId)) {
-//                    exam = examMap.get(uld.getTaskId());
-//                } else if (study_type.equals("")) {
-//                    exam = examMap.get(uld.getTaskId());
-//                } else {
-//                    continue;
-//                }
+
                 _score.setTemplate_id(exam.getId().toString());
                 _score.setTemplate_name(exam.getExamName());
                 Questions questions = questionsMap.get(uld.getOperateId());
@@ -173,23 +176,23 @@ public class FZhKTController {
                 _score.setTask_name(questions.getQuestionName());
 
             }
-            if (uld.getScoreStatues() == 0 || uld.getScoreStatues() == 1) {
+            if (uld.getScoreStatues() == 2) {
+                _score.setStatus("");
+                onlineHashSet.add(uld.getUserId());
+            } else if (uld.getScoreStatues() == 0 || uld.getScoreStatues() == 1) {
                 _score.setStatus("操作中");
+                onlineHashSet.add(uld.getUserId());
             }
             if (userTokenMap.get(uld.getUserId()) == null) {
                 _score.setStatus("离线");
+                if (onlineHashSet.contains(uld.getUserId())) {
+                    onlineHashSet.remove(uld.getUserId());
+                }
             }
             //</editor-fold>
             datalist.add(_score);
         }
-        //<editor-fold desc="实时数据列表赋值：datalist">
-        //tasklist=tasklist.stream().collect(Collectors.groupingBy(taskModel::getTask_id,taskModel::getStudy_type));
-        tasklist = tasklist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getTask_id() + ";" + o.getStudy_type()))), ArrayList::new));
-
-        //</editor-fold>
-
-
-        //</editor-fold>
+        online_num = onlineHashSet.size();
         //<editor-fold desc="统计数据赋值">
         String teacher_name;    //教师名称
         teacher_name = "教师名称";
@@ -297,17 +300,21 @@ public class FZhKTController {
     public Result getTaskdetailscore(
             @RequestParam(value = "Id", required = true) int Id,
             @RequestParam(value = "taskName", required = true) String taskName,
+            @RequestParam(value = "userId", required = true) int userId,
+            @RequestParam(value = "taskId", required = true) int taskId,
+            @RequestParam(value = "studyType", required = true) int studyType,
             @RequestParam(value = "token", required = true) String strToken,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
 
-        UserLiveWithBLOBs ulwb = userliveservice.selectByPrimaryKey(Id);
-        List<ScoreDetailPOJO> scoreDetailPOJOSList = fzhktService.getScoreDetailList(ulwb);
+        //UserLiveWithBLOBs ulwb = userliveservice.selectByPrimaryKey(Id);
+        //List<ScoreDetailPOJO> scoreDetailPOJOSList = fzhktService.getScoreDetailList(ulwb);
+        List<ScoreDetailPOJO> scoreDetailPOJOSList1 = fzhktService.getScoreDetailList(userId, taskId, studyType);
         //double totlscore = fzhktService.getTaskTotal_score(ulwb);
         //<editor-fold desc="返回参数赋值">
         Map<String, Object> FZhKTMap = new HashMap<>();
-        FZhKTMap.put("dataList", scoreDetailPOJOSList);
+        FZhKTMap.put("dataList", scoreDetailPOJOSList1);
         //FZhKTMap.put("totlScore", totlscore);
         FZhKTMap.put("taskName", taskName);
         r.setData(FZhKTMap);
@@ -385,8 +392,8 @@ public class FZhKTController {
                         //scoreexcelitem.setLoginTime("2020:07:03 0:0:0");//登录时间
                         scoreexcelitem.setTaskName(tm.getTask_name());//任务单
                         realTimeEcxelPOJO.ClassNameMap.add(user.getClassName());
-                        if (userLoginLogMap != null ) {
-                            if(userLoginLogMap.containsKey(user.getId())) {
+                        if (userLoginLogMap != null) {
+                            if (userLoginLogMap.containsKey(user.getId())) {
                                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                 String formatStr = formatter.format(userLoginLogMap.get(user.getId()).getCreateTime());
                                 scoreexcelitem.setLoginTime(formatStr);
@@ -400,7 +407,7 @@ public class FZhKTController {
                 if (userLiveDataWithBLOBs != null) {
                     for (UserLiveDataWithBLOBs usld : userLiveDataWithBLOBs) {
                         RealTimeExcelItemPOJO rtitem = realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.get(usld.getUserId());
-                        String learntime=String.format("%.2f",Double.valueOf(rtitem.getLearnTime())+usld.getStudyDuration()/60000);
+                        String learntime = String.format("%.2f", Double.valueOf(rtitem.getLearnTime()) + usld.getStudyDuration() / 60000);
                         rtitem.setLearnTime(learntime);
                         double toutalscore = rtitem.getTotalScore().doubleValue() + usld.getCurrentScore();
                         rtitem.setTotalScore((double) Math.round(toutalscore * 100) / 100);

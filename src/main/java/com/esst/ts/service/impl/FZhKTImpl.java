@@ -1,6 +1,5 @@
 package com.esst.ts.service.impl;
 
-import com.esst.ts.constants.Constants;
 import com.esst.ts.dao.*;
 import com.esst.ts.model.*;
 import com.esst.ts.service.FZhKTService;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -170,9 +168,9 @@ public class FZhKTImpl implements FZhKTService {
     }
 
     @Override
-    public List<UserToken> getUserLoginByTeacherID(String userId) {
+    public List<UserToken> getUserLoginList() {
         //return userLoginLogMapper.getUserLoginByTeacherID(userId);
-        return userTokenDao.getUserLoginByTeacherID(userId);
+        return userTokenDao.getUserLoginList();
     }
 
     @Override
@@ -233,47 +231,6 @@ public class FZhKTImpl implements FZhKTService {
     @Override
     public List<UserLive> checkIsRecordByTeacherId(String beginDate, String endDate, int userID) {
         return userliveScore.checkIsRecordByTeacherId(beginDate, endDate, userID);
-    }
-
-    @Override
-    public List<ScoreDetailPOJO> getScoreDetailList(UserLiveWithBLOBs ulwb) {
-        List<ScoreDetailPOJO> scoreDetailPOJOArrayList = new ArrayList<>();
-        List<Operate> operateList = getOprateList();
-        List<Questions> questionsList = getQuestionListAll();
-        Map<Integer, Operate> operate_map = operateList.stream().collect(Collectors.toMap(Operate::getId, Function.identity(), (key1, key2) -> key2));
-        Map<Integer, Questions> questionsMap = questionsList.stream().collect(Collectors.toMap(Questions::getId, Function.identity(), (key1, key2) -> key2));
-
-
-        scoreDetailPOJOArrayList = FZhKTMapper.getDetailScoreList(ulwb);
-        ScoreDetailPOJO scordetail = new ScoreDetailPOJO();
-        scordetail.setOperateId(ulwb.getOperateId());
-        scordetail.setLearnTime(String.valueOf(ulwb.getStudyDuration() / 1000));
-        //DateFormat df=new SimpleDateFormat("yyyy-MM-dd 00:00:00");
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String studydate = sdf.format(new Date(ulwb.getStartTime()));
-        scordetail.setStudyDate(studydate);
-        scordetail.setScore(ulwb.getCurrentScore().toString());
-
-        scordetail.setScoreDetail(ulwb.getScoreDetail());
-        if (ulwb.getStudyType() == StudyType.TASK.ordinal()) {
-            for (ScoreDetailPOJO sd : scoreDetailPOJOArrayList) {
-                int keyi = sd.getOperateId();
-                Operate op = operate_map.get(sd.getOperateId());
-                sd.setTaskName(op.getOperateName());
-            }
-            scordetail.setTaskName(operate_map.get(scordetail.getOperateId()).getOperateName());
-        } else if (ulwb.getStudyType() == StudyType.EXAM.ordinal()) {
-            for (ScoreDetailPOJO sd : scoreDetailPOJOArrayList) {
-                sd.setTaskName(questionsMap.get(sd.getOperateId()).getQuestionName());
-                //sd.setOperateName("空空空");
-            }
-            scordetail.setTaskName(questionsMap.get(scordetail.getOperateId()).getQuestionName());
-            //scordetail.setOperateName("空空空");
-        }
-        if (ulwb.getScoreStatues() != Constants.ScoreStatues.END.ordinal()) {
-            scoreDetailPOJOArrayList.add(scordetail);
-        }
-        return scoreDetailPOJOArrayList;
     }
 
     @Override
@@ -430,6 +387,33 @@ public class FZhKTImpl implements FZhKTService {
     @Override
     public List<UserLoginLog> getUserLoginLogeacherID(int userId) {
         return userLoginLogMapper.getUserLoginLogByTeacherID(userId);
+    }
+
+    @Override
+    public List<UserLiveDataWithBLOBs> getRealTimeByTeacherId(String userId, String guestId, String taskId, String studyType) {
+        return userlivedata.getRealTimeByTeacherId(userId, guestId, taskId, studyType);
+    }
+
+    @Override
+    public List<ScoreDetailPOJO> getScoreDetailList(int userId, int taskId, int studyType) {
+        List<ScoreDetailPOJO> scoreDetailPOJOArrayList = new ArrayList<>();
+        List<Operate> operateList = getOprateList();
+        List<Questions> questionsList = getQuestionListAll();
+        Map<Integer, Operate> operate_map = operateList.stream().collect(Collectors.toMap(Operate::getId, Function.identity(), (key1, key2) -> key2));
+        Map<Integer, Questions> questionsMap = questionsList.stream().collect(Collectors.toMap(Questions::getId, Function.identity(), (key1, key2) -> key2));
+
+
+        scoreDetailPOJOArrayList = FZhKTMapper.getDetailScoreList(userId, taskId, studyType);
+        for (ScoreDetailPOJO sd : scoreDetailPOJOArrayList) {
+            int keyi = sd.getOperateId();
+            if (studyType == StudyType.TASK.ordinal()) {
+                Operate op = operate_map.get(sd.getOperateId());
+                sd.setTaskName(op.getOperateName());
+            } else if (studyType == StudyType.EXAM.ordinal()) {
+                sd.setTaskName(questionsMap.get(sd.getOperateId()).getQuestionName());
+            }
+        }
+        return scoreDetailPOJOArrayList;
     }
 
     @Override
