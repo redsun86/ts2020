@@ -413,11 +413,12 @@ public class StudyRecordController {
         List<Exam> examList=fzhktService.getExamListAll();
         Map<Integer,Exam> examMap=examList.stream().collect(Collectors.toMap(Exam::getId, Function.identity(), (key1, key2) -> key2));
         //根据学生姓名查询学生id
-        String strUserId="";
+        String strUserId="0,";
         List<User> userList=userService.getUserByTrueName(userTrueName);
         for (User user : userList) {
-            strUserId+=user.getId();
+            strUserId+=user.getId()+",";
         }
+        strUserId=strUserId.substring(0,strUserId.length()-1);
         List<UserScoreRecordPOJO> userScoreRecordPOJOTask=studyRecordService.getUserStudyRecordAndUserInfoforPersonTask(strUserId);
         for(UserScoreRecordPOJO newuserScoreRecordPOJOTask:userScoreRecordPOJOTask){
             if(newuserScoreRecordPOJOTask.getStudyType()==0){
