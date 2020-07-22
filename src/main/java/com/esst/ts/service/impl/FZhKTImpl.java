@@ -390,6 +390,10 @@ public class FZhKTImpl implements FZhKTService {
     }
 
     @Override
+    public List<UserLoginLog> getUserloginLogForDate(String sarttime,String endtime){
+        return userLoginLogMapper.getStudentrLoginLog(sarttime,endtime);
+    }
+    @Override
     public List<UserLiveDataWithBLOBs> getRealTimeByTeacherId(String userId, String taskId, String studyType) {
         return userlivedata.getRealTimeByTeacherId(userId,taskId, studyType);
     }

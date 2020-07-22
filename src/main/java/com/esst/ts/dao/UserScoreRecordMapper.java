@@ -100,11 +100,11 @@ public interface UserScoreRecordMapper {
     @Insert(" insert into user_score_record (user_id, task_id, \n" +
             "operate_id, score, total_score, \n" +
             "begin_time, end_time, study_type,\n" +
-            "mac_address, ip_address,train_id)\n" +
+            "mac_address, ip_address,train_id,teacher_id)\n" +
             "values (#{userId,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, \n" +
             "#{operateId,jdbcType=INTEGER}, #{score,jdbcType=DOUBLE}, #{totalScore,jdbcType=DOUBLE}, \n" +
             " #{beginTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, #{studyType,jdbcType=INTEGER},\n" +
-            " #{macAddress,jdbcType=VARCHAR}, #{ipAddress,jdbcType=VARCHAR},#{trainId,jdbcType=VARCHAR}\n" +
+            " #{macAddress,jdbcType=VARCHAR}, #{ipAddress,jdbcType=VARCHAR},#{trainId,jdbcType=VARCHAR},#{teacherId,jdbcType=INTEGER}\n" +
             " )" +
             "ON DUPLICATE KEY UPDATE score=#{score,jdbcType=DOUBLE},total_score=#{totalScore},end_time=#{endTime}")
     int updateUserScoreRecoredByTrainID(UserScoreRecord usrScore);

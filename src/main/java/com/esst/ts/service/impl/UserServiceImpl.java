@@ -49,6 +49,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User loginByStudents(String num) {
+        return userMapper.loginByStudents(num);
+    }
+
+    @Override
     public User getUserByNum(String num,Integer userId) {
         return userMapper.selectByNum(num,userId);
     }

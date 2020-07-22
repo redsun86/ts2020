@@ -54,6 +54,8 @@ public interface FZhKTService {
 
     List<UserLoginLog> getUserLoginLogeacherID(int userId);
 
+    List<UserLoginLog> getUserloginLogForDate(String sarttime,String endtime);
+
     List<UserLiveDataWithBLOBs> getRealTimeByTeacherId(String userId,String taskId,String studyType);
 
     List<ScoreDetailPOJO> getScoreDetailList(int teacher,int userId, int taskId, int studyType);

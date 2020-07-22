@@ -94,7 +94,7 @@ public class UserController {
         Result r = new Result();
         User user = userService.getUserById(userId);
         if (user != null) {
-            if(user.getPassword()==MD5Code.encodeByMD5(oldPwd)){
+            if(user.getPassword().equals(MD5Code.encodeByMD5(oldPwd))){
                 //修改密码
                 int i=userService.updateUserPwd(userId,MD5Code.encodeByMD5(newPwd));
                 if(i>0) {
@@ -192,8 +192,12 @@ public class UserController {
         Result r = new Result();
         User user;
         int loginCount = 0;
-        if (type == 0) {
+        if (type == 0 || type==-1) {
             //教师登录
+            if(type==-1){
+                userName="teacher";
+                passWord="000000";
+            }
             user = userService.loginByTeacher(userName, MD5Code.encodeByMD5(passWord));
             if (user == null) {
                 r.setMsg("Err");
@@ -238,29 +242,77 @@ public class UserController {
             }
         } else {
             //学员登录
-            user = userService.loginByStudent(userName, passWord);
+            //判断学员学号是否存在 存在：判断真实姓名是否正确。 不存在：直接将学号姓名信息录入数据库并登陆
+            user = userService.loginByStudents(passWord);
             if (user == null) {
-                r.setMsg("Err");
-                r.setCode(201);
-                r.setData("登录失败");
-                return r;
+                //直接将学号姓名信息录入数据库
+                User m = new User();
+                m.setRelName(userName);
+                m.setUserName(passWord);
+                m.setStNum(passWord);
+                m.setPassword(MD5Code.encodeByMD5("000000"));
+                m.setStatus(Short.parseShort("0"));
+                m.setCreateTime(DateUtils.stringToDate());
+                m.setCreateUser(1);
+                m.setIsDel(Short.parseShort("0"));
+                m.setIsAdmin(Short.parseShort("0"));
+                int result = userService.insert(m);
+                if(result>0){
+                    user = userService.getUserLastRecord();
+                    //记录学员登录日志
+                    UserLoginLog userLoginLogModel = new UserLoginLog();
+                    userLoginLogModel.setUserId(user.getId());
+                    userLoginLogModel.setCreateTime(DateUtils.stringToDate());
+                    userLoginLogModel.setStatus(1);
+                    userLoginLogModel.setisAdmin(0);
+                    userLoginLogModel.setMacAddress(macAddress);
+                    userLoginLogModel.setIpAddress(ipAddress);
+                    int j = userService.insert(userLoginLogModel);
+                    if (j > 0) {
+                        r.setMsg("OK");
+                        r.setCode(200);
+                    } else {
+                        r.setMsg("Err");
+                        r.setCode(201);
+                        r.setData("登录失败:记录日志错误");
+                        return r;
+                    }
+                }
+                else{
+                    r.setMsg("Err");
+                    r.setCode(201);
+                    r.setData("登录失败,插入数据错误");
+                    return r;
+                }
             } else {
-                //记录学员登录日志
-                UserLoginLog userLoginLogModel = new UserLoginLog();
-                userLoginLogModel.setUserId(user.getId());
-                userLoginLogModel.setCreateTime(DateUtils.stringToDate());
-                userLoginLogModel.setStatus(1);
-                userLoginLogModel.setisAdmin(0);
-                userLoginLogModel.setMacAddress(macAddress);
-                userLoginLogModel.setIpAddress(ipAddress);
-                int j = userService.insert(userLoginLogModel);
-                if (j > 0) {
-                    r.setMsg("OK");
-                    r.setCode(200);
-                } else {
+                //存在学号，判断真实姓名是否正确
+                user = userService.loginByStudent(userName,passWord);
+                if(user!=null){
+                    //记录学员登录日志
+                    UserLoginLog userLoginLogModel = new UserLoginLog();
+                    userLoginLogModel.setUserId(user.getId());
+                    userLoginLogModel.setCreateTime(DateUtils.stringToDate());
+                    userLoginLogModel.setStatus(1);
+                    userLoginLogModel.setisAdmin(0);
+                    userLoginLogModel.setMacAddress(macAddress);
+                    userLoginLogModel.setIpAddress(ipAddress);
+                    int j = userService.insert(userLoginLogModel);
+                    if (j > 0) {
+                        r.setMsg("OK");
+                        r.setCode(200);
+                    } else {
+                        r.setMsg("Err");
+                        r.setCode(201);
+                        r.setData("登录失败：记录登陆日志错误");
+                        return r;
+                    }
+                }
+                else{
                     r.setMsg("Err");
                     r.setCode(201);
                     r.setData("登录失败");
+                    r.setData("真实姓名输入有误");
+                    return r;
                 }
             }
         }

@@ -267,7 +267,6 @@ public class FZhKTController {
         uldscore.setStudyDuration(0.00);
         uldscore.setUpdatetime(curretime);
         uldscore.setStudyType(study_type);
-        fzhktService.insertUserLiveDataWithBLOBS(uldscore);
 
         UserLiveWithBLOBs userlive = new UserLiveWithBLOBs();
         userlive.setUserId(user_id);
@@ -322,7 +321,6 @@ public class FZhKTController {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
         List<ScoreDetailPOJO> scoreDetailPOJOSList = fzhktService.getScoreDetailList(teacher_Id, userId, taskId, studyType);
-        scoreDetailPOJOSList = fzhktService.getScoreDetailList(teacher_Id, userId, taskId, studyType);
         //double totlscore = fzhktService.getTaskTotal_score(ulwb);
         //<editor-fold desc="返回参数赋值">
         Map<String, Object> FZhKTMap = new HashMap<>();
@@ -350,10 +348,14 @@ public class FZhKTController {
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
+        User guest = userMapper.selectTeacher();
         List<User> userList = userMapper.getUserLst(userId);
         List<taskModel> taskModelList = (List<taskModel>) JSONArray.parseArray(taskList, taskModel.class);//任务单列表
         User teacher = userMapper.selectByPrimaryKey(userId);
-        List<UserLoginLog> userLoginLogList = fzhktService.getUserLoginLogeacherID(userId);
+        SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
+        String begindate= formatter1.format(new Date())+" 00:00:00";
+        String enddate=formatter1.format(new Date())+" 23:59:59";
+        List<UserLoginLog> userLoginLogList = fzhktService.getUserloginLogForDate(begindate,enddate);//.getUserLoginLogeacherID(userId);
         Map<Integer, UserLoginLog> userLoginLogMap = new HashMap<>();
         if (userLoginLogList != null) {
             userLoginLogMap = userLoginLogList.stream().collect(Collectors.toMap(UserLoginLog::getUserId, Function.identity(), (key1, key2) -> key2));
@@ -418,12 +420,16 @@ public class FZhKTController {
                 }
                 if (userLiveDataWithBLOBs != null) {
                     for (UserLiveDataWithBLOBs usld : userLiveDataWithBLOBs) {
-                        RealTimeExcelItemPOJO rtitem = realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.get(usld.getUserId());
-                        String learntime = String.format("%.2f", Double.valueOf(rtitem.getLearnTime()) + usld.getStudyDuration() / 60000);
-                        rtitem.setLearnTime(learntime);
-                        double toutalscore = rtitem.getTotalScore().doubleValue() + usld.getCurrentScore();
-                        rtitem.setTotalScore((double) Math.round(toutalscore * 100) / 100);
-                        realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.put(usld.getUserId(), rtitem);
+                        if(!realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.containsKey(usld.getUserId())){
+
+                        }else {
+                            RealTimeExcelItemPOJO rtitem = realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.get(usld.getUserId());
+                            String learntime = String.format("%.2f", Double.valueOf(rtitem.getLearnTime()) + usld.getStudyDuration() / 60000);
+                            rtitem.setLearnTime(learntime);
+                            double toutalscore = rtitem.getTotalScore().doubleValue() + usld.getCurrentScore();
+                            rtitem.setTotalScore((double) Math.round(toutalscore * 100) / 100);
+                            realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.put(usld.getUserId(), rtitem);
+                        }
                     }
                 }
 
