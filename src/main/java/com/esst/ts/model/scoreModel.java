@@ -1,4 +1,5 @@
 package com.esst.ts.model;
+
 public class scoreModel {
     private String id;//:"1",
     private String machine_id;//":"PC01",
@@ -15,6 +16,26 @@ public class scoreModel {
     private String detailesscore;//":"带排版的详细成绩",
     private String report_url;//":"www.esonline.com/report.pdf"
 
+    public String getTeacher_id() {
+        return teacher_id;
+    }
+
+    public void setTeacher_id(String teacher_id) {
+        this.teacher_id = teacher_id;
+    }
+
+    private String teacher_id;//老师ID
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+    private String user_id;
+
     public int getStudy_type() {
         return study_type;
     }
@@ -27,7 +48,8 @@ public class scoreModel {
         super();
     }
 
-    private  int study_type;
+    private int study_type;
+
     public String getId() {
         return id;
     }

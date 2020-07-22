@@ -34,6 +34,6 @@ public interface FZhKTMapper {
             "GROUP BY operate_id) bv ;")
     double getTotalcoreByUserLive(UserLiveWithBLOBs ul);
 
-    @Select("SELECT date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d %H:%i:%s') as studyDate,operate_id operateId,ROUND(study_duration/1000,2) learnTime,current_score score FROM `user_live_data` WHERE id in(SELECT MAX(u.id) id from user_live_data u WHERE user_id=#{userId} and task_id=#{taskId} AND study_type=#{studyType} GROUP BY train_id)")
-    List<ScoreDetailPOJO> getDetailScoreList(@Param("userId") int userId, @Param("taskId") int taskId,@Param("studyType") int studyType);
+    @Select("SELECT date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d %H:%i:%s') as studyDate,operate_id operateId,ROUND(study_duration/1000,2) learnTime,current_score score FROM `user_live_data` WHERE id in(SELECT MAX(u.id) id from user_live_data u WHERE teacher_id=#{teacherId} and user_id=#{userId} and task_id=#{taskId} AND study_type=#{studyType} GROUP BY train_id)")
+    List<ScoreDetailPOJO> getDetailScoreList(@Param("teacherId") int teacherId,@Param("userId") int userId, @Param("taskId") int taskId,@Param("studyType") int studyType);
 }

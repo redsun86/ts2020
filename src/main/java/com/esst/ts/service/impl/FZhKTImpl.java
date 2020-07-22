@@ -390,12 +390,12 @@ public class FZhKTImpl implements FZhKTService {
     }
 
     @Override
-    public List<UserLiveDataWithBLOBs> getRealTimeByTeacherId(String userId, String guestId, String taskId, String studyType) {
-        return userlivedata.getRealTimeByTeacherId(userId, guestId, taskId, studyType);
+    public List<UserLiveDataWithBLOBs> getRealTimeByTeacherId(String userId, String taskId, String studyType) {
+        return userlivedata.getRealTimeByTeacherId(userId,taskId, studyType);
     }
 
     @Override
-    public List<ScoreDetailPOJO> getScoreDetailList(int userId, int taskId, int studyType) {
+    public List<ScoreDetailPOJO> getScoreDetailList(int teacher,int userId, int taskId, int studyType) {
         List<ScoreDetailPOJO> scoreDetailPOJOArrayList = new ArrayList<>();
         List<Operate> operateList = getOprateList();
         List<Questions> questionsList = getQuestionListAll();
@@ -403,7 +403,7 @@ public class FZhKTImpl implements FZhKTService {
         Map<Integer, Questions> questionsMap = questionsList.stream().collect(Collectors.toMap(Questions::getId, Function.identity(), (key1, key2) -> key2));
 
 
-        scoreDetailPOJOArrayList = FZhKTMapper.getDetailScoreList(userId, taskId, studyType);
+        scoreDetailPOJOArrayList = FZhKTMapper.getDetailScoreList(teacher,userId, taskId, studyType);
         for (ScoreDetailPOJO sd : scoreDetailPOJOArrayList) {
             int keyi = sd.getOperateId();
             if (studyType == StudyType.TASK.ordinal()) {

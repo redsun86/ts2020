@@ -91,7 +91,6 @@ public class FZhKTController {
         Map<Integer, UserToken> userTokenMap = userLoginLogsList.stream().collect(Collectors.toMap(UserToken::getUserId, Function.identity(), (key1, key2) -> key2));
         Map<Integer, UserLiveData> userlivedate_map = new HashMap<Integer, UserLiveData>();
         Map<Integer, User> userMap = userList.stream().collect(Collectors.toMap(User::getId, Function.identity(), (key1, key2) -> key2));
-
         Map<Integer, Task> task_map = tasklistsql.stream().collect(Collectors.toMap(Task::getId, Function.identity(), (key1, key2) -> key2));
         Map<Integer, Operate> operate_map = operateList.stream().collect(Collectors.toMap(Operate::getId, Function.identity(), (key1, key2) -> key2));
         Map<Integer, UserLiveWithBLOBs> userLive_map = userLivelist.stream().collect(Collectors.toMap(UserLiveWithBLOBs::getId, Function.identity(), (key1, key2) -> key2));
@@ -102,28 +101,12 @@ public class FZhKTController {
         HashSet<Integer> onlineHashSet = new HashSet();//在线人数，有学习记录人数-离线人数
         List<UserLiveDataWithBLOBs> userLiveWithBLOBsList;
         if (guest.getId().toString().equals(userId)) {
-            userLiveWithBLOBsList = fzhktService.getRealTimeByTeacherId("", guest.getId().toString(), templateId, study_type);
+            userLiveWithBLOBsList = fzhktService.getRealTimeByTeacherId("", "", "");
         } else {
-            userLiveWithBLOBsList = fzhktService.getRealTimeByTeacherId(userId, guest.getId().toString(), templateId, study_type);
+            userLiveWithBLOBsList = fzhktService.getRealTimeByTeacherId(userId, "", "");
         }
         for (UserLiveDataWithBLOBs uld : userLiveWithBLOBsList) {
-            scoreModel _score = new scoreModel();
-            _score.setId(uld.getId().toString());
-            _score.setMachine_id(uld.getMacAddress());
-            User user = userMap.get(uld.getUserId());
-            if (userListTeacherMap.containsKey(user.getId())) {
-                _score.setUser_name(user.getRelName());
-            } else {
-                _score.setUser_name("*" + user.getRelName());
-            }
-            classnamemap.put(user.getClassName(), "");
-            _score.setStudent_num(user.getStNum());
-            _score.setScore(uld.getCurrentScore().toString());
-            _score.setTotal_score(String.format("%.2f", uld.getTotalScore()));
-
-            _score.setLearning_time(String.valueOf(uld.getStudyDuration() / 1000));
-            _score.setStudy_type(uld.getStudyType());
-            //<editor-fold desc="任务单类型">
+            //<editor-fold desc="初始化任务单列表">
             if (uld.getStudyType() == 0) {
                 Task t = new Task();
                 Task tlist = task_map.get(uld.getTaskId());
@@ -132,26 +115,7 @@ public class FZhKTController {
                 taskModel.setTask_name(tlist.getTaskName());
                 taskModel.setStudy_type(uld.getStudyType().toString());
                 tasklist.add(taskModel);
-                if (StringUtil.isEmpty(study_type) || StringUtil.isEmpty(templateId)) {
-                    t = task_map.get(uld.getTaskId());
-                } else if (study_type.equals("0")) {
-                    if (uld.getTaskId().toString().equals(templateId)) {
-                        t = task_map.get(uld.getTaskId());
-                    } else {
-                        continue;
-                    }
-                } else {
-                    continue;
-                }
-                _score.setTemplate_id(t.getId().toString());
-                _score.setTemplate_name(t.getTaskName());
-                Operate operate = operate_map.get(uld.getOperateId());
-                _score.setTask_id(operate.getId().toString());
-                _score.setTask_name(operate.getOperateName());
-
-            }
-            //</editor-fold>
-            else if (uld.getStudyType() == 1) {
+            } else if (uld.getStudyType() == 1) {
                 Exam exam = new Exam();
                 Exam examlist = examMap.get(uld.getTaskId());
                 taskModel taskModel = new taskModel();
@@ -159,39 +123,87 @@ public class FZhKTController {
                 taskModel.setTask_name(examlist.getExamName());
                 taskModel.setStudy_type(uld.getStudyType().toString());
                 tasklist.add(taskModel);
-                if (StringUtil.isEmpty(study_type) || StringUtil.isEmpty(templateId)) {
-                    exam = examMap.get(uld.getTaskId());
-                } else if (study_type.equals("1")) {
-                    if (uld.getTaskId().toString().equals(templateId)) {
-                        exam = examMap.get(uld.getTaskId());
-                    } else
-                        continue;
-                } else
-                    continue;
-
-                _score.setTemplate_id(exam.getId().toString());
-                _score.setTemplate_name(exam.getExamName());
-                Questions questions = questionsMap.get(uld.getOperateId());
-                _score.setTask_id(questions.getId().toString());
-                _score.setTask_name(questions.getQuestionName());
-
-            }
-            if (uld.getScoreStatues() == 2) {
-                _score.setStatus("");
-                onlineHashSet.add(uld.getUserId());
-            } else if (uld.getScoreStatues() == 0 || uld.getScoreStatues() == 1) {
-                _score.setStatus("操作中");
-                onlineHashSet.add(uld.getUserId());
-            }
-            if (userTokenMap.get(uld.getUserId()) == null) {
-                _score.setStatus("离线");
-                if (onlineHashSet.contains(uld.getUserId())) {
-                    onlineHashSet.remove(uld.getUserId());
-                }
             }
             //</editor-fold>
-            datalist.add(_score);
+            if (StringUtil.isEmpty(templateId) || uld.getTaskId().equals(Integer.valueOf(templateId)) && uld.getStudyType().equals(Integer.valueOf(study_type))) {
+                //<editor-fold desc="遍历成绩">
+                scoreModel _score = new scoreModel();
+                _score.setId(uld.getId().toString());
+                _score.setUser_id(String.valueOf(uld.getUserId()));
+                _score.setTeacher_id(uld.getTeacherId().toString());
+                _score.setMachine_id(uld.getMacAddress());
+                User user = userMap.get(uld.getUserId());
+                if (userListTeacherMap.containsKey(user.getId())) {
+                    _score.setUser_name(user.getRelName());
+                } else {
+                    _score.setUser_name("*" + user.getRelName());
+                }
+                classnamemap.put(user.getClassName(), "");
+                _score.setStudent_num(user.getStNum());
+                _score.setScore(uld.getCurrentScore().toString());
+                _score.setTotal_score(String.format("%.2f", uld.getTotalScore()));
+
+                _score.setLearning_time(String.valueOf(uld.getStudyDuration() / 1000));
+                _score.setStudy_type(uld.getStudyType());
+                //<editor-fold desc="任务单类型">
+                if (uld.getStudyType() == 0) {
+                    Task t = new Task();
+                    if (StringUtil.isEmpty(study_type) || StringUtil.isEmpty(templateId)) {
+                        t = task_map.get(uld.getTaskId());
+                    } else if (study_type.equals("0")) {
+                        if (uld.getTaskId().toString().equals(templateId)) {
+                            t = task_map.get(uld.getTaskId());
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                    _score.setTemplate_id(t.getId().toString());
+                    _score.setTemplate_name(t.getTaskName());
+                    Operate operate = operate_map.get(uld.getOperateId());
+                    _score.setTask_id(operate.getId().toString());
+                    _score.setTask_name(operate.getOperateName());
+
+                }
+                //</editor-fold>
+                else if (uld.getStudyType() == 1) {
+                    Exam exam = new Exam();
+                    if (StringUtil.isEmpty(study_type) || StringUtil.isEmpty(templateId)) {
+                        exam = examMap.get(uld.getTaskId());
+                    } else if (study_type.equals("1")) {
+                        if (uld.getTaskId().toString().equals(templateId)) {
+                            exam = examMap.get(uld.getTaskId());
+                        } else
+                            continue;
+                    } else
+                        continue;
+
+                    _score.setTemplate_id(exam.getId().toString());
+                    _score.setTemplate_name(exam.getExamName());
+                    Questions questions = questionsMap.get(uld.getOperateId());
+                    _score.setTask_id(questions.getId().toString());
+                    _score.setTask_name(questions.getQuestionName());
+
+                }
+                if (uld.getScoreStatues() == 2) {
+                    _score.setStatus("已提交");
+                    onlineHashSet.add(uld.getUserId());
+                } else if (uld.getScoreStatues() == 0 || uld.getScoreStatues() == 1) {
+                    _score.setStatus("操作中");
+                    onlineHashSet.add(uld.getUserId());
+                }
+                if (userTokenMap.get(uld.getUserId()) == null) {
+                    _score.setStatus("离线");
+                    if (onlineHashSet.contains(uld.getUserId())) {
+                        onlineHashSet.remove(uld.getUserId());
+                    }
+                }
+                //</editor-fold>
+                datalist.add(_score);
+            }
         }
+        tasklist = tasklist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getTask_id() + ";" + o.getStudy_type()))), ArrayList::new));
         online_num = onlineHashSet.size();
         //<editor-fold desc="统计数据赋值">
         String teacher_name;    //教师名称
@@ -232,6 +244,7 @@ public class FZhKTController {
                               @RequestParam(value = "client_status") int client_status,
                               @RequestParam(value = "study_type") int study_type,
                               @RequestParam(value = "train_id") String train_id,
+                              @RequestParam(value = "teacher_id") int teacher_id,
                               @RequestParam(value = "token", required = true) String token,
                               HttpServletRequest request) {
         RequestContext requestcontext = new RequestContext(request);
@@ -254,7 +267,7 @@ public class FZhKTController {
         uldscore.setStudyDuration(0.00);
         uldscore.setUpdatetime(curretime);
         uldscore.setStudyType(study_type);
-        //fzhktService.insertUserLiveDataWithBLOBS(uldscore);
+        fzhktService.insertUserLiveDataWithBLOBS(uldscore);
 
         UserLiveWithBLOBs userlive = new UserLiveWithBLOBs();
         userlive.setUserId(user_id);
@@ -274,6 +287,7 @@ public class FZhKTController {
         userlive = fzhktService.updateUserLive(userlive);
         uldscore.setStudyDuration(userlive.getStudyDuration());
         uldscore.setStartTime(userlive.getStartTime());
+        uldscore.setTeacherId(teacher_id);
         fzhktService.insertUserLiveDataWithBLOBS(uldscore);
 
 
@@ -289,7 +303,7 @@ public class FZhKTController {
         usrScore.setIpAddress(id_adress);
         usrScore.setTrainId(train_id);
         usrScore.setStudyType(study_type);
-
+        usrScore.setTeacherId(teacher_id);
         fzhktService.updateUserScoreRecoredByTrainID(usrScore);
         r.setMsg("更新成功");
         return r;
@@ -298,23 +312,21 @@ public class FZhKTController {
     @ResponseBody
     @RequestMapping(value = "/getTaskdetailscore", method = RequestMethod.GET)
     public Result getTaskdetailscore(
-            @RequestParam(value = "Id", required = true) int Id,
-            @RequestParam(value = "taskName", required = true) String taskName,
+            @RequestParam(value = "teacherId", required = true) int teacher_Id,
             @RequestParam(value = "userId", required = true) int userId,
             @RequestParam(value = "taskId", required = true) int taskId,
             @RequestParam(value = "studyType", required = true) int studyType,
+            @RequestParam(value = "taskName", required = true) String taskName,
             @RequestParam(value = "token", required = true) String strToken,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
-
-        //UserLiveWithBLOBs ulwb = userliveservice.selectByPrimaryKey(Id);
-        //List<ScoreDetailPOJO> scoreDetailPOJOSList = fzhktService.getScoreDetailList(ulwb);
-        List<ScoreDetailPOJO> scoreDetailPOJOSList1 = fzhktService.getScoreDetailList(userId, taskId, studyType);
+        List<ScoreDetailPOJO> scoreDetailPOJOSList = fzhktService.getScoreDetailList(teacher_Id, userId, taskId, studyType);
+        scoreDetailPOJOSList = fzhktService.getScoreDetailList(teacher_Id, userId, taskId, studyType);
         //double totlscore = fzhktService.getTaskTotal_score(ulwb);
         //<editor-fold desc="返回参数赋值">
         Map<String, Object> FZhKTMap = new HashMap<>();
-        FZhKTMap.put("dataList", scoreDetailPOJOSList1);
+        FZhKTMap.put("dataList", scoreDetailPOJOSList);
         //FZhKTMap.put("totlScore", totlscore);
         FZhKTMap.put("taskName", taskName);
         r.setData(FZhKTMap);
