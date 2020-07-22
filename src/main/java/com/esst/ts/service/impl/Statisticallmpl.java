@@ -19,8 +19,6 @@ public class Statisticallmpl implements StatisticalService {
     @Resource
     com.esst.ts.dao.StatisticalMapper StatisticalMapper;
     @Resource
-    com.esst.ts.dao.StatisticalHistoryMapper StatisticalHistoryMapper;
-    @Resource
     com.esst.ts.dao.StatisticalBaseDataMapper StatisticalBaseDataMapper;
 
 
@@ -31,88 +29,64 @@ public class Statisticallmpl implements StatisticalService {
 
     @Override
     public List<StatisticalChartDataPOJO> GetListWithDaBiaoLv(StatisticalPOJO mod) {
-        if (mod.getIsHistory() == 0) {
-            if (mod.getStudyType() == 1)
-                return StatisticalMapper.GetListWithDaBiaoLv1(mod);
-            else
-                return StatisticalMapper.GetListWithDaBiaoLv0(mod);
-        } else {
-            if (mod.getStudyType() == 1)
-                return StatisticalHistoryMapper.GetListWithDaBiaoLv1(mod);
-            else
-                return StatisticalHistoryMapper.GetListWithDaBiaoLv0(mod);
-        }
+        if (mod.getIsHistory() == 0)
+            return StatisticalMapper.GetListWithDaBiaoLv1(mod);
+        else
+            return StatisticalMapper.GetListWithDaBiaoLv0(mod);
+
     }
 
     @Override
     public List<StatisticalChartDataPOJO> GetListWithBaoGao(StatisticalPOJO mod) {
-        if (mod.getIsHistory() == 0) {
-            if (mod.getStudyType() == 1)
-                return StatisticalMapper.GetListWithBaoGao1(mod);
-            else
-                return StatisticalMapper.GetListWithBaoGao0(mod);
-        } else {
-            return StatisticalHistoryMapper.GetListWithBaoGao(mod);
-        }
+        if (mod.getIsHistory() == 0)
+            return StatisticalMapper.GetListWithBaoGao1(mod);
+        else
+            return StatisticalMapper.GetListWithBaoGao0(mod);
+
     }
 
     @Override
     public List<StatisticalChartDataPOJO> GetListWithShiChang(StatisticalPOJO mod) {
-        if (mod.getIsHistory() == 0) {
-            if (mod.getStudyType() == 1)
+        if (mod.getIsHistory() == 0)
             return StatisticalMapper.GetListWithShiChang1(mod);
-            else
-                return StatisticalMapper.GetListWithShiChang0(mod);
-        } else {
-            return StatisticalHistoryMapper.GetListWithShiChang(mod);
-        }
+        else
+            return StatisticalMapper.GetListWithShiChang0(mod);
+
     }
 
     @Override
     public List<StatisticalChartDataPOJO> GetListWithChengJi(StatisticalPOJO mod) {
-        if (mod.getIsHistory() == 0) {
-            return StatisticalMapper.GetListWithChengJi(mod);
-        } else {
-            return StatisticalHistoryMapper.GetListWithChengJi(mod);
-        }
+        if (mod.getIsHistory() == 0)
+            return StatisticalMapper.GetListWithChengJi1(mod);
+        else
+            return StatisticalMapper.GetListWithChengJi0(mod);
+
     }
 
     @Override
     public List<StatisticalChartDataPOJO> GetListWithPingJun(StatisticalPOJO mod) {
-        if (mod.getIsHistory() == 0) {
-            if (mod.getStudyType() == 1)
-                return StatisticalMapper.GetListWithPingJun1(mod);
-            else
-                return StatisticalMapper.GetListWithPingJun0(mod);
-        } else {
-            if (mod.getStudyType() == 1)
-                return StatisticalHistoryMapper.GetListWithPingJun1(mod);
-            else
-                return StatisticalHistoryMapper.GetListWithPingJun0(mod);
-        }
+        if (mod.getIsHistory() == 0)
+            return StatisticalMapper.GetListWithPingJun1(mod);
+        else
+            return StatisticalMapper.GetListWithPingJun0(mod);
+
     }
 
     @Override
     public StatisticalChartDataPOJO GetDefaultModel(StatisticalPOJO mod) {
         if (mod.getIsHistory() == 0) {
-            return StatisticalMapper.GetDefaultModel(mod);
+            return StatisticalMapper.GetDefaultModel1(mod);
         } else {
-            return StatisticalHistoryMapper.GetDefaultModel(mod);
+            return StatisticalMapper.GetDefaultModel0(mod);
         }
     }
 
     @Override
     public StatisticalChartAvgPOJO GetAvgModel(StatisticalPOJO mod) {
-        if (mod.getIsHistory() == 0) {
-            if (mod.getStudyType() == 1)
-                return StatisticalMapper.GetAvgModel1(mod);
-            else
-                return StatisticalMapper.GetAvgModel0(mod);
-        } else {
-            if (mod.getStudyType() == 1)
-                return StatisticalHistoryMapper.GetAvgModel1(mod);
-            else
-                return StatisticalHistoryMapper.GetAvgModel0(mod);
-        }
+        if (mod.getIsHistory() == 0)
+            return StatisticalMapper.GetAvgModel1(mod);
+        else
+            return StatisticalMapper.GetAvgModel0(mod);
+
     }
 }

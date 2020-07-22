@@ -356,80 +356,244 @@
         ) gbv group by gbv.xAxis_id
         ) scbv on sc.xAxis_id=scbv.xAxis_id
     </select>
-    <select id="GetListWithChengJi" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
-        select cj.xAxis,ifnull(cjbv.yAxis,0) yAxis from(
+    <select id="GetListWithChengJi0" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
+        select cj.xAxis,ifnull(scbv.yAxis,0) yAxis from(
         select 1 xAxis_id,'小于50' xAxis
         union all select 2 xAxis_id,'50~100' xAxis
         union all select 3 xAxis_id,'100~150' xAxis
         union all select 4 xAxis_id,'150~200' xAxis
         union all select 5 xAxis_id,'200' xAxis
         ) cj left join (
-        select studybv.xAxis_id,count(0) yAxis from (
-        select bv.user_id,bv.task_id,bv.study_type,CAST(SUM(ifnull(current_score,0)) AS DECIMAL(18,2)) current_score,(case
-        when 50>=SUM(ifnull(current_score,0)) then 1
-        when SUM(ifnull(current_score,0)) > 50 and 100 >= SUM(ifnull(current_score,0)) then 2
-        when SUM(ifnull(current_score,0)) > 100 and 150 >= SUM(ifnull(current_score,0)) then 3
-        when SUM(ifnull(current_score,0)) > 150 and 200 >= SUM(ifnull(current_score,0)) then 4
+        select gbv.xAxis_id,count(distinct user_id) yAxis from(
+        select bv.user_id,bv.task_id,sum(bv.prop_scroe) prop_scroe,(case
+        when 50>=ifnull(sum(bv.prop_scroe),0) then 1
+        when ifnull(sum(bv.prop_scroe),0)>50 and 100 >= ifnull(sum(bv.prop_scroe),0) then 2
+        when ifnull(sum(bv.prop_scroe),0)>100 and 150 >= ifnull(sum(bv.prop_scroe),0) then 3
+        when ifnull(sum(bv.prop_scroe),0)>150 and 200 >= ifnull(sum(bv.prop_scroe),0) then 4
         else 5 end) xAxis_id from (
-        select uld.user_id,uld.task_id,uld.operate_id,uld.study_type,max(uld.current_score) current_score from (
-        select max(id) id	from user_live_data
-        where study_type=#{studyType,jdbcType=INTEGER} and task_id=#{exameId,jdbcType=INTEGER}
-        and date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
+
+
+        select date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
+        ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
+        ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
+        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
+        op.o_count*100 end) total_score
+        -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
+        from (
+        select max(id) id from user_score_record
+        where id>0
+        <if test="isAdmin != null  and isAdmin!=-1">
+            and teacher_id=#{userId,jdbcType=INTEGER}
+        </if>
+        and study_type=#{studyType,jdbcType=INTEGER} and task_id=#{exameId,jdbcType=INTEGER}
+        and
+        date_format(FROM_UNIXTIME(begin_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
+        and date_format(#{stopTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(begin_time/1000),'%Y.%m.%d')
+        group by
+        teacher_id,user_id,task_id,operate_id,study_type,train_id,date_format(FROM_UNIXTIME(begin_time/1000),'%Y.%m.%d')
+        ) studybv left join (select id,teacher_id,user_id,task_id,operate_id,report,study_type,score
+        current_score,begin_time,end_time-begin_time study_duration from user_score_record) uld on uld.id=studybv.id
+        left join (
+        select e.id exam_id,e.exam_name,q.id
+        question_id,q.question_name,qprop.q_count,qprop.sum_prop,q.proportion/qprop.sum_prop prop from exam e left join
+        questions q on e.id=q.exame_id
+        left join (
+        select e.id exam_id,e.exam_name,count(q.id) q_count,SUM(q.proportion) sum_prop from exam e left join questions q
+        on e.id=q.exame_id
+        where e.is_deleted=0 and q.is_deleted=0
+        group by e.id,e.exam_name
+        ) qprop on e.id=qprop.exam_id
+        ) qp on qp.exam_id=uld.task_id and qp.question_id=uld.operate_id and uld.study_type=1
+        left join (
+        select t.id task_id,t.task_name,o.id operate_id,o.operate_name,oprop.o_count
+        from task t left join task_oper_relation tor on tor.task_id=t.id left join operate o on tor.operate_id=o.id
+        left join (
+        select tor.task_id,count(tor.operate_id) o_count from task_oper_relation tor left join operate o on
+        tor.operate_id=o.id
+        where o.is_deleted=0
+        group by tor.task_id
+        ) oprop on t.id=oprop.task_id
+        ) op on op.task_id=uld.task_id and op.operate_id=uld.operate_id and uld.study_type=0
+        group by
+        uld.teacher_id,uld.user_id,uld.task_id,uld.report,uld.operate_id,uld.study_type
+        ,date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d'),qp.q_count,qp.prop,op.o_count
+
+
+        ) bv group by bv.user_id,bv.task_id
+        ) gbv group by gbv.xAxis_id
+        ) scbv on cj.xAxis_id=scbv.xAxis_id
+    </select>
+    <select id="GetListWithChengJi1" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
+        select cj.xAxis,ifnull(scbv.yAxis,0) yAxis from(
+        select 1 xAxis_id,'小于50' xAxis
+        union all select 2 xAxis_id,'50~100' xAxis
+        union all select 3 xAxis_id,'100~150' xAxis
+        union all select 4 xAxis_id,'150~200' xAxis
+        union all select 5 xAxis_id,'200' xAxis
+        ) cj left join (
+        select gbv.xAxis_id,count(distinct user_id) yAxis from(
+        select bv.user_id,bv.task_id,sum(bv.prop_scroe) prop_scroe,(case
+        when 50>=ifnull(sum(bv.prop_scroe),0) then 1
+        when ifnull(sum(bv.prop_scroe),0)>50 and 100 >= ifnull(sum(bv.prop_scroe),0) then 2
+        when ifnull(sum(bv.prop_scroe),0)>100 and 150 >= ifnull(sum(bv.prop_scroe),0) then 3
+        when ifnull(sum(bv.prop_scroe),0)>150 and 200 >= ifnull(sum(bv.prop_scroe),0) then 4
+        else 5 end) xAxis_id from (
+
+
+        select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
+        ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
+        ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
+        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
+        op.o_count*100 end) total_score
+        -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
+        from (
+        select max(id) id from user_live_data
+        where id>0
+        <if test="isAdmin != null  and isAdmin!=-1">
+            and teacher_id=#{userId,jdbcType=INTEGER}
+        </if>
+        and study_type=#{studyType,jdbcType=INTEGER} and task_id=#{exameId,jdbcType=INTEGER}
+        and
+        date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
         and date_format(#{stopTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')
-        group by user_id,task_id,operate_id,study_type,train_id
+        group by
+        teacher_id,user_id,task_id,operate_id,study_type,train_id,date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')
         ) studybv left join user_live_data uld on uld.id=studybv.id
-        group by uld.user_id,uld.task_id,uld.operate_id,uld.study_type
-        ) bv group by bv.user_id,bv.task_id,bv.study_type
-        ) studybv group by studybv.xAxis_id
-        ) cjbv on cj.xAxis_id=cjbv.xAxis_id
+        left join (
+        select e.id exam_id,e.exam_name,q.id
+        question_id,q.question_name,qprop.q_count,qprop.sum_prop,q.proportion/qprop.sum_prop prop from exam e left join
+        questions q on e.id=q.exame_id
+        left join (
+        select e.id exam_id,e.exam_name,count(q.id) q_count,SUM(q.proportion) sum_prop from exam e left join questions q
+        on e.id=q.exame_id
+        where e.is_deleted=0 and q.is_deleted=0
+        group by e.id,e.exam_name
+        ) qprop on e.id=qprop.exam_id
+        ) qp on qp.exam_id=uld.task_id and qp.question_id=uld.operate_id and uld.study_type=1
+        left join (
+        select t.id task_id,t.task_name,o.id operate_id,o.operate_name,oprop.o_count
+        from task t left join task_oper_relation tor on tor.task_id=t.id left join operate o on tor.operate_id=o.id
+        left join (
+        select tor.task_id,count(tor.operate_id) o_count from task_oper_relation tor left join operate o on
+        tor.operate_id=o.id
+        where o.is_deleted=0
+        group by tor.task_id
+        ) oprop on t.id=oprop.task_id
+        ) op on op.task_id=uld.task_id and op.operate_id=uld.operate_id and uld.study_type=0
+        group by
+        uld.teacher_id,uld.user_id,uld.task_id,uld.report,uld.operate_id,uld.study_type
+        ,date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d'),qp.q_count,qp.prop,op.o_count
+
+
+        ) bv group by bv.user_id,bv.task_id
+        ) gbv group by gbv.xAxis_id
+        ) scbv on cj.xAxis_id=scbv.xAxis_id
     </select>
     <select id="GetListWithPingJun0" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
-        select op.operate_name xAxis,ifnull(studybv.current_score,0.00) yAxis from (
-        select tor.task_id,o.id operate_id,o.operate_name from task_oper_relation tor left join operate o on tor.operate_id=o.id
-        where tor.task_id=#{exameId,jdbcType=INTEGER} and o.is_deleted=0
-        ) op left join (
-        select bv.task_id,bv.operate_id,bv.study_type,CAST(AVG(ifnull(current_score,0.00)) AS DECIMAL(18,2)) current_score from (
-        select uld.user_id,uld.task_id,uld.operate_id,uld.study_type,max(uld.current_score) current_score from (
-        select max(id) id	from user_live_data
-        where study_type=#{studyType,jdbcType=INTEGER} and task_id=#{exameId,jdbcType=INTEGER}
-        and date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
-        and date_format(#{stopTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')
-        group by user_id,task_id,operate_id,study_type,train_id
-        ) studybv left join user_live_data uld on uld.id=studybv.id
-        group by uld.user_id,uld.task_id,uld.operate_id,uld.study_type
-        ) bv group by bv.task_id,bv.operate_id,bv.study_type
-        ) studybv on op.task_id=studybv.task_id and op.operate_id=studybv.operate_id
+        select bv.operate_name xAxis,cast(AVG(bv.prop_scroe) as DECIMAL(10,2)) yAxis
+        from (
+
+        select date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
+        ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
+        ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
+        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
+        op.o_count*100 end) total_score
+        -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
+        from (
+        select max(id) id from user_score_record
+        where id>0
+        <if test="isAdmin != null  and isAdmin!=-1">
+            and teacher_id=#{userId,jdbcType=INTEGER}
+        </if>
+        and study_type=#{studyType,jdbcType=INTEGER} and task_id=#{exameId,jdbcType=INTEGER}
+        and
+        date_format(FROM_UNIXTIME(begin_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
+        and date_format(#{stopTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(begin_time/1000),'%Y.%m.%d')
+        group by
+        teacher_id,user_id,task_id,operate_id,study_type,train_id,date_format(FROM_UNIXTIME(begin_time/1000),'%Y.%m.%d')
+        ) studybv left join (select id,teacher_id,user_id,task_id,operate_id,report,study_type,score
+        current_score,begin_time,end_time-begin_time study_duration from user_score_record) uld on uld.id=studybv.id
+        left join (
+        select e.id exam_id,e.exam_name,q.id
+        question_id,q.question_name,qprop.q_count,qprop.sum_prop,q.proportion/qprop.sum_prop prop from exam e left join
+        questions q on e.id=q.exame_id
+        left join (
+        select e.id exam_id,e.exam_name,count(q.id) q_count,SUM(q.proportion) sum_prop from exam e left join questions q
+        on e.id=q.exame_id
+        where e.is_deleted=0 and q.is_deleted=0
+        group by e.id,e.exam_name
+        ) qprop on e.id=qprop.exam_id
+        ) qp on qp.exam_id=uld.task_id and qp.question_id=uld.operate_id and uld.study_type=1
+        left join (
+        select t.id task_id,t.task_name,o.id operate_id,o.operate_name,oprop.o_count
+        from task t left join task_oper_relation tor on tor.task_id=t.id left join operate o on tor.operate_id=o.id
+        left join (
+        select tor.task_id,count(tor.operate_id) o_count from task_oper_relation tor left join operate o on
+        tor.operate_id=o.id
+        where o.is_deleted=0
+        group by tor.task_id
+        ) oprop on t.id=oprop.task_id
+        ) op on op.task_id=uld.task_id and op.operate_id=uld.operate_id and uld.study_type=0
+        group by
+        uld.teacher_id,uld.user_id,uld.task_id,uld.report,uld.operate_id,uld.study_type
+        ,date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d'),qp.q_count,qp.prop,op.o_count
+
+        ) bv group by bv.task_id,bv.operate_id
     </select>
     <select id="GetListWithPingJun1" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
-        select op.operate_name xAxis,ifnull(studybv.current_score,0.00) yAxis from (
-        select o.exame_id task_id,o.id operate_id,o.question_name operate_name from questions o
-        where o.exame_id=#{exameId,jdbcType=INTEGER} and o.is_deleted=0
-        ) op left join (
-        select bv.task_id,bv.operate_id,bv.study_type,CAST(AVG(ifnull(current_score,0.00)) AS DECIMAL(18,2)) current_score from (
-        select uld.user_id,uld.task_id,uld.operate_id,uld.study_type,max(uld.current_score) current_score from (
-        select max(id) id	from user_live_data
-        where study_type=#{studyType,jdbcType=INTEGER} and task_id=#{exameId,jdbcType=INTEGER}
-        and date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
-        and date_format(#{stopTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')
-        group by user_id,task_id,operate_id,study_type,train_id
-        ) studybv left join user_live_data uld on uld.id=studybv.id
-        group by uld.user_id,uld.task_id,uld.operate_id,uld.study_type
-        ) bv group by bv.task_id,bv.operate_id,bv.study_type
-        ) studybv on op.task_id=studybv.task_id and op.operate_id=studybv.operate_id
-    </select>
-    <select id="GetDefaultModel" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
-        select uld.teacher_id,uld.task_id xAxis,uld.study_type yAxis,count(distinct uld.user_id)
-        userCount,date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') study_date from user_live_data uld
-        where
-        date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
-        and
-        date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d')
+        select bv.task_id,bv.operate_id,bv.operate_name xAxis,cast(AVG(bv.prop_scroe) as DECIMAL(10,2)) yAxis
+        from (
+
+        select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
+        ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
+        ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
+        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
+        op.o_count*100 end) total_score
+        -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
+        from (
+        select max(id) id from user_live_data
+        where id>0
         <if test="isAdmin != null  and isAdmin!=-1">
-            and uld.teacher_id=#{userId,jdbcType=INTEGER}
+            and teacher_id=#{userId,jdbcType=INTEGER}
         </if>
-        GROUP BY uld.teacher_id,uld.task_id,uld.study_type,date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d')
-        ORDER BY userCount DESC,uld.study_type,uld.teacher_id,uld.task_id
-        limit 0,1
+        and study_type=#{studyType,jdbcType=INTEGER} and task_id=#{exameId,jdbcType=INTEGER}
+        and
+        date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
+        and date_format(#{stopTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')
+        group by
+        teacher_id,user_id,task_id,operate_id,study_type,train_id,date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')
+        ) studybv left join user_live_data uld on uld.id=studybv.id
+        left join (
+        select e.id exam_id,e.exam_name,q.id
+        question_id,q.question_name,qprop.q_count,qprop.sum_prop,q.proportion/qprop.sum_prop prop from exam e left join
+        questions q on e.id=q.exame_id
+        left join (
+        select e.id exam_id,e.exam_name,count(q.id) q_count,SUM(q.proportion) sum_prop from exam e left join questions q
+        on e.id=q.exame_id
+        where e.is_deleted=0 and q.is_deleted=0
+        group by e.id,e.exam_name
+        ) qprop on e.id=qprop.exam_id
+        ) qp on qp.exam_id=uld.task_id and qp.question_id=uld.operate_id and uld.study_type=1
+        left join (
+        select t.id task_id,t.task_name,o.id operate_id,o.operate_name,oprop.o_count
+        from task t left join task_oper_relation tor on tor.task_id=t.id left join operate o on tor.operate_id=o.id
+        left join (
+        select tor.task_id,count(tor.operate_id) o_count from task_oper_relation tor left join operate o on
+        tor.operate_id=o.id
+        where o.is_deleted=0
+        group by tor.task_id
+        ) oprop on t.id=oprop.task_id
+        ) op on op.task_id=uld.task_id and op.operate_id=uld.operate_id and uld.study_type=0
+        group by
+        uld.teacher_id,uld.user_id,uld.task_id,uld.report,uld.operate_id,uld.study_type
+        ,date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d'),qp.q_count,qp.prop,op.o_count
+
+
+        ) bv group by bv.task_id,bv.operate_id
     </select>
     <select id="GetAvgModel0" resultMap="BaseResultAvgMap" parameterType="com.esst.ts.model.StatisticalPOJO">
         select count(distinct gbv.user_id) user_count,cast(avg(study_duration)/60/1000 as DECIMAL(10,0))
@@ -541,5 +705,33 @@
 
         ) bv group by bv.user_id,bv.total_score
         ) gbv
+    </select>
+    <select id="GetDefaultModel0" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
+        select uld.teacher_id,uld.task_id xAxis,uld.study_type yAxis,count(distinct uld.user_id)
+        userCount,date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') study_date from user_score_record uld
+        where
+        date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
+        and
+        date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d')
+        <if test="isAdmin != null  and isAdmin!=-1">
+            and uld.teacher_id=#{userId,jdbcType=INTEGER}
+        </if>
+        GROUP BY uld.teacher_id,uld.task_id,uld.study_type,date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d')
+        ORDER BY userCount DESC,uld.study_type,uld.teacher_id,uld.task_id
+        limit 0,1
+    </select>
+    <select id="GetDefaultModel1" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
+        select uld.teacher_id,uld.task_id xAxis,uld.study_type yAxis,count(distinct uld.user_id)
+        userCount,date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') study_date from user_live_data uld
+        where
+        date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
+        and
+        date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d')
+        <if test="isAdmin != null  and isAdmin!=-1">
+            and uld.teacher_id=#{userId,jdbcType=INTEGER}
+        </if>
+        GROUP BY uld.teacher_id,uld.task_id,uld.study_type,date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d')
+        ORDER BY userCount DESC,uld.study_type,uld.teacher_id,uld.task_id
+        limit 0,1
     </select>
 </mapper>

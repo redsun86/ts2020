@@ -1170,7 +1170,9 @@ public class StrategyController {
 
         //<editor-fold desc="学习时长分布">
         modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("平均时长：" + avgMod.getAvgDuration() + "min");
+        if(null!=avgMod) {
+            modMap.setDescribe("平均时长：" + avgMod.getAvgDuration() + "min");
+        }
         modMap.setNotes("学习时长分布");
 
         dstaLst = StatisticalService.GetListWithShiChang(reqMod);
@@ -1180,14 +1182,11 @@ public class StrategyController {
         responseDataMap.put("learningTime", modMap);
         //</editor-fold>
 
-//        ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-
-
-
-
         //<editor-fold desc="任务单/试卷成绩分布">
         modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("满分：" + avgMod.getSumScore() + "分；平均分：" + avgMod.getAvgScore() + "分");
+        if(null!=avgMod) {
+            modMap.setDescribe("满分：" + avgMod.getSumScore() + "分；平均分：" + avgMod.getAvgScore() + "分");
+        }
         modMap.setNotes("任务单/试卷成绩分布");
 
         dstaLst = StatisticalService.GetListWithChengJi(reqMod);
@@ -1207,9 +1206,10 @@ public class StrategyController {
 
         responseDataMap.put("averageScore", modMap);
         //</editor-fold>
+
         //<editor-fold desc="附件参数赋值">
-        responseDataMap.put("loginUserCount", "2");
-        responseDataMap.put("onlineUserCount", "7");
+        responseDataMap.put("loginUserCount", "0");
+        responseDataMap.put("onlineUserCount", "0");
         if (currentExameId > 0) {
             responseDataMap.put("currentExameId", currentExameId);
             responseDataMap.put("currentStudyType", currentStudyType);

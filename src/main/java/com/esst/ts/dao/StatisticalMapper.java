@@ -7,61 +7,69 @@ import java.util.List;
 public interface StatisticalMapper {
 
     /**
-     * 实时数据统计图表 任务单 达标率
+     * 实时数据统计图表 历史 达标率
      */
     List<StatisticalChartDataPOJO> GetListWithDaBiaoLv0(StatisticalPOJO mod);
 
     /**
-     * 实时数据统计图表 试卷 达标率
+     * 实时数据统计图表 实时 达标率
      */
     List<StatisticalChartDataPOJO> GetListWithDaBiaoLv1(StatisticalPOJO mod);
 
     /**
-     * 实时数据统计图表 任务单 提交报告
+     * 实时数据统计图表 历史 提交报告
      */
     List<StatisticalChartDataPOJO> GetListWithBaoGao0(StatisticalPOJO mod);
 
     /**
-     * 实时数据统计图表 任务单 提交报告
+     * 实时数据统计图表 实时 提交报告
      */
     List<StatisticalChartDataPOJO> GetListWithBaoGao1(StatisticalPOJO mod);
 
     /**
-     * 实时数据统计图表 任务单+试卷 学习时长
+     * 实时数据统计图表 历史 学习时长
      */
     List<StatisticalChartDataPOJO> GetListWithShiChang0(StatisticalPOJO mod);
     /**
-     * 实时数据统计图表 任务单+试卷 学习时长
+     * 实时数据统计图表 实时 学习时长
      */
     List<StatisticalChartDataPOJO> GetListWithShiChang1(StatisticalPOJO mod);
 
     /**
-     * 实时数据统计图表 任务单+试卷 成绩分布
+     * 实时数据统计图表 历史 成绩分布
      */
-    List<StatisticalChartDataPOJO> GetListWithChengJi(StatisticalPOJO mod);
+    List<StatisticalChartDataPOJO> GetListWithChengJi0(StatisticalPOJO mod);
+    /**
+     * 实时数据统计图表 实时 成绩分布
+     */
+    List<StatisticalChartDataPOJO> GetListWithChengJi1(StatisticalPOJO mod);
 
     /**
-     * 实时数据统计图表 任务单 各任务平均成绩
+     * 实时数据统计图表 历史 各任务平均成绩
      */
     List<StatisticalChartDataPOJO> GetListWithPingJun0(StatisticalPOJO mod);
 
     /**
-     * 实时数据统计图表 试卷 各任务平均成绩
+     * 实时数据统计图表 实时 各任务平均成绩
      */
     List<StatisticalChartDataPOJO> GetListWithPingJun1(StatisticalPOJO mod);
 
     /**
-     * 实时数据统计图表 默认的操作人数最多的任务单/试卷
+     * 实时数据统计图表 历史 默认的操作人数最多的任务单/试卷
      */
-    StatisticalChartDataPOJO GetDefaultModel(StatisticalPOJO mod);
+    StatisticalChartDataPOJO GetDefaultModel0(StatisticalPOJO mod);
+    /**
+     * 实时数据统计图表 实时 默认的操作人数最多的任务单/试卷
+     */
+    StatisticalChartDataPOJO GetDefaultModel1(StatisticalPOJO mod);
 
     /**
-     * 实时数据统计图表 任务单 平均时长 平均成绩 总成绩
+     * 实时数据统计图表 历史 平均时长 平均成绩 总成绩
      */
     StatisticalChartAvgPOJO GetAvgModel0(StatisticalPOJO mod);
 
     /**
-     * 实时数据统计图表 试卷 平均时长 平均成绩 总成绩
+     * 实时数据统计图表 实时 平均时长 平均成绩 总成绩
      */
     StatisticalChartAvgPOJO GetAvgModel1(StatisticalPOJO mod);
 }
