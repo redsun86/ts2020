@@ -1,14 +1,20 @@
 package com.esst.ts.controller;
 
 import com.esst.ts.model.*;
+import com.esst.ts.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.RequestContext;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
@@ -100,6 +106,75 @@ public class StrategyController {
 
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     //</editor-fold>
+
+
+    //  接收AD500u.ini 解析并入库
+
+    /**
+     * @param file
+     * @param request
+     * @return 解析AD500u.ini并入库
+     */
+    @ResponseBody
+    @RequestMapping(value = "/AD500u", method = RequestMethod.POST)
+    public Result AD500u(@RequestParam("file") MultipartFile objFile, HttpServletRequest request) throws IOException {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        //<editor-fold desc="返回参数初始化">
+        r.setMsg(requestContext.getMessage("OK"));
+        r.setCode(Result.SUCCESS);
+        Map<String, Object> responseDataMap = new HashMap<>();
+        List<String> contentList = new ArrayList<>();
+        InputStream fileStream = objFile.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(fileStream));
+        String line = null;
+        boolean isBegin = false;
+        try {
+            while ((line = reader.readLine()) != null) {
+                if (StringUtils.isNotEmpty(line)) {
+                    String strLine = line.trim()
+                            .replaceAll(";", ",")
+                            .replaceAll("；", ",")
+                            .replaceAll("，", ",");
+                    //出现* 表示可以开始解析并入库了
+                    if (strLine.contains("*")) {
+                        isBegin = true;
+                    }
+                    if (isBegin) {
+                        String[] Items = strLine.split(",");
+                        if (Items.length >= 2) {
+                            String strName=Items[0].trim()
+                                    .replace("*", "")
+                                    .replaceAll("\\t","");
+                            String strCode=Items[1].trim()
+                                    .replace("-", "")
+                                    .replaceAll("\\t","");
+                            if (Items[0].contains("*")) {
+                                contentList.add(strName);
+                            } else {
+                                contentList.add(strCode + "、" + strName);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (
+                IOException e) {
+            //            e.printStackTrace();
+            responseDataMap.put("respMsg", e.getMessage());
+        } finally {
+            try {
+                fileStream.close();
+            } catch (IOException e) {
+                //                e.printStackTrace();
+                responseDataMap.put("respMsg", e.getMessage());
+            }
+        }
+        responseDataMap.put(objFile.getOriginalFilename() + "的内容：", contentList);
+        r.setData(responseDataMap);
+        //</editor-fold>
+        return r;
+    }
 
     //  1、策略库数据更新接口
 
@@ -1170,7 +1245,7 @@ public class StrategyController {
 
         //<editor-fold desc="学习时长分布">
         modMap = new StatisticalChartPOJO();
-        if(null!=avgMod) {
+        if (null != avgMod) {
             modMap.setDescribe("平均时长：" + avgMod.getAvgDuration() + "min");
         }
         modMap.setNotes("学习时长分布");
@@ -1184,7 +1259,7 @@ public class StrategyController {
 
         //<editor-fold desc="任务单/试卷成绩分布">
         modMap = new StatisticalChartPOJO();
-        if(null!=avgMod) {
+        if (null != avgMod) {
             modMap.setDescribe("满分：" + avgMod.getSumScore() + "分；平均分：" + avgMod.getAvgScore() + "分");
         }
         modMap.setNotes("任务单/试卷成绩分布");
