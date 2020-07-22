@@ -1,12 +1,11 @@
 package com.esst.ts.dao;
 
-import com.esst.ts.model.StatisticalChartAvgPOJO;
-import com.esst.ts.model.StatisticalChartDataPOJO;
-import com.esst.ts.model.StatisticalPOJO;
+import com.esst.ts.model.*;
 
 import java.util.List;
 
 public interface StatisticalMapper {
+
     /**
      * 实时数据统计图表 任务单 达标率
      */
@@ -20,12 +19,21 @@ public interface StatisticalMapper {
     /**
      * 实时数据统计图表 任务单 提交报告
      */
-    List<StatisticalChartDataPOJO> GetListWithBaoGao(StatisticalPOJO mod);
+    List<StatisticalChartDataPOJO> GetListWithBaoGao0(StatisticalPOJO mod);
+
+    /**
+     * 实时数据统计图表 任务单 提交报告
+     */
+    List<StatisticalChartDataPOJO> GetListWithBaoGao1(StatisticalPOJO mod);
 
     /**
      * 实时数据统计图表 任务单+试卷 学习时长
      */
-    List<StatisticalChartDataPOJO> GetListWithShiChang(StatisticalPOJO mod);
+    List<StatisticalChartDataPOJO> GetListWithShiChang0(StatisticalPOJO mod);
+    /**
+     * 实时数据统计图表 任务单+试卷 学习时长
+     */
+    List<StatisticalChartDataPOJO> GetListWithShiChang1(StatisticalPOJO mod);
 
     /**
      * 实时数据统计图表 任务单+试卷 成绩分布

@@ -11,7 +11,8 @@
         <result column="avg_score" property="avgScore" jdbcType="VARCHAR"/>
         <result column="sum_score" property="sumScore" jdbcType="VARCHAR"/>
     </resultMap>
-    <select id="GetListWithDaBiaoLv0" resultMap="BaseResultHistoryMap" parameterType="com.esst.ts.model.StatisticalPOJO">
+    <select id="GetListWithDaBiaoLv0" resultMap="BaseResultHistoryMap"
+            parameterType="com.esst.ts.model.StatisticalPOJO">
         select sum(case when wdb.user_id is null then 0 else 1 end) xAxis,count(distinct u.user_id) yAxis from (
         select user_id from user_score_record
         where study_type=#{studyType,jdbcType=INTEGER} and task_id=#{exameId,jdbcType=INTEGER}
@@ -42,7 +43,8 @@
         group by u.user_id
         ) wdb on u.user_id=wdb.user_id
     </select>
-    <select id="GetListWithDaBiaoLv1" resultMap="BaseResultHistoryMap" parameterType="com.esst.ts.model.StatisticalPOJO">
+    <select id="GetListWithDaBiaoLv1" resultMap="BaseResultHistoryMap"
+            parameterType="com.esst.ts.model.StatisticalPOJO">
         select sum(case when wdb.user_id is null then 0 else 1 end) xAxis,count(distinct u.user_id) yAxis from (
         select user_id from user_score_record
         where study_type=#{studyType,jdbcType=INTEGER} and task_id=#{exameId,jdbcType=INTEGER}
@@ -186,12 +188,17 @@
         ) studybv on op.task_id=studybv.task_id and op.operate_id=studybv.operate_id
     </select>
     <select id="GetDefaultModel" resultMap="BaseResultHistoryMap" parameterType="com.esst.ts.model.StatisticalPOJO">
-        select uld.task_id xAxis,uld.study_type yAxis,count(distinct uld.user_id) userCount,date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') study_date
-        from user_score_record uld
-        where date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
-            and date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d')
-        GROUP BY uld.task_id,uld.study_type,date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d')
-        ORDER BY userCount DESC
+        select uld.teacher_id,uld.task_id xAxis,uld.study_type yAxis,count(distinct uld.user_id)
+        userCount,date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') study_date from user_score_record uld
+        where
+        date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
+        and
+        date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d')
+        <if test="isAdmin != null  and isAdmin!=-1">
+            and uld.teacher_id=#{userId,jdbcType=INTEGER}
+        </if>
+        GROUP BY uld.teacher_id,uld.task_id,uld.study_type,date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d')
+        ORDER BY userCount DESC,uld.study_type,uld.teacher_id,uld.task_id
         limit 0,1
     </select>
     <select id="GetAvgModel0" resultMap="BaseResultAvgMap" parameterType="com.esst.ts.model.StatisticalPOJO">

@@ -1,8 +1,6 @@
 package com.esst.ts.service.impl;
 
-import com.esst.ts.model.StatisticalChartAvgPOJO;
-import com.esst.ts.model.StatisticalChartDataPOJO;
-import com.esst.ts.model.StatisticalPOJO;
+import com.esst.ts.model.*;
 import com.esst.ts.service.StatisticalService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +20,14 @@ public class Statisticallmpl implements StatisticalService {
     com.esst.ts.dao.StatisticalMapper StatisticalMapper;
     @Resource
     com.esst.ts.dao.StatisticalHistoryMapper StatisticalHistoryMapper;
+    @Resource
+    com.esst.ts.dao.StatisticalBaseDataMapper StatisticalBaseDataMapper;
+
+
+    @Override
+    public List<baseDataResponse> GetBaseList(baseDataRequest mod) {
+        return StatisticalBaseDataMapper.GetBaseList(mod);
+    }
 
     @Override
     public List<StatisticalChartDataPOJO> GetListWithDaBiaoLv(StatisticalPOJO mod) {
@@ -41,7 +47,10 @@ public class Statisticallmpl implements StatisticalService {
     @Override
     public List<StatisticalChartDataPOJO> GetListWithBaoGao(StatisticalPOJO mod) {
         if (mod.getIsHistory() == 0) {
-            return StatisticalMapper.GetListWithBaoGao(mod);
+            if (mod.getStudyType() == 1)
+                return StatisticalMapper.GetListWithBaoGao1(mod);
+            else
+                return StatisticalMapper.GetListWithBaoGao0(mod);
         } else {
             return StatisticalHistoryMapper.GetListWithBaoGao(mod);
         }
@@ -50,7 +59,10 @@ public class Statisticallmpl implements StatisticalService {
     @Override
     public List<StatisticalChartDataPOJO> GetListWithShiChang(StatisticalPOJO mod) {
         if (mod.getIsHistory() == 0) {
-            return StatisticalMapper.GetListWithShiChang(mod);
+            if (mod.getStudyType() == 1)
+            return StatisticalMapper.GetListWithShiChang1(mod);
+            else
+                return StatisticalMapper.GetListWithShiChang0(mod);
         } else {
             return StatisticalHistoryMapper.GetListWithShiChang(mod);
         }

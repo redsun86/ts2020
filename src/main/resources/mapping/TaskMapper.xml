@@ -15,6 +15,7 @@
         <result column="technology_id" property="technologyId" jdbcType="INTEGER"/>
         <result column="shibiao" property="shiBiao" jdbcType="VARCHAR"/>
         <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="teacher_id" property="teacherId" javaType="INTEGER"/>
     </resultMap>
     <sql id="Base_Column_List">
     id, task_code, task_name, technology_id, shibiao
@@ -100,16 +101,16 @@
   </update>
 
     <select id="GetList" resultMap="BasePOJOResultMap">
-        select t.id,t.task_code,t.task_name,t.technology_id,t.shibiao
+        select t.id,u.teacher_id,t.task_code,t.task_name,t.technology_id,t.shibiao
         ,1 `status`
-        from task t
+        from task t  left join (select id teacher_id from `user` where is_del=0 and is_admin=-1 order by id desc limit 0,1) u on 1=1
         <where>
             t.id>0
         </where>
         ORDER BY t.id
     </select>
     <select id="GetListWithStudentIdsAndStatus" resultMap="BasePOJOResultMap">
-        select t.id,t.task_code,concat(ut.rel_name,'老师：',t.task_name) task_name,t.technology_id,t.shibiao
+        select t.id,t.task_code,ut.user_id teacher_id,concat(ut.rel_name,'老师：',t.task_name) task_name,t.technology_id,t.shibiao
         ,(case when ut.task_id is null then 0 else 1 end) `status`
         from task t right join (
         select u.rel_name,utr.user_id,utr.task_id from user_task_relation utr

@@ -13,6 +13,7 @@ public class TechnologyTaskPOJO {
     private Integer technologyId;//` int(11) DEFAULT NULL COMMENT '工艺ID',
     private String shiBiao;//` varchar(32) DEFAULT NULL COMMENT '时标（保留字段）',
     private Integer status;//状态（1：发布/2：未发布）
+    private Integer teacherId;//教师id/发布者id,
     private List<Operate> operateList;
 
     public Integer getId() {
@@ -63,6 +64,15 @@ public class TechnologyTaskPOJO {
         this.status = status;
     }
 
+
+    public Integer getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(Integer teacherId) {
+        this.teacherId = teacherId;
+    }
+
     public List<Operate> getOperateList() {
         return operateList;
     }
@@ -70,4 +80,5 @@ public class TechnologyTaskPOJO {
     public void setOperateList(List<Operate> operateList) {
         this.operateList = operateList;
     }
+
 }

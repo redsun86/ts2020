@@ -1,8 +1,6 @@
 package com.esst.ts.service;
 
-import com.esst.ts.model.StatisticalChartAvgPOJO;
-import com.esst.ts.model.StatisticalChartDataPOJO;
-import com.esst.ts.model.StatisticalPOJO;
+import com.esst.ts.model.*;
 
 import java.util.List;
 
@@ -12,6 +10,15 @@ import java.util.List;
  * <p> 创建标识：梁建磊 2020/6/15 13:54</p>
  */
 public interface StatisticalService {
+
+    /**
+     * 获取学员成绩记录的基础数据
+     *
+     * @param mod
+     * @return 学员成绩记录的基础数据
+     */
+    List<baseDataResponse> GetBaseList(baseDataRequest mod);
+
     /**
      * 成绩达标率
      *
