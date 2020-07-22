@@ -29,7 +29,7 @@ public interface UserService {
     User loginByTeacher(String userName, String passWord);
 
     User loginByStudent(String trueName, String num);
-
+    User loginByStudents(String num);
     /**
      * 根据学号判断当前教师是否已经导入该学号
      * @param num
