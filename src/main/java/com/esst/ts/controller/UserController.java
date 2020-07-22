@@ -94,7 +94,7 @@ public class UserController {
         Result r = new Result();
         User user = userService.getUserById(userId);
         if (user != null) {
-            if(user.getPassword()==MD5Code.encodeByMD5(oldPwd)){
+            if(user.getPassword().equals(MD5Code.encodeByMD5(oldPwd))){
                 //修改密码
                 int i=userService.updateUserPwd(userId,MD5Code.encodeByMD5(newPwd));
                 if(i>0) {
