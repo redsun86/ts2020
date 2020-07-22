@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.StatisticalBaseDataMapper">
+    <resultMap id="BaseResultMap" type="com.esst.ts.model.baseDataResponse">
+		<result column="date_time" property="dateTime" jdbcType="DATE"/>
+		<result column="teacher_id" property="teacherId" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="INTEGER"/>
+		<result column="task_id" property="taskId" jdbcType="INTEGER"/>
+		<result column="report" property="report" jdbcType="VARCHAR"/>
+		<result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+		<result column="operate_id" property="operateId" jdbcType="INTEGER"/>
+		<result column="operate_name" property="operateName" jdbcType="VARCHAR"/>
+		<result column="study_type" property="studyType" jdbcType="INTEGER"/>
+		<result column="study_duration" property="studyDuration" jdbcType="DOUBLE"/>
+		<result column="prop_scroe" property="propScroe" jdbcType="REAL"/>
+		<result column="total_score" property="totalScore" jdbcType="REAL"/>
+    </resultMap>
+    <select id="GetBaseList" resultMap="BaseResultMap" parameterType="com.esst.ts.model.baseDataRequest">
+select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
+,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
+,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
+,uld.study_type,MAX(uld.study_duration) study_duration
+	,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else op.o_count*100 end) total_score
+-- 	,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
+from (
+	select max(id) id	from user_live_data
+-- 	where teacher_id=1 and study_type=1 and task_id=157
+-- 	and date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')>=date_format(NOW(),'%Y.%m.%d')
+-- 	and date_format(NOW(),'%Y.%m.%d')>=date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')
+	group by teacher_id,user_id,task_id,operate_id,study_type,train_id,date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')
+) studybv left join user_live_data uld on uld.id=studybv.id
+left join (
+	select e.id exam_id,e.exam_name,q.id question_id,q.question_name,qprop.q_count,qprop.sum_prop,q.proportion/qprop.sum_prop prop from exam e left join questions q on e.id=q.exame_id
+	left join (
+		select e.id exam_id,e.exam_name,count(q.id) q_count,SUM(q.proportion) sum_prop from exam e left join questions q on e.id=q.exame_id
+		where e.is_deleted=0 and q.is_deleted=0
+		group by e.id,e.exam_name
+	) qprop on e.id=qprop.exam_id
+) qp on qp.exam_id=uld.task_id and qp.question_id=uld.operate_id and uld.study_type=1
+left join (
+	select t.id task_id,t.task_name,o.id operate_id,o.operate_name,oprop.o_count
+	from task t left join task_oper_relation tor on tor.task_id=t.id left join operate o on tor.operate_id=o.id
+	left join (
+		select tor.task_id,count(tor.operate_id) o_count from task_oper_relation tor left join operate o on tor.operate_id=o.id
+		where o.is_deleted=0
+		group by tor.task_id
+	) oprop on t.id=oprop.task_id
+) op on op.task_id=uld.task_id and op.operate_id=uld.operate_id and uld.study_type=0
+group by uld.teacher_id,uld.user_id,uld.task_id,uld.report,uld.operate_id,uld.study_type,date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d'),qp.q_count,qp.prop,op.o_count
+    </select>
+</mapper>

@@ -1051,6 +1051,12 @@ public class StrategyController {
 
         Date StartTime = new Date();
 
+        if (null != reqMod.getUserId() & reqMod.getUserId() > 0) {
+            User umod = UserService.getUserById(Integer.valueOf(reqMod.getUserId()));
+            if (null != umod) {
+                reqMod.setIsAdmin(umod.getIsAdmin());
+            }
+        }
 
         //<editor-fold desc="返回参数初始化">
         r.setMsg(requestContext.getMessage("OK"));
@@ -1115,7 +1121,6 @@ public class StrategyController {
             List<StatisticalChartDataPOJO> dblist = StatisticalService.GetListWithDaBiaoLv(reqMod);
             if (dblist.size() > 0) {
                 StatisticalChartDataPOJO moddb = dblist.get(0);
-
                 mod = new StatisticalChartDataPOJO();
                 mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
                 mod.setyAxis("已达标");
@@ -1174,6 +1179,12 @@ public class StrategyController {
 
         responseDataMap.put("learningTime", modMap);
         //</editor-fold>
+
+//        ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+
+
+
         //<editor-fold desc="任务单/试卷成绩分布">
         modMap = new StatisticalChartPOJO();
         modMap.setDescribe("满分：" + avgMod.getSumScore() + "分；平均分：" + avgMod.getAvgScore() + "分");
@@ -1309,6 +1320,14 @@ public class StrategyController {
                 break;
         }
 
+        List<Integer> numbers = Arrays.asList(3, 2, 2, 3, 7, 3, 5);
+
+        IntSummaryStatistics stats = numbers.stream().mapToInt((x) -> x).summaryStatistics();
+
+        System.out.println("列表中最大的数 : " + stats.getMax());
+        System.out.println("列表中最小的数 : " + stats.getMin());
+        System.out.println("所有数之和 : " + stats.getSum());
+        System.out.println("平均数 : " + stats.getAverage());
 
         Operate reqMod = new Operate();
         //只查询未删除的工况

@@ -16,6 +16,7 @@ public class StatisticalPOJO {
     private Integer isHistory;
     private String startTime;
     private String stopTime;
+    private Short isAdmin;
 
     public Integer getStudyType() {
         return studyType;
@@ -63,5 +64,13 @@ public class StatisticalPOJO {
 
     public void setStopTime(String stopTime) {
         this.stopTime = stopTime;
+    }
+
+    public Short getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(Short isAdmin) {
+        this.isAdmin = isAdmin;
     }
 }

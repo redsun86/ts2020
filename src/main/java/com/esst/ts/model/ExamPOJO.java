@@ -14,6 +14,7 @@ public class ExamPOJO {
     private Integer examAttribute;
     private Integer questionsCount;//试题数量
     private String editInfo;
+    private Integer teacherId;//教师id/发布者id,
 
     public Integer getId() {
         return id;
@@ -85,5 +86,13 @@ public class ExamPOJO {
 
     public void setEditInfo(String editInfo) {
         this.editInfo = editInfo;
+    }
+
+    public Integer getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(Integer teacherId) {
+        this.teacherId = teacherId;
     }
 }
