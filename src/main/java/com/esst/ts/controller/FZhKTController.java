@@ -321,7 +321,6 @@ public class FZhKTController {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
         List<ScoreDetailPOJO> scoreDetailPOJOSList = fzhktService.getScoreDetailList(teacher_Id, userId, taskId, studyType);
-        scoreDetailPOJOSList = fzhktService.getScoreDetailList(teacher_Id, userId, taskId, studyType);
         //double totlscore = fzhktService.getTaskTotal_score(ulwb);
         //<editor-fold desc="返回参数赋值">
         Map<String, Object> FZhKTMap = new HashMap<>();

@@ -40,7 +40,7 @@ public interface UserLoginLogMapper {
     @ResultMap("BaseResultMap")
     List<UserLoginLog> getUserLoginLogByTeacherID(@Param("userId") int userId);
 
-    @Select("SELECT ser_id,MIN(create_time) create_time FROM user_login_log where  and status=1 and create_time >=#{beginDate} and create_time <=#{endDate} GROUP BY user_id")
+    @Select("SELECT user_id,MIN(create_time) create_time FROM user_login_log where status=1 and create_time >=#{beginDate} and create_time <=#{endDate} GROUP BY user_id")
     @ResultMap("BaseResultMap")
     List<UserLoginLog> getStudentrLoginLog(@Param("beginDate") String beginDate, @Param("endDate") String endDate);
 }
