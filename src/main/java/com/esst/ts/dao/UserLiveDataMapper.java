@@ -40,4 +40,12 @@ public interface UserLiveDataMapper {
             "(SELECT MAX(u.id) id from user_live_data u LEFT JOIN teacher_student_relation t on u.user_id=t.student_id WHERE t.teacher_id=#{userId} and u.study_type=#{studyType} and u.task_id=#{taskId} GROUP BY train_id) e ON uld.id=e.id GROUP BY task_id,operate_id ")
     @ResultMap("ResultMapWithBLOBs")
     List<UserLiveDataWithBLOBs> getOperateMaxScore(@Param("userId") int userId,@Param("taskId") int taskId, @Param("studyType") int studyType);
+
+    @Select("SELECT SUM(x.study_duration1) as study_duration,SUM(x.total_score1) as total_score,x.* FROM \n" +
+            "(SELECT SUM(uld.study_duration) study_duration1 ,(case when uld.study_type = 0 THEN MAX(current_score) WHEN uld.study_type=1 THEN total_score END) total_score1,uld.* from user_live_data uld" +
+            " RIGHT JOIN  (SELECT MAX(u.id) id from user_live_data u WHERE IF(#{userId}='',0=0,teacher_id=#{userId} OR teacher_id =#{guestId}) and IF(#{taskId}='',0=0,task_id=#{taskId} AND study_type=#{studyType}) GROUP BY train_id) e" +
+            " ON uld.id=e.id GROUP BY task_id,operate_id,user_id) x \n" +
+            "GROUP BY task_id,user_id")
+    @ResultMap("ResultMapWithBLOBs")
+    List<UserLiveDataWithBLOBs> getRealTimeByTeacherId(@Param("userId") String userId,@Param("guestId") String guestId,@Param("taskId") String taskId,@Param("studyType") String studyType);
 }

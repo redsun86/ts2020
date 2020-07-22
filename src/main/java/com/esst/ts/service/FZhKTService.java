@@ -36,7 +36,7 @@ public interface FZhKTService {
 
     List<UserLiveWithBLOBs> getUserLiveByTeacherId(String userId);
     //这个函数有待优化20200619
-    List<UserToken> getUserLoginByTeacherID(String userId);
+    List<UserToken> getUserLoginList();
 
     int getUserLoginLogCountByTeacherID(String userId);
 
@@ -44,7 +44,7 @@ public interface FZhKTService {
     int deletelivedataTorecord(int userId);
     double getTaskTotal_score(UserLiveWithBLOBs uld);
     List<UserLive> checkIsRecordByTeacherId(String beginDate,String endDate,int userID);
-    List<ScoreDetailPOJO> getScoreDetailList(UserLiveWithBLOBs id);
+    //List<ScoreDetailPOJO> getScoreDetailList(UserLiveWithBLOBs id);
 
     int updateUserScoreRecoredByTrainID(UserScoreRecord usrScore);
 
@@ -53,4 +53,8 @@ public interface FZhKTService {
     ResponseEntity<byte[]> exportReatimeScore(List<RealTimeEcxelPOJO> scoreexcelList);
 
     List<UserLoginLog> getUserLoginLogeacherID(int userId);
+
+    List<UserLiveDataWithBLOBs> getRealTimeByTeacherId(String userId,String guestId,String taskId,String studyType);
+
+    List<ScoreDetailPOJO> getScoreDetailList(int userId, int taskId, int studyType);
 }
