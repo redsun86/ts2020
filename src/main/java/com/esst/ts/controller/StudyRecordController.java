@@ -46,6 +46,7 @@ public class StudyRecordController {
     @ResponseBody
     @RequestMapping(value = "/selectScore", method = RequestMethod.POST)
     public Result selectScore(@RequestParam(value = "date",required = true) String date,
+                              @RequestParam(value = "userId",required = true) Integer userId,
                              @RequestParam(value = "token",required = true) String token,
                              HttpServletRequest request) throws ParseException {
         RequestContext requestContext = new RequestContext(request);
@@ -402,7 +403,8 @@ public class StudyRecordController {
      */
     @ResponseBody
     @RequestMapping(value = "/selectPersonScore", method = RequestMethod.POST)
-    public Result selectPersonScore(@RequestParam(value = "userTrueName") String userTrueName,
+    public Result selectPersonScore(@RequestParam(value = "userId") Integer userId,
+                                @RequestParam(value = "userTrueName") String userTrueName,
                                 @RequestParam(value = "taskId") Integer taskId,
                                 @RequestParam(value = "studyType") String studyType,
                                 @RequestParam(value = "token") String token,
@@ -524,7 +526,8 @@ public class StudyRecordController {
      */
     @ResponseBody
     @RequestMapping(value = "/personScoreExcel", method = RequestMethod.POST)
-    public ResponseEntity<byte[]> personScoreExcel(@RequestParam(value = "userTrueName") String userTrueName,
+    public ResponseEntity<byte[]> personScoreExcel(@RequestParam(value = "userId") Integer userId,
+                                                    @RequestParam(value = "userTrueName") String userTrueName,
                                                    @RequestParam(value = "taskId") Integer taskId,
                                                    @RequestParam(value = "studyType") String studyType,
                                                    @RequestParam(value = "token") String token,
