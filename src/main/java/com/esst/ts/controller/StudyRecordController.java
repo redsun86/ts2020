@@ -86,7 +86,12 @@ public class StudyRecordController {
                         UserLoginLogListitem li=new UserLoginLogListitem();
                         User u=userService.getUserById(userLoginLogListForUserId.get(j).getUserId());
                         li.setuserId(userLoginLogListForUserId.get(j).getUserId());
-                        li.setTeacherName(u.getRelName()+"老师");
+                        if(u.getIsAdmin()==1){
+                            li.setTeacherName(u.getRelName()+"老师");
+                        }
+                        else{
+                            li.setTeacherName(u.getRelName());
+                        }
                         listitems.add(li);
                         l.setListsitem(listitems);
                         c++;
