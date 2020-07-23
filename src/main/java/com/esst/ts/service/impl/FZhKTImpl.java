@@ -239,7 +239,7 @@ public class FZhKTImpl implements FZhKTService {
     }
 
     @Override
-    public List<UserLiveDataWithBLOBs> getOperateMaxScore(int userId, int taskId, int studyType) {
+    public List<UserLiveDataWithBLOBs> getOperateMaxScore(String userId, String taskId, String studyType) {
         return userlivedata.getOperateMaxScore(userId, taskId, studyType);
     }
 
@@ -344,6 +344,36 @@ public class FZhKTImpl implements FZhKTService {
                     cell0.setCellValue(itemPOJO.getNum());
                     HSSFCell cell1 = r.createCell(1);//姓名
                     cell1.setCellValue(itemPOJO.getStudentName());
+                    HSSFCell cell2 = r.createCell(2);//机器号
+                    cell2.setCellValue(itemPOJO.getMachineNum());
+                    HSSFCell cell3 = r.createCell(3);//登录时间
+                    cell3.setCellValue(itemPOJO.getLoginTime());
+
+                    HSSFCell cell4 = r.createCell(4);//学习时长
+                    cell4.setCellValue(itemPOJO.getLearnTime());
+                    HSSFCell cell5 = r.createCell(5);//任务单
+                    cell5.setCellValue(itemPOJO.getTotalScore());
+
+                    for (Map.Entry<Integer, Integer> entryoperate : rte.operateIndexList.entrySet()) {
+                        HSSFCell cell6 = r.createCell(entryoperate.getValue() + 6);
+                        if (itemPOJO.operateScoremap.containsKey(entryoperate.getKey())) {
+                            cell6.setCellValue(itemPOJO.operateScoremap.get(entryoperate.getKey()));
+                        } else {
+                            cell6.setCellValue(0);
+                        }
+
+                    }
+                    rownum++;
+                }
+            }
+            if (rte.realTimeExcelItemPOJOHashMapWithoutTeacher != null) {
+                for (Map.Entry<Integer, RealTimeExcelItemPOJO> entry : rte.realTimeExcelItemPOJOHashMapWithoutTeacher.entrySet()) {
+                    RealTimeExcelItemPOJO itemPOJO = entry.getValue();
+                    HSSFRow r = sheet.createRow(rownum);
+                    HSSFCell cell0 = r.createCell(0);//学号
+                    cell0.setCellValue(itemPOJO.getNum());
+                    HSSFCell cell1 = r.createCell(1);//姓名
+                    cell1.setCellValue("*"+itemPOJO.getStudentName());
                     HSSFCell cell2 = r.createCell(2);//机器号
                     cell2.setCellValue(itemPOJO.getMachineNum());
                     HSSFCell cell3 = r.createCell(3);//登录时间

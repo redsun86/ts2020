@@ -39,5 +39,7 @@ public class RealTimeEcxelPOJO {
     public List<String> operateList = new ArrayList<>();
     public Map<Integer,Integer>operateIndexList= new HashMap<>();
     public Map<Integer, RealTimeExcelItemPOJO> realTimeExcelItemPOJOHashMap = new HashMap<>();
+    //老师导入名单外学员
+    public Map<Integer, RealTimeExcelItemPOJO> realTimeExcelItemPOJOHashMapWithoutTeacher = new HashMap<>();
     public HashSet<String> ClassNameMap = new HashSet<>();
 }

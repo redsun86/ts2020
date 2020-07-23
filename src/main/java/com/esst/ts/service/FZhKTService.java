@@ -48,7 +48,7 @@ public interface FZhKTService {
 
     int updateUserScoreRecoredByTrainID(UserScoreRecord usrScore);
 
-    List<UserLiveDataWithBLOBs> getOperateMaxScore(int userId, int taskId, int studyType);
+    List<UserLiveDataWithBLOBs> getOperateMaxScore(String userId, String taskId, String studyType);
 
     ResponseEntity<byte[]> exportReatimeScore(List<RealTimeEcxelPOJO> scoreexcelList);
 

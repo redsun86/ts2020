@@ -350,6 +350,7 @@ public class FZhKTController {
         Result r = new Result();
         User guest = userMapper.selectTeacher();
         List<User> userList = userMapper.getUserLst(userId);
+        List<User> userListAll=userMapper.getUserListAll();
         List<taskModel> taskModelList = (List<taskModel>) JSONArray.parseArray(taskList, taskModel.class);//任务单列表
         User teacher = userMapper.selectByPrimaryKey(userId);
         SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -357,6 +358,7 @@ public class FZhKTController {
         String enddate=formatter1.format(new Date())+" 23:59:59";
         List<UserLoginLog> userLoginLogList = fzhktService.getUserloginLogForDate(begindate,enddate);//.getUserLoginLogeacherID(userId);
         Map<Integer, UserLoginLog> userLoginLogMap = new HashMap<>();
+        Map<Integer, User> userMap = userListAll.stream().collect(Collectors.toMap(User::getId, Function.identity(), (key1, key2) -> key2));
         if (userLoginLogList != null) {
             userLoginLogMap = userLoginLogList.stream().collect(Collectors.toMap(UserLoginLog::getUserId, Function.identity(), (key1, key2) -> key2));
         }
@@ -365,8 +367,13 @@ public class FZhKTController {
         //学号	姓名	机器号	登录时间（年月日，时分秒）	学习时长（min）	课题名称	氮气置换
         if ((taskModelList != null)) {
             for (taskModel tm : taskModelList) {
+
                 List<UserLiveDataWithBLOBs> userLiveDataWithBLOBs = new ArrayList<>();
-                userLiveDataWithBLOBs = fzhktService.getOperateMaxScore(userId, Integer.valueOf(tm.getTask_id()), Integer.valueOf(tm.getStudy_type()));
+                if(guest.getId().equals(userId)) {
+                    userLiveDataWithBLOBs = fzhktService.getOperateMaxScore("", String.valueOf(tm.getTask_id()), String.valueOf(tm.getStudy_type()));
+                }else {
+                    userLiveDataWithBLOBs = fzhktService.getOperateMaxScore(String.valueOf(userId), String.valueOf(tm.getTask_id()), String.valueOf(tm.getStudy_type()));
+                }
                 RealTimeEcxelPOJO realTimeEcxelPOJO = new RealTimeEcxelPOJO();
                 realTimeEcxelPOJO.setStudyType(Constants.StudyType.values()[Integer.valueOf(tm.getStudy_type())]);//学习类型
                 realTimeEcxelPOJO.setTaskName(tm.getTask_name());//任务单
@@ -421,14 +428,45 @@ public class FZhKTController {
                 if (userLiveDataWithBLOBs != null) {
                     for (UserLiveDataWithBLOBs usld : userLiveDataWithBLOBs) {
                         if(!realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.containsKey(usld.getUserId())){
-
+                            // <editor-fold desc="名单外学员">
+                            RealTimeExcelItemPOJO scoreexcelitem = new RealTimeExcelItemPOJO();
+                            if(realTimeEcxelPOJO.realTimeExcelItemPOJOHashMapWithoutTeacher.containsKey(usld.getUserId())){
+                                scoreexcelitem=realTimeEcxelPOJO.realTimeExcelItemPOJOHashMapWithoutTeacher.get(usld.getUserId());
+                            }
+                            User user1=userMap.get(usld.getUserId());
+                            //填充数据
+                            scoreexcelitem.setNum(user1.getStNum());//学号
+                            scoreexcelitem.setStudentName(user1.getRelName());//姓名
+                            //scoreexcelitem.setLoginTime("2020:07:03 0:0:0");//登录时间
+                            scoreexcelitem.setTaskName(tm.getTask_name());//任务单
+                            realTimeEcxelPOJO.ClassNameMap.add(user1.getClassName());
+                            if (userLoginLogMap != null) {
+                                if (userLoginLogMap.containsKey(user1.getId())) {
+                                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                    String formatStr = formatter.format(userLoginLogMap.get(user1.getId()).getCreateTime());
+                                    scoreexcelitem.setLoginTime(formatStr);
+                                }
+                            }
+                            //scoreexcelitem.operateScoremap
+                            String learntime = String.format("%.2f", Double.valueOf(scoreexcelitem.getLearnTime()) + usld.getStudyDuration() / 60000);
+                            scoreexcelitem.setLearnTime(learntime);
+                            scoreexcelitem.setMachineNum(usld.getMacAddress());
+                            scoreexcelitem.operateScoremap.put(usld.getOperateId(), usld.getCurrentScore());
+                            double toutalscore = scoreexcelitem.getTotalScore().doubleValue() + usld.getCurrentScore();
+                            scoreexcelitem.setTotalScore((double) Math.round(toutalscore * 100) / 100);
+                            realTimeEcxelPOJO.realTimeExcelItemPOJOHashMapWithoutTeacher.put(user1.getId(), scoreexcelitem);
+                            //</editor-fold>
                         }else {
+                            // <editor-fold desc="名单内学员">
                             RealTimeExcelItemPOJO rtitem = realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.get(usld.getUserId());
                             String learntime = String.format("%.2f", Double.valueOf(rtitem.getLearnTime()) + usld.getStudyDuration() / 60000);
                             rtitem.setLearnTime(learntime);
+                            rtitem.setMachineNum(usld.getMacAddress());
+                            rtitem.operateScoremap.put(usld.getOperateId(), usld.getCurrentScore());
                             double toutalscore = rtitem.getTotalScore().doubleValue() + usld.getCurrentScore();
                             rtitem.setTotalScore((double) Math.round(toutalscore * 100) / 100);
                             realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.put(usld.getUserId(), rtitem);
+                            //</editor-fold>
                         }
                     }
                 }
