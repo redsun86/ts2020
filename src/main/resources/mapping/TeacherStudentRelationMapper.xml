@@ -109,4 +109,12 @@
             </if>
         </where>
     </select>
+    <select id="GetOnLineTeacherList" resultMap="BaseResultMap">
+        select u.id,u.id teacher_id,ifnull(lg.`status`,0) is_online from `user` u
+        left join (select user_id,max(id) id from user_login_log group by user_id) ulg on u.id=ulg.user_id
+        left join user_login_log lg on ulg.id=lg.id
+        <where>
+            u.is_admin=1 and ifnull(lg.`status`,0)=1
+        </where>
+    </select>
 </mapper>

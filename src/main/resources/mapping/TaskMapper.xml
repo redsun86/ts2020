@@ -103,7 +103,7 @@
     <select id="GetList" resultMap="BasePOJOResultMap">
         select t.id,u.teacher_id,t.task_code,t.task_name,t.technology_id,t.shibiao
         ,1 `status`
-        from task t  left join (select id teacher_id from `user` where is_del=0 and is_admin=-1 order by id desc limit 0,1) u on 1=1
+        from task t left join (select id teacher_id from `user` where is_del=0 and is_admin=-1 order by id desc limit 0,1) u on 1=1
         <where>
             t.id>0
         </where>

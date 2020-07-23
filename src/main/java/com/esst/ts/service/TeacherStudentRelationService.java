@@ -17,4 +17,11 @@ public interface TeacherStudentRelationService {
      * @return 返回数据集合
      */
     List<TeacherStudentRelation> GetList(TeacherStudentRelation mod);
+
+    /**
+     * 常规方法——获取在线老师的集合
+     *
+     * @return 返回数据集合
+     */
+    List<TeacherStudentRelation> GetOnLineTeacherList();
 }

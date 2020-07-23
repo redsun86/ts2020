@@ -21,4 +21,9 @@ public class TeacherStudentRelationImpl implements TeacherStudentRelationService
     public List<TeacherStudentRelation> GetList(TeacherStudentRelation mod) {
         return TeacherStudentRelationMapper.GetList(mod);
     }
+
+    @Override
+    public List<TeacherStudentRelation> GetOnLineTeacherList() {
+        return TeacherStudentRelationMapper.GetOnLineTeacherList();
+    }
 }

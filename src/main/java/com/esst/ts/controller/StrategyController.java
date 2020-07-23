@@ -143,12 +143,12 @@ public class StrategyController {
                     if (isBegin) {
                         String[] Items = strLine.split(",");
                         if (Items.length >= 2) {
-                            String strName=Items[0].trim()
+                            String strName = Items[0].trim()
                                     .replace("*", "")
-                                    .replaceAll("\\t","");
-                            String strCode=Items[1].trim()
+                                    .replaceAll("\\t", "");
+                            String strCode = Items[1].trim()
                                     .replace("-", "")
-                                    .replaceAll("\\t","");
+                                    .replaceAll("\\t", "");
                             if (Items[0].contains("*")) {
                                 contentList.add(strName);
                             } else {
@@ -458,8 +458,24 @@ public class StrategyController {
                     idList.add(String.valueOf(tmod.getTeacherId()));
                 }
                 if (idList.size() > 0) reqUserIds = String.join(",", idList);
+                taskPojolst = TaskService.GetList(reqUserIds, 1, 0);
+            } else {
+                List<TeacherStudentRelation> onLineTeacherList = TeacherStudentRelationService.GetOnLineTeacherList();
+                if (null != onLineTeacherList && onLineTeacherList.size() > 0) {
+                    List<String> idList = new ArrayList<>();
+                    for (TeacherStudentRelation tmod : onLineTeacherList) {
+                        idList.add(String.valueOf(tmod.getTeacherId()));
+                    }
+                    if (idList.size() > 0) reqUserIds = String.join(",", idList);
+                }
+                taskPojolst = TaskService.GetList(reqUserIds, 1, 0);
+                List<TechnologyTaskPOJO> newTaskPojolst = TaskService.GetList("", 1, 0);
+                if (null != newTaskPojolst && newTaskPojolst.size() > 0) {
+                    for (TechnologyTaskPOJO tmod : newTaskPojolst) {
+                        taskPojolst.add(tmod);
+                    }
+                }
             }
-            taskPojolst = TaskService.GetList(reqUserIds, 1, 0);
         }
         responseDataMap.put("dataList", taskPojolst);
         r.setData(responseDataMap);

@@ -60,12 +60,13 @@ public class StatisticalController {
 
         //        取出基础数据
         List<baseDataResponse> baseDataList = StatisticalService.GetBaseList(reqMod);
-
+        responseDataMap.put("baseDataList",baseDataList);
         for (baseDataResponse bdmod : baseDataList) {
             if (null == bdmod.getTeacherId()) {
                 bdmod.setTeacherId(1);
             }
         }
+
 //        获取userId单列数据
         List<Integer> userIdList = baseDataList.stream().map(baseDataResponse -> baseDataResponse.getUserId()).collect(Collectors.toList());
 //        去除重复值
@@ -73,10 +74,6 @@ public class StatisticalController {
         userIdList.clear();
         userIdList.addAll(hsUserIdList);
 
-        List<Float> studyDurationList = baseDataList.stream().map(baseDataResponse -> baseDataResponse.getPropScroe()).collect(Collectors.toList());
-        DoubleSummaryStatistics stats = studyDurationList.stream().mapToDouble((x)-> x).summaryStatistics();
-        double sum=stats.getSum();
-        double avg= sum/userIdList.size();
 
         //        取出试卷的权重及试题总数
         //        取出任务的权重及任务总数
