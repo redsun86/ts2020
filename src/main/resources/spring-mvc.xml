@@ -94,7 +94,7 @@
 
     <mvc:interceptors>
         <mvc:interceptor>
-            <mvc:mapping path="/**" />
+            <mvc:mapping path="/web/v1/**" />
             <mvc:exclude-mapping path="/web/v1/user/userLogin"/>
             <bean class="com.esst.ts.interceptor.LoginInterceptor"></bean>
         </mvc:interceptor>
