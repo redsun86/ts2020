@@ -15,7 +15,28 @@
         select count(distinct xAxis) xAxis,count(distinct user_id) yAxis from (
         select bv.user_id,bv.task_id,bv.operate_id,(case when 50>bv.prop_scroe then bv.user_id else null end) xAxis from
         (
-
+        select tv.task_id,tv.operate_id,tv.study_type,tv.user_id,ifnull(scorev.prop_scroe,0.00) prop_scroe from (
+        select * from (
+        select tor.task_id,tor.operate_id,0 study_type from task_oper_relation tor left join operate o on tor.operate_id=o.id where o.is_deleted=0
+        union all
+        select e.id task_id,q.id operate_id,1 study_type from exam e left join questions q on q.exame_id=e.id where e.is_deleted=0 and q.is_deleted=0
+        ) tor
+        left join (select distinct uld.user_id from (
+        select max(id) id from user_score_record
+        where id>0
+        <if test="isAdmin != null  and isAdmin!=-1">
+            and teacher_id=#{userId,jdbcType=INTEGER}
+        </if>
+        and study_type=#{studyType,jdbcType=INTEGER} and task_id=#{exameId,jdbcType=INTEGER}
+        and
+        date_format(FROM_UNIXTIME(begin_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
+        and date_format(#{stopTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(begin_time/1000),'%Y.%m.%d')
+        group by
+        teacher_id,user_id,task_id,operate_id,study_type,train_id,date_format(FROM_UNIXTIME(begin_time/1000),'%Y.%m.%d')
+        ) studybv left join (select id,teacher_id,user_id,task_id,operate_id,report,study_type,score
+        current_score,begin_time,end_time-begin_time study_duration from user_score_record) uld on uld.id=studybv.id) u on 1=1
+        where tor.study_type=0 and tor.task_id=1
+        ) tv left join (
         select date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
@@ -62,6 +83,7 @@
         uld.teacher_id,uld.user_id,uld.task_id,uld.report,uld.operate_id,uld.study_type
         ,date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d'),qp.q_count,qp.prop,op.o_count
 
+        ) scorev on tv.task_id=scorev.task_id and tv.operate_id=scorev.operate_id and tv.study_type=scorev.study_type and tv.user_id=scorev.user_id
         ) bv
         ) gbv
     </select>
@@ -69,7 +91,27 @@
         select count(distinct xAxis) xAxis,count(distinct user_id) yAxis from (
         select bv.user_id,bv.task_id,bv.operate_id,(case when 50>bv.prop_scroe then bv.user_id else null end) xAxis from
         (
-
+        select tv.task_id,tv.operate_id,tv.study_type,tv.user_id,ifnull(scorev.prop_scroe,0.00) prop_scroe from (
+        select * from (
+        select tor.task_id,tor.operate_id,0 study_type from task_oper_relation tor left join operate o on tor.operate_id=o.id where o.is_deleted=0
+        union all
+        select e.id task_id,q.id operate_id,1 study_type from exam e left join questions q on q.exame_id=e.id where e.is_deleted=0 and q.is_deleted=0
+        ) tor
+        left join (select distinct uld.user_id from (
+        select max(id) id from user_live_data
+        where id>0
+        <if test="isAdmin != null  and isAdmin!=-1">
+            and teacher_id=#{userId,jdbcType=INTEGER}
+        </if>
+        and study_type=#{studyType,jdbcType=INTEGER} and task_id=#{exameId,jdbcType=INTEGER}
+        and
+        date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')>=date_format(#{startTime,jdbcType=VARCHAR},'%Y.%m.%d')
+        and date_format(#{stopTime,jdbcType=VARCHAR},'%Y.%m.%d')>=date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')
+        group by
+        teacher_id,user_id,task_id,operate_id,study_type,train_id,date_format(FROM_UNIXTIME(start_time/1000),'%Y.%m.%d')
+        ) studybv left join user_live_data uld on uld.id=studybv.id) u on 1=1
+        where tor.study_type=0 and tor.task_id=1
+        ) tv left join (
 
         select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
@@ -115,6 +157,8 @@
         group by
         uld.teacher_id,uld.user_id,uld.task_id,uld.report,uld.operate_id,uld.study_type
         ,date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d'),qp.q_count,qp.prop,op.o_count
+
+        ) scorev on tv.task_id=scorev.task_id and tv.operate_id=scorev.operate_id and tv.study_type=scorev.study_type and tv.user_id=scorev.user_id
 
         ) bv
         ) gbv
