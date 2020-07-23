@@ -343,6 +343,7 @@ public class UserController {
         userMap.put("roleName", user.getRoleName());
         userMap.put("operateMode", user.getOperateMode());
         userMap.put("loginCount", loginCount);
+        userMap.put("isAdmin",user.getIsAdmin());
         r.setData(userMap);
         return r;
     }
