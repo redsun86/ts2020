@@ -498,6 +498,7 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "/resetStudentsPwd", method = RequestMethod.POST)
     public Result resetStudentsPwd(@RequestParam(value = "id", required = true) String id,
+                                   @RequestParam(value = "userId", required = true) Integer userId,
                                    @RequestParam(value = "token", required = true) String strToken,
                                    HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
