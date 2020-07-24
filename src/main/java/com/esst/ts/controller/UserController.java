@@ -310,7 +310,6 @@ public class UserController {
                 else{
                     r.setMsg("Err");
                     r.setCode(201);
-                    r.setData("登录失败");
                     r.setData("真实姓名输入有误");
                     return r;
                 }
