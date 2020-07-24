@@ -58,9 +58,9 @@ public class FZhKTController {
     @ResponseBody
     @RequestMapping(value = "/realtimedata", method = RequestMethod.GET)
     public Result realtimedata(
-            @RequestParam(value = "user_id", required = false) String userId,
-            @RequestParam(value = "template_id", required = false) String templateId,
-            @RequestParam(value = "study_type", required = false) String study_type,
+            @RequestParam(value = "userId", required = false) String userId,
+            @RequestParam(value = "templateId", required = false) String templateId,
+            @RequestParam(value = "studyType", required = false) String study_type,
             @RequestParam(value = "token", required = true) String strToken,
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
@@ -231,20 +231,20 @@ public class FZhKTController {
      */
     @ResponseBody
     @RequestMapping(value = "/updatescore", method = RequestMethod.POST)
-    public Result updatescore(@RequestParam(value = "score_id") String score_id,
-                              @RequestParam(value = "user_id") int user_id,
-                              @RequestParam(value = "mac_adress") String mac_adress,
-                              @RequestParam(value = "ip_adress") String id_adress,
-                              @RequestParam(value = "task_id") int task_id,
-                              @RequestParam(value = "operate_id") int operate_id,
+    public Result updatescore(@RequestParam(value = "scoreId") String score_id,
+                              @RequestParam(value = "userId") int user_id,
+                              @RequestParam(value = "macAdress") String mac_adress,
+                              @RequestParam(value = "ipAdress") String id_adress,
+                              @RequestParam(value = "taskId") int task_id,
+                              @RequestParam(value = "operateId") int operate_id,
                               @RequestParam(value = "status") String status,
-                              @RequestParam(value = "current_score") double current_score,
-                              @RequestParam(value = "total_score") double total_score,
-                              @RequestParam(value = "score_detail") String score_detail,
-                              @RequestParam(value = "client_status") int client_status,
-                              @RequestParam(value = "study_type") int study_type,
-                              @RequestParam(value = "train_id") String train_id,
-                              @RequestParam(value = "teacher_id") int teacher_id,
+                              @RequestParam(value = "currentScore") double current_score,
+                              @RequestParam(value = "totalScore") double total_score,
+                              @RequestParam(value = "scoreDetail") String score_detail,
+                              @RequestParam(value = "clientStatus") int client_status,
+                              @RequestParam(value = "studyType") int study_type,
+                              @RequestParam(value = "trainId") String train_id,
+                              @RequestParam(value = "teacherId") int teacher_id,
                               @RequestParam(value = "token", required = true) String token,
                               HttpServletRequest request) {
         RequestContext requestcontext = new RequestContext(request);
@@ -311,8 +311,9 @@ public class FZhKTController {
     @ResponseBody
     @RequestMapping(value = "/getTaskdetailscore", method = RequestMethod.GET)
     public Result getTaskdetailscore(
-            @RequestParam(value = "teacherId", required = true) int teacher_Id,
             @RequestParam(value = "userId", required = true) int userId,
+            @RequestParam(value = "teacherId", required = true) int teacher_Id,
+            @RequestParam(value = "studentId",required = true) int studentId,
             @RequestParam(value = "taskId", required = true) int taskId,
             @RequestParam(value = "studyType", required = true) int studyType,
             @RequestParam(value = "taskName", required = true) String taskName,
@@ -320,7 +321,7 @@ public class FZhKTController {
             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
-        List<ScoreDetailPOJO> scoreDetailPOJOSList = fzhktService.getScoreDetailList(teacher_Id, userId, taskId, studyType);
+        List<ScoreDetailPOJO> scoreDetailPOJOSList = fzhktService.getScoreDetailList(teacher_Id, studentId, taskId, studyType);
         //double totlscore = fzhktService.getTaskTotal_score(ulwb);
         //<editor-fold desc="返回参数赋值">
         Map<String, Object> FZhKTMap = new HashMap<>();
