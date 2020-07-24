@@ -55,7 +55,7 @@ public class StudyRecordController {
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
 
-        Date dates = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+        Date dates = new SimpleDateFormat("yyyy-MM-dd").parse(date) ;
         Calendar ca = Calendar.getInstance();
         ca.setTime(dates);
         int month = ca.get(Calendar.MONTH)+1;//第几个月
@@ -546,8 +546,9 @@ public class StudyRecordController {
         String strUserId="";
         List<User> userList=userService.getUserByTrueName(userTrueName);
         for (User user : userList) {
-            strUserId+=user.getId();
+            strUserId+=user.getId()+",";
         }
+        strUserId=strUserId.substring(0,strUserId.length()-1);
         List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfoforPerson(strUserId,taskId,studyType);
         List<UserScoreRecordPOJO> dataList = new ArrayList<UserScoreRecordPOJO>();
         for (UserScoreRecordPOJO newuserScoreRecordPOJO : userScoreRecordPOJO) {
