@@ -78,4 +78,6 @@ public interface UserService {
      * @return
      */
     int updateUserInfo(Integer userId,String trueName,String mobile,String loginName);
+    User getUserByUserName(String userName);
+
 }

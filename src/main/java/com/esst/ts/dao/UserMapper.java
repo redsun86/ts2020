@@ -31,6 +31,11 @@ public interface UserMapper {
     @ResultMap("BaseResultMap")
     User selectByNum(@Param("num") String num,@Param("userId") int userId);
 
+
+    @Select("select * from user where user_name = #{userName} and is_admin in(1,-1)")
+    @ResultMap("BaseResultMap")
+    User getUserByUserName(@Param("userName") String userName);
+
     @Select("select * from user where st_num = #{num} and is_admin=0")
     @ResultMap("BaseResultMap")
     User getCheckUserByNum(@Param("num") String num);
