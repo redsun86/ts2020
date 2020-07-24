@@ -22,10 +22,6 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         Result r = new Result();
-        httpServletResponse.reset();
-        httpServletResponse.setCharacterEncoding("UTF-8");
-        httpServletResponse.setContentType("application/json;charset=UTF-8");
-        PrintWriter pw = httpServletResponse.getWriter();
 
         String userId = null, token = null;
         Map map = httpServletRequest.getParameterMap();
@@ -49,20 +45,30 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
 
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(userId)) {
+            httpServletResponse.reset();
+            httpServletResponse.setCharacterEncoding("UTF-8");
+            httpServletResponse.setContentType("application/json;charset=UTF-8");
+            PrintWriter pw = httpServletResponse.getWriter();
             r.setMsg("请求无效，缺少必要参数");
             r.setCode(Result.PARAMETER_ERROR);
             pw.write(JSONObject.toJSONString(r));
+            pw.flush();
+            pw.close();
             return false;
         }
 
         if (userTokenService.checkToken(Integer.parseInt(userId), token, 1)) {
+            httpServletResponse.reset();
+            httpServletResponse.setCharacterEncoding("UTF-8");
+            httpServletResponse.setContentType("application/json;charset=UTF-8");
+            PrintWriter pw = httpServletResponse.getWriter();
             r.setMsg("无效token");
             r.setCode(Result.TOKEN_ERROR);
             pw.write(JSONObject.toJSONString(r));
+            pw.flush();
+            pw.close();
             return false;
         }
-        pw.flush();
-        pw.close();
         return true;
     }
 
