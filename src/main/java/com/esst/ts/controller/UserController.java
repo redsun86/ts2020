@@ -63,17 +63,22 @@ public class UserController {
                             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
-        int i = userService.updateUserInfo(userId,trueName,mobile,loginName);
-        if (i>0) {
-            r.setMsg("OK");
-            r.setCode(0);
-            r.setData("用户信息修改成功");
-        }
-        else
-        {
+        User u=userService.getUserById(userId);
+        if(u.getUserName().equals(loginName)){
             r.setMsg("Err");
             r.setCode(2);
-            r.setData("用户信息修改失败");
+            r.setData("登录名已存在，请重新输入");
+        }else {
+            int i = userService.updateUserInfo(userId, trueName, mobile, loginName);
+            if (i > 0) {
+                r.setMsg("OK");
+                r.setCode(0);
+                r.setData("用户信息修改成功");
+            } else {
+                r.setMsg("Err");
+                r.setCode(1);
+                r.setData("用户信息修改失败");
+            }
         }
         return r;
     }
