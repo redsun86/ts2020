@@ -88,8 +88,13 @@
     <select id="GetList" resultMap="BaseResultMap" parameterType="com.esst.ts.model.TeacherStudentRelation">
         select tsr.id,tsr.student_id,tsr.teacher_id,tsr.is_del,ifnull(lg.`status`,0) is_online
         from teacher_student_relation tsr
-        left join (select user_id,max(id) id from user_login_log group by user_id) ulg on tsr.Teacher_id=ulg.user_id
-        left join user_login_log lg on ulg.id=lg.id
+        left join (select
+        (REPLACE(unix_timestamp(current_timestamp(3)),'.','')-REPLACE(unix_timestamp(ut.update_time),'.','')*1000)
+        outtime,ut.user_id,1 `status` from user_token ut
+        where ut.login_type=1 and date_format(NOW(),'%Y.%m.%d')=date_format(ut.update_time,'%Y.%m.%d')
+        and #{webOutTime,jdbcType=INTEGER}>
+        (REPLACE(unix_timestamp(current_timestamp(3)),'.','') -REPLACE(unix_timestamp(ut.update_time),'.','')*1000)
+        ) lg on tsr.Teacher_id=lg.user_id
         <where>
             tsr.id>0
             <if test="id != null">
@@ -109,10 +114,15 @@
             </if>
         </where>
     </select>
-    <select id="GetOnLineTeacherList" resultMap="BaseResultMap">
+    <select id="GetOnLineTeacherList" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select u.id,u.id teacher_id,ifnull(lg.`status`,0) is_online from `user` u
-        left join (select user_id,max(id) id from user_login_log group by user_id) ulg on u.id=ulg.user_id
-        left join user_login_log lg on ulg.id=lg.id
+        left join (select
+        (REPLACE(unix_timestamp(current_timestamp(3)),'.','')-REPLACE(unix_timestamp(ut.update_time),'.','')*1000)
+        outtime,ut.user_id,1 `status` from user_token ut
+        where ut.login_type=1 and date_format(NOW(),'%Y.%m.%d')=date_format(ut.update_time,'%Y.%m.%d')
+        and #{webOutTime,jdbcType=INTEGER}>
+        (REPLACE(unix_timestamp(current_timestamp(3)),'.','')-REPLACE(unix_timestamp(ut.update_time),'.','')*1000))
+        lg on u.id=lg.user_id
         <where>
             u.is_admin=1 and ifnull(lg.`status`,0)=1
         </where>

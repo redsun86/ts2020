@@ -23,7 +23,7 @@ public class TeacherStudentRelationImpl implements TeacherStudentRelationService
     }
 
     @Override
-    public List<TeacherStudentRelation> GetOnLineTeacherList() {
-        return TeacherStudentRelationMapper.GetOnLineTeacherList();
+    public List<TeacherStudentRelation> GetOnLineTeacherList(Integer webOutTime) {
+        return TeacherStudentRelationMapper.GetOnLineTeacherList(webOutTime);
     }
 }
