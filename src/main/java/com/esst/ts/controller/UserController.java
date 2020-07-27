@@ -154,7 +154,7 @@ public class UserController {
                              HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
-        UserToken userToken = userTokenService.checkUserTokenIsLogin(userId, token);
+        UserToken userToken = userTokenService.checkUserTokenIsLogin(userId);
         if (userToken != null) {
             r.setMsg("OK");
             r.setCode(0);
@@ -307,23 +307,33 @@ public class UserController {
                 //存在学号，判断真实姓名是否正确
                 user = userService.loginByStudent(userName,passWord);
                 if(user!=null){
-                    //记录学员登录日志
-                    UserLoginLog userLoginLogModel = new UserLoginLog();
-                    userLoginLogModel.setUserId(user.getId());
-                    userLoginLogModel.setCreateTime(DateUtils.stringToDate());
-                    userLoginLogModel.setStatus(1);
-                    userLoginLogModel.setisAdmin(0);
-                    userLoginLogModel.setMacAddress(macAddress);
-                    userLoginLogModel.setIpAddress(ipAddress);
-                    int j = userService.insert(userLoginLogModel);
-                    if (j > 0) {
-                        r.setMsg("OK");
-                        r.setCode(200);
-                    } else {
+                    //检查当前学员是否在线
+                    UserToken userToken = userTokenService.checkUserTokenIsLogin(user.getId());
+                    if(userToken!=null){
                         r.setMsg("Err");
-                        r.setCode(201);
-                        r.setData("登录失败：记录登陆日志错误");
+                        r.setCode(202);
+                        r.setData("当前学员已在线");
                         return r;
+                    }
+                    else{
+                        //记录学员登录日志
+                        UserLoginLog userLoginLogModel = new UserLoginLog();
+                        userLoginLogModel.setUserId(user.getId());
+                        userLoginLogModel.setCreateTime(DateUtils.stringToDate());
+                        userLoginLogModel.setStatus(1);
+                        userLoginLogModel.setisAdmin(0);
+                        userLoginLogModel.setMacAddress(macAddress);
+                        userLoginLogModel.setIpAddress(ipAddress);
+                        int j = userService.insert(userLoginLogModel);
+                        if (j > 0) {
+                            r.setMsg("OK");
+                            r.setCode(200);
+                        } else {
+                            r.setMsg("Err");
+                            r.setCode(201);
+                            r.setData("登录失败：记录登陆日志错误");
+                            return r;
+                        }
                     }
                 }
                 else{

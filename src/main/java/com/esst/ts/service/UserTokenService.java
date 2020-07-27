@@ -51,8 +51,7 @@ public interface UserTokenService {
      * 更具用户Id和token判断是否在线
      *
      * @param userId
-     * @param token
      * @return
      */
-    UserToken checkUserTokenIsLogin(Integer userId,String token);
+    UserToken checkUserTokenIsLogin(Integer userId);
 }

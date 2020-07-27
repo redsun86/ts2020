@@ -65,7 +65,7 @@ public class UserTokenServiceImpl implements UserTokenService {
     }
 
     @Override
-    public UserToken checkUserTokenIsLogin(Integer userId, String token) {
-        return userTokenDao.checkUserTokenIsLogin(userId, token);
+    public UserToken checkUserTokenIsLogin(Integer userId) {
+        return userTokenDao.checkUserTokenIsLogin(userId);
     }
 }
