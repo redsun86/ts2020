@@ -144,6 +144,7 @@ public class StudyRecordController {
     public Result selectClassScore(@RequestParam(value = "beginDate") String beginDate,
                                    @RequestParam(value = "endDate") String endDate,
                                    @RequestParam(value = "userId") Integer userId,
+                                   @RequestParam(value = "id") Integer id,
                                    @RequestParam(value = "taskId") Integer taskId,
                                    @RequestParam(value = "studyType") String studyType,
                                    @RequestParam(value = "token") String token,
@@ -158,8 +159,8 @@ public class StudyRecordController {
         Map<Integer, Task> task_map = tasklistsql.stream().collect(Collectors.toMap(Task::getId, Function.identity(), (key1, key2) -> key2));
         List<Exam> examList=fzhktService.getExamListAll();
         Map<Integer,Exam> examMap=examList.stream().collect(Collectors.toMap(Exam::getId, Function.identity(), (key1, key2) -> key2));
-        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfo(beginDate,endDate,userId,studyType,taskId);
-        List<UserScoreRecordPOJO> userScoreRecordPOJOTask=studyRecordService.getUserStudyRecordAndUserInfoTask(beginDate,endDate,userId);
+        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfo(beginDate,endDate,id,studyType,taskId);
+        List<UserScoreRecordPOJO> userScoreRecordPOJOTask=studyRecordService.getUserStudyRecordAndUserInfoTask(beginDate,endDate,id);
         for(UserScoreRecordPOJO newuserScoreRecordPOJOTask:userScoreRecordPOJOTask){
             if(newuserScoreRecordPOJOTask.getStudyType()==0){
                 //任务
@@ -266,6 +267,7 @@ public class StudyRecordController {
     public ResponseEntity<byte[]> classScoreExcel(@RequestParam(value = "beginDate") String beginDate,
                                 @RequestParam(value = "endDate") String endDate,
                                 @RequestParam(value = "userId") Integer userId,
+                                @RequestParam(value = "id") Integer id,
                                 @RequestParam(value = "taskId") Integer taskId,
                                 @RequestParam(value = "studyType") String studyType,
                                 @RequestParam(value = "token") String token,
@@ -280,7 +282,7 @@ public class StudyRecordController {
         Map<Integer, Task> task_map = tasklistsql.stream().collect(Collectors.toMap(Task::getId, Function.identity(), (key1, key2) -> key2));
         List<Exam> examList=fzhktService.getExamListAll();
         Map<Integer,Exam> examMap=examList.stream().collect(Collectors.toMap(Exam::getId, Function.identity(), (key1, key2) -> key2));
-        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfo(beginDate,endDate,userId,studyType,taskId);
+        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordAndUserInfo(beginDate,endDate,id,studyType,taskId);
         List<UserScoreRecordPOJO> dataList = new ArrayList<UserScoreRecordPOJO>();
         for (UserScoreRecordPOJO newuserScoreRecordPOJO : userScoreRecordPOJO) {
             User u=new User();
@@ -350,6 +352,7 @@ public class StudyRecordController {
     @RequestMapping(value = "/selectClassScoreDetail", method = RequestMethod.POST)
     public Result selectClassScoreDetail(@RequestParam(value = "date") String date,
                                    @RequestParam(value = "userId") Integer userId,
+                                   @RequestParam(value = "id") Integer id,
                                    @RequestParam(value = "taskId") Integer taskId,
                                    @RequestParam(value = "studyType") Integer studyType,
                                    @RequestParam(value = "token") String token,
@@ -363,7 +366,7 @@ public class StudyRecordController {
         List<Questions> questionlistsql = fzhktService.getQuestionListAll();
         Map<Integer, Operate> operate_map = operatelistsql.stream().collect(Collectors.toMap(Operate::getId, Function.identity(), (key1, key2) -> key2));
         Map<Integer, Questions> questions_map = questionlistsql.stream().collect(Collectors.toMap(Questions::getId, Function.identity(), (key1, key2) -> key2));
-        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordDetail(date,userId,taskId,studyType);
+        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordDetail(date,id,taskId,studyType);
         List<UserScoreRecordPOJO> dataList = new ArrayList<UserScoreRecordPOJO>();
         for (UserScoreRecordPOJO newuserScoreRecordPOJO : userScoreRecordPOJO) {
             UserScoreRecordPOJO m = new UserScoreRecordPOJO();
@@ -616,6 +619,7 @@ public class StudyRecordController {
     @RequestMapping(value = "/selectPersonScoreDetail", method = RequestMethod.POST)
     public Result selectPersonScoreDetail(@RequestParam(value = "date") String date,
                                             @RequestParam(value = "userId") Integer userId,
+                                            @RequestParam(value = "id") Integer id,
                                             @RequestParam(value = "taskId") Integer taskId,
                                             @RequestParam(value = "studyType") Integer studyType,
                                             @RequestParam(value = "token") String token,
@@ -629,7 +633,7 @@ public class StudyRecordController {
         List<Questions> questionlistsql = fzhktService.getQuestionListAll();
         Map<Integer, Operate> operate_map = operatelistsql.stream().collect(Collectors.toMap(Operate::getId, Function.identity(), (key1, key2) -> key2));
         Map<Integer, Questions> questions_map = questionlistsql.stream().collect(Collectors.toMap(Questions::getId, Function.identity(), (key1, key2) -> key2));
-        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordDetail(date,userId,taskId,studyType);
+        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordDetail(date,id,taskId,studyType);
         List<UserScoreRecordPOJO> dataList = new ArrayList<UserScoreRecordPOJO>();
         for (UserScoreRecordPOJO newuserScoreRecordPOJO : userScoreRecordPOJO) {
             UserScoreRecordPOJO m = new UserScoreRecordPOJO();
