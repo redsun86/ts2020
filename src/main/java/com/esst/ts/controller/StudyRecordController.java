@@ -182,16 +182,25 @@ public class StudyRecordController {
             else if(newuserScoreRecordPOJOTask.getStudyType()==1){
                 //试卷
                 Exam e=examMap.get(newuserScoreRecordPOJOTask.getTaskId());
-                int c=0;
-                for(int i=0;i<tasklist.size();i++){
-                    if(tasklist.get(i).getStudy_type()=="1" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJOTask.getTaskId().toString())){
-                        c++;
+                if(e!=null){
+                    int c=0;
+                    for(int i=0;i<tasklist.size();i++){
+                        if(tasklist.get(i).getStudy_type()=="1" && tasklist.get(i).getTask_id().equals(newuserScoreRecordPOJOTask.getTaskId().toString())){
+                            c++;
+                        }
+                    }
+                    if(c==0) {
+                        taskModel taskModel = new taskModel();
+                        taskModel.setTask_id(e.getId().toString());
+                        taskModel.setTask_name(e.getExamName());
+                        taskModel.setStudy_type("1");
+                        tasklist.add(taskModel);
                     }
                 }
-                if(c==0) {
+                else{
                     taskModel taskModel = new taskModel();
-                    taskModel.setTask_id(e.getId().toString());
-                    taskModel.setTask_name(e.getExamName());
+                    taskModel.setTask_id("0");
+                    taskModel.setTask_name("");
                     taskModel.setStudy_type("1");
                     tasklist.add(taskModel);
                 }
