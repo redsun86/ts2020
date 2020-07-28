@@ -59,4 +59,8 @@ public interface FZhKTService {
     List<UserLiveDataWithBLOBs> getRealTimeByTeacherId(String userId,String taskId,String studyType);
 
     List<ScoreDetailPOJO> getScoreDetailList(int teacher,int userId, int taskId, int studyType);
+
+    int insertDetailScore(DetailScore detailScore);
+
+    DetailScore getDetailScore(String trainId);
 }

@@ -1,5 +1,6 @@
 package com.esst.ts.service.impl;
 
+import com.esst.ts.constants.Constants;
 import com.esst.ts.dao.*;
 import com.esst.ts.model.*;
 import com.esst.ts.service.FZhKTService;
@@ -63,7 +64,8 @@ public class FZhKTImpl implements FZhKTService {
     private UserTokenDao userTokenDao;
     @Resource
     UserScoreRecordMapper userScoreRecordMapper;
-
+    @Resource
+    DetailScoreMapper detailScoreMapper;
     @Override
     public List<Task> getCourseTaskLst(int courseID) {
         return FZhKTMapper.getCourseTaskLstBytechId(courseID);
@@ -170,7 +172,7 @@ public class FZhKTImpl implements FZhKTService {
     @Override
     public List<UserToken> getUserLoginList() {
         //return userLoginLogMapper.getUserLoginByTeacherID(userId);
-        return userTokenDao.getUserLoginList();
+        return userTokenDao.getUserLoginList(Constants.WEB_OUT_TIME);
     }
 
     @Override
@@ -448,6 +450,16 @@ public class FZhKTImpl implements FZhKTService {
             }
         }
         return scoreDetailPOJOArrayList;
+    }
+
+    @Override
+    public int insertDetailScore(DetailScore detailScore) {
+        return detailScoreMapper.insert(detailScore);
+    }
+
+    @Override
+    public DetailScore getDetailScore(String trainId) {
+        return detailScoreMapper.getDetailScoreByTrainID(trainId);
     }
 
     @Override

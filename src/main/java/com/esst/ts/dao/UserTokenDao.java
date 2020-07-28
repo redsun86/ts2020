@@ -37,7 +37,7 @@ public interface UserTokenDao {
     @ResultMap("BaseResultMap")
     UserToken checkUserTokenIsLogin(@Param("userId") Integer userId, @Param("token") String token);
 
-    @Select("select user_id from user_token WHERE update_time>CAST(SYSDATE()AS DATE)")
+    @Select("select user_id from user_token WHERE login_type=1 AND time_to_sec(timediff(update_time, NOW()))<#{webouttime}")
     @ResultMap("BaseResultMap")
-    List<UserToken> getUserLoginList();
+    List<UserToken> getUserLoginList(@Param("webouttime") int webouttime);
 }

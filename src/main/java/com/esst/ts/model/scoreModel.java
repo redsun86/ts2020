@@ -16,6 +16,16 @@ public class scoreModel {
     private String detailesscore;//":"带排版的详细成绩",
     private String report_url;//":"www.esonline.com/report.pdf"
 
+    public String getTrain_id() {
+        return train_id;
+    }
+
+    public void setTrain_id(String train_id) {
+        this.train_id = train_id;
+    }
+
+    private String train_id;
+
     public String getTeacher_id() {
         return teacher_id;
     }

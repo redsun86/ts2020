@@ -38,6 +38,15 @@ public class ScoreDetailPOJO {
     private String learnTime;
     private String score;
 
+    public String getTrainId() {
+        return trainId;
+    }
+
+    public void setTrainId(String trainId) {
+        this.trainId = trainId;
+    }
+
+    private String trainId;
     public String getScoreDetail() {
         return scoreDetail;
     }

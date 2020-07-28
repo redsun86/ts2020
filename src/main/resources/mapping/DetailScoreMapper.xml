@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.DetailScoreMapper" >
+  <resultMap id="BaseResultMap" type="com.esst.ts.model.DetailScore" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="train_id" property="trainId" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.esst.ts.model.DetailScore" extends="BaseResultMap" >
+    <result column="detail_score" property="detailScore" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, train_id
+  </sql>
+  <sql id="Blob_Column_List" >
+    detail_score
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from detail_score
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from detail_score
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.esst.ts.model.DetailScore" >
+    insert into detail_score (id, train_id, detail_score
+      )
+    values (#{id,jdbcType=INTEGER}, #{trainId,jdbcType=VARCHAR}, #{detailScore,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.esst.ts.model.DetailScore" >
+    insert into detail_score
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="trainId != null" >
+        train_id,
+      </if>
+      <if test="detailScore != null" >
+        detail_score,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="trainId != null" >
+        #{trainId,jdbcType=VARCHAR},
+      </if>
+      <if test="detailScore != null" >
+        #{detailScore,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esst.ts.model.DetailScore" >
+    update detail_score
+    <set >
+      <if test="trainId != null" >
+        train_id = #{trainId,jdbcType=VARCHAR},
+      </if>
+      <if test="detailScore != null" >
+        detail_score = #{detailScore,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.esst.ts.model.DetailScore" >
+    update detail_score
+    set train_id = #{trainId,jdbcType=VARCHAR},
+      detail_score = #{detailScore,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.DetailScore" >
+    update detail_score
+    set train_id = #{trainId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
