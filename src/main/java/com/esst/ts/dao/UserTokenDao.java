@@ -33,9 +33,9 @@ public interface UserTokenDao {
     @ResultMap("BaseResultMap")
     UserToken getUserToken(@Param("userId") Integer userId, @Param("loginType") int loginType);
 
-    @Select("select * from user_token where user_id=#{userId} and token=#{token} and login_type =1")
+    @Select("select * from user_token where user_id=#{userId} and login_type =1")
     @ResultMap("BaseResultMap")
-    UserToken checkUserTokenIsLogin(@Param("userId") Integer userId, @Param("token") String token);
+    UserToken checkUserTokenIsLogin(@Param("userId") Integer userId);
 
     @Select("select user_id from user_token WHERE login_type=1 AND time_to_sec(timediff(update_time, NOW()))<#{webouttime}")
     @ResultMap("BaseResultMap")

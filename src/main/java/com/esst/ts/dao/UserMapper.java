@@ -24,12 +24,17 @@ public interface UserMapper {
     @ResultMap("BaseResultMap")
     User selectTeacher();
 
-    @Update("update user set rel_name=#{trueName},mobile=#{mobile} where id=#{userId}")
+    @Update("update user set rel_name=#{trueName},mobile=#{mobile},user_name=#{loginName} where id=#{userId}")
     int updateUserInfo(@Param("userId") int userId,@Param("trueName") String trueName,@Param("mobile") String mobile,@Param("loginName") String loginName);
 
     @Select("select * from user where st_num = #{num} and id in(select student_id from teacher_student_relation where teacher_id = #{userId})")
     @ResultMap("BaseResultMap")
     User selectByNum(@Param("num") String num,@Param("userId") int userId);
+
+
+    @Select("select * from user where user_name = #{userName} and is_admin in(1,-1)")
+    @ResultMap("BaseResultMap")
+    User getUserByUserName(@Param("userName") String userName);
 
     @Select("select * from user where st_num = #{num} and is_admin=0")
     @ResultMap("BaseResultMap")

@@ -40,5 +40,5 @@ public interface TeacherStudentRelationMapper {
      *
      * @return
      */
-    List<TeacherStudentRelation> GetOnLineTeacherList();
+    List<TeacherStudentRelation> GetOnLineTeacherList(Integer webOutTime);
 }

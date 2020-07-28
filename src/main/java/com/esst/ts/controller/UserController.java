@@ -63,17 +63,36 @@ public class UserController {
                             HttpServletRequest request) {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
-        int i = userService.updateUserInfo(userId,trueName,mobile,loginName);
-        if (i>0) {
-            r.setMsg("OK");
-            r.setCode(0);
-            r.setData("用户信息修改成功");
+        User u=userService.getUserByUserName(loginName);
+        if(u!=null) {
+            if (u.getId().equals(userId)) {
+                int i = userService.updateUserInfo(userId, trueName, mobile, loginName);
+                if (i > 0) {
+                    r.setMsg("OK");
+                    r.setCode(0);
+                    r.setData("用户信息修改成功");
+                } else {
+                    r.setMsg("Err");
+                    r.setCode(1);
+                    r.setData("用户信息修改失败");
+                }
+            } else {
+                r.setMsg("Err");
+                r.setCode(1);
+                r.setData("用户名称已存在,请重新输入");
+            }
         }
-        else
-        {
-            r.setMsg("Err");
-            r.setCode(2);
-            r.setData("用户信息修改失败");
+        else{
+            int i = userService.updateUserInfo(userId, trueName, mobile, loginName);
+            if (i > 0) {
+                r.setMsg("OK");
+                r.setCode(0);
+                r.setData("用户信息修改成功");
+            } else {
+                r.setMsg("Err");
+                r.setCode(1);
+                r.setData("用户信息修改失败");
+            }
         }
         return r;
     }
@@ -118,32 +137,6 @@ public class UserController {
             r.setMsg("Err");
             r.setCode(1);
             r.setData("系统错误");
-        }
-        return r;
-    }
-
-
-    /**
-     * 判断当前学员是否在线
-     *
-     * @param userId 用户ID
-     */
-    @ResponseBody
-    @RequestMapping("/checkLogin")
-    public Result checkLogin(@RequestParam(value = "userId") Integer userId,
-                             @RequestParam(value = "token") String token,
-                             HttpServletRequest request) {
-        RequestContext requestContext = new RequestContext(request);
-        Result r = new Result();
-        UserToken userToken = userTokenService.checkUserTokenIsLogin(userId, token);
-        if (userToken != null) {
-            r.setMsg("OK");
-            r.setCode(0);
-            r.setData("当前用户在线");
-        } else {
-            r.setMsg("OK");
-            r.setCode(1);
-            r.setData("当前用户离线");
         }
         return r;
     }
@@ -288,29 +281,61 @@ public class UserController {
                 //存在学号，判断真实姓名是否正确
                 user = userService.loginByStudent(userName,passWord);
                 if(user!=null){
-                    //记录学员登录日志
-                    UserLoginLog userLoginLogModel = new UserLoginLog();
-                    userLoginLogModel.setUserId(user.getId());
-                    userLoginLogModel.setCreateTime(DateUtils.stringToDate());
-                    userLoginLogModel.setStatus(1);
-                    userLoginLogModel.setisAdmin(0);
-                    userLoginLogModel.setMacAddress(macAddress);
-                    userLoginLogModel.setIpAddress(ipAddress);
-                    int j = userService.insert(userLoginLogModel);
-                    if (j > 0) {
-                        r.setMsg("OK");
-                        r.setCode(200);
-                    } else {
-                        r.setMsg("Err");
-                        r.setCode(201);
-                        r.setData("登录失败：记录登陆日志错误");
-                        return r;
+                    //检查当前学员是否在线
+                    UserToken userToken = userTokenService.getUserTokenByUserId(user.getId(),1);
+                    if(userToken!=null){
+                        boolean f=userTokenService.checkToken(user.getId(),userToken.getToken(),1);
+                        if(!f){
+                            r.setMsg("Err");
+                            r.setCode(202);
+                            r.setData("当前学员已在线");
+                            return r;
+                        }
+                        else{
+                            //记录学员登录日志
+                            UserLoginLog userLoginLogModel = new UserLoginLog();
+                            userLoginLogModel.setUserId(user.getId());
+                            userLoginLogModel.setCreateTime(DateUtils.stringToDate());
+                            userLoginLogModel.setStatus(1);
+                            userLoginLogModel.setisAdmin(0);
+                            userLoginLogModel.setMacAddress(macAddress);
+                            userLoginLogModel.setIpAddress(ipAddress);
+                            int j = userService.insert(userLoginLogModel);
+                            if (j > 0) {
+                                r.setMsg("OK");
+                                r.setCode(200);
+                            } else {
+                                r.setMsg("Err");
+                                r.setCode(201);
+                                r.setData("登录失败：记录登陆日志错误");
+                                return r;
+                            }
+                        }
+                    }
+                    else{
+                        //记录学员登录日志
+                        UserLoginLog userLoginLogModel = new UserLoginLog();
+                        userLoginLogModel.setUserId(user.getId());
+                        userLoginLogModel.setCreateTime(DateUtils.stringToDate());
+                        userLoginLogModel.setStatus(1);
+                        userLoginLogModel.setisAdmin(0);
+                        userLoginLogModel.setMacAddress(macAddress);
+                        userLoginLogModel.setIpAddress(ipAddress);
+                        int j = userService.insert(userLoginLogModel);
+                        if (j > 0) {
+                            r.setMsg("OK");
+                            r.setCode(200);
+                        } else {
+                            r.setMsg("Err");
+                            r.setCode(201);
+                            r.setData("登录失败：记录登陆日志错误");
+                            return r;
+                        }
                     }
                 }
                 else{
                     r.setMsg("Err");
                     r.setCode(201);
-                    r.setData("登录失败");
                     r.setData("真实姓名输入有误");
                     return r;
                 }

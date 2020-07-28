@@ -23,5 +23,5 @@ public interface TeacherStudentRelationService {
      *
      * @return 返回数据集合
      */
-    List<TeacherStudentRelation> GetOnLineTeacherList();
+    List<TeacherStudentRelation> GetOnLineTeacherList(Integer webOutTime);
 }

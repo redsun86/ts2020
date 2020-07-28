@@ -8,6 +8,10 @@ public class TeacherStudentRelation {
     private Integer teacherId;
 
     private Integer isDel;
+    /**
+     * 超时时间
+     */
+    private Integer webOutTime;
 
     /**
      * 是否在线：0：未登录；1：在线；2：离线
@@ -52,5 +56,13 @@ public class TeacherStudentRelation {
 
     public void setIsOnline(Integer isOnline) {
         this.isOnline = isOnline;
+    }
+
+    public Integer getWebOutTime() {
+        return webOutTime;
+    }
+
+    public void setWebOutTime(Integer webOutTime) {
+        this.webOutTime = webOutTime;
     }
 }

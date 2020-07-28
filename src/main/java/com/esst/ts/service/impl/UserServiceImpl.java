@@ -109,6 +109,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserByUserName(String userName) {
+        return userMapper.getUserByUserName(userName);
+    }
+
+    @Override
     public int updatePassword(User record) {
         return userMapper.updateByPrimaryKeySelective(record);
     }

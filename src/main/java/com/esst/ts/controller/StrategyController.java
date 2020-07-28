@@ -1,5 +1,6 @@
 package com.esst.ts.controller;
 
+import com.esst.ts.constants.Constants;
 import com.esst.ts.model.*;
 import com.esst.ts.utils.StringUtils;
 import org.slf4j.Logger;
@@ -125,8 +126,25 @@ public class StrategyController {
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
         List<String> contentList = new ArrayList<>();
+
         InputStream fileStream = objFile.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(fileStream));
+
+//        try {
+//            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//            DocumentBuilder builder = factory.newDocumentBuilder();
+//            Document doc = builder.parse(fileStream);
+//            NodeList nl = doc.getElementsByTagName("VALUE");
+//            for (int i = 0; i < nl.getLength(); i++) {
+//                System.out.print("车牌号码:"+ doc.getElementsByTagName("NO").item(i).getFirstChild().getNodeValue());
+//                System.out.println("车主地址:"+ doc.getElementsByTagName("ADDR").item(i).getFirstChild().getNodeValue());
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+
+        //<editor-fold desc="Description">
         String line = null;
         boolean isBegin = false;
         try {
@@ -158,18 +176,18 @@ public class StrategyController {
                     }
                 }
             }
-        } catch (
-                IOException e) {
-            //            e.printStackTrace();
+        } catch (IOException e) {
+            // e.printStackTrace();
             responseDataMap.put("respMsg", e.getMessage());
         } finally {
             try {
                 fileStream.close();
             } catch (IOException e) {
-                //                e.printStackTrace();
+                // e.printStackTrace();
                 responseDataMap.put("respMsg", e.getMessage());
             }
         }
+        //</editor-fold>
         responseDataMap.put(objFile.getOriginalFilename() + "的内容：", contentList);
         r.setData(responseDataMap);
         //</editor-fold>
@@ -282,6 +300,7 @@ public class StrategyController {
             TeacherStudentRelation reqTeacherMod = new TeacherStudentRelation();
             reqTeacherMod.setIsDel(0);
             reqTeacherMod.setStudentId(Integer.valueOf(userId));
+            reqTeacherMod.setWebOutTime(Constants.WEB_OUT_TIME);
             List<TeacherStudentRelation> teacherList = TeacherStudentRelationService.GetList(reqTeacherMod);
             if (null != teacherList && teacherList.size() > 0) {
                 List<String> idList = new ArrayList<>();
@@ -451,6 +470,8 @@ public class StrategyController {
             reqTeacherMod.setStudentId(Integer.valueOf(userId));
             // 检索条件-在线
             reqTeacherMod.setIsOnline(1);
+            // 超时时间
+            reqTeacherMod.setWebOutTime(Constants.WEB_OUT_TIME);
             List<TeacherStudentRelation> teacherList = TeacherStudentRelationService.GetList(reqTeacherMod);
             if (null != teacherList && teacherList.size() > 0) {
                 List<String> idList = new ArrayList<>();
@@ -460,7 +481,7 @@ public class StrategyController {
                 if (idList.size() > 0) reqUserIds = String.join(",", idList);
                 taskPojolst = TaskService.GetList(reqUserIds, 1, 0);
             } else {
-                List<TeacherStudentRelation> onLineTeacherList = TeacherStudentRelationService.GetOnLineTeacherList();
+                List<TeacherStudentRelation> onLineTeacherList = TeacherStudentRelationService.GetOnLineTeacherList(Constants.WEB_OUT_TIME);
                 if (null != onLineTeacherList && onLineTeacherList.size() > 0) {
                     List<String> idList = new ArrayList<>();
                     for (TeacherStudentRelation tmod : onLineTeacherList) {
