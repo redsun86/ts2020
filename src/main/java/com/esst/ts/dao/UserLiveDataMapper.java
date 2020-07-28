@@ -34,7 +34,7 @@ public interface UserLiveDataMapper {
     List<UserLiveDataWithBLOBs> getUserlivaByteacherid(@Param("userId") int userId);
 //    @Select("select u.* from user_live_data u LEFT JOIN teacher_student_relation t on u.user_id=t.student_id WHERE t.teacher_id=#{userId} AND u.score_statues=2")
 //    @ResultMap("ResultMapWithBLOBs")
-    @Delete("delete from user_live_data where user_id in (select student_id from teacher_student_relation WHERE teacher_id=#{userId})")
+    @Delete("delete from user_live_data where teacher_id=#{userId})")
     int deletUserliveByteacherid(@Param("userId") int userId);
     @Select("SELECT SUM(uld.study_duration) study_duration ,MAX(current_score) current_score,uld.* from user_live_data uld RIGHT JOIN \n" +
             "(SELECT MAX(u.id) id from user_live_data u WHERE IF(#{userId}='',0=0,teacher_id=#{userId}) and task_id=#{taskId} AND study_type=#{studyType} GROUP BY train_id) e ON uld.id=e.id GROUP BY task_id,operate_id ")
