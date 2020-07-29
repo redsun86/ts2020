@@ -10,7 +10,7 @@ public class baseRequestPOJO {
      */
     private String token;
     /**
-     * 请求者用户id
+     * 登录者用户id
      */
     private Integer userId;
     /**

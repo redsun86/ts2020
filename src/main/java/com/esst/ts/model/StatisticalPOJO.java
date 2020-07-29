@@ -5,11 +5,18 @@ package com.esst.ts.model;
  */
 public class StatisticalPOJO {
     /**
+     * 登录者用户id
+     */
+    private Integer userId;
+    /**
      * 学习类型。0：任务单；1：试卷
      */
     private Integer studyType;
     private Integer exameId;
-    private Integer userId;
+    /**
+     * 所属老师用户id
+     */
+    private Integer teacherId;
     /**
      * 是否历史数据。0：否；1：是；
      */

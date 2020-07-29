@@ -5,6 +5,11 @@ package com.esst.ts.model;
  * 创建标识：梁建磊 2020/7/20 17:05
  */
 public class baseDataRequest extends baseRequestPOJO {
+
+    /**
+     * 所属老师用户id
+     */
+    private Integer teacherId;
     /**
      * 数据类型。0：任务单；1：试卷
      */
