@@ -96,9 +96,13 @@ public interface UserScoreRecordMapper {
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getLearnTime(@Param("beginDate") String beginDate,@Param("userId") int userId,@Param("taskId") int taskId);
 
+    @Select("select id,user_id,task_id,operate_id,score,end_time - begin_time AS learn_time,FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d %H:%i:%s') AS studyDate,study_type from user_score_record where FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d') >=#{date} AND FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d') <=#{date} AND user_id=#{userId} and task_id=#{taskId} and study_type=#{studyType} and teacher_id=#{teacherId} ORDER BY id ASC")
+    @ResultMap("BasePOJOResultMap")
+    List<UserScoreRecordPOJO> getUserStudyRecordDetail(@Param("date") String date,@Param("userId") int userId,@Param("taskId") int taskId,@Param("studyType") int studyType,@Param("teacherId") int teacherId);
+
     @Select("select id,user_id,task_id,operate_id,score,end_time - begin_time AS learn_time,FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d %H:%i:%s') AS studyDate,study_type from user_score_record where FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d') >=#{date} AND FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d') <=#{date} AND user_id=#{userId} and task_id=#{taskId} and study_type=#{studyType} ORDER BY id ASC")
     @ResultMap("BasePOJOResultMap")
-    List<UserScoreRecordPOJO> getUserStudyRecordDetail(@Param("date") String date,@Param("userId") int userId,@Param("taskId") int taskId,@Param("studyType") int studyType);
+    List<UserScoreRecordPOJO> getPersonUserStudyRecordDetail(@Param("date") String date,@Param("userId") int userId,@Param("taskId") int taskId,@Param("studyType") int studyType);
 
     @Select("SELECT r.*, r.end_time - r.begin_time AS learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE user_id in(${userId}) GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id ORDER BY total_score,begin_time DESC")
     @ResultMap("BasePOJOResultMap")
