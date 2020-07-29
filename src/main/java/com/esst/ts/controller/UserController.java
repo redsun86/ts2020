@@ -288,7 +288,7 @@ public class UserController {
                         if(!f){
                             r.setMsg("Err");
                             r.setCode(202);
-                            r.setData("当前学员已在线");
+                            r.setData("已有他人使用该学号和姓名登录，请联系老师通过教师站确定登录者的机器号");
                             return r;
                         }
                         else{

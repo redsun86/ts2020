@@ -33,6 +33,8 @@ public class UserScoreRecordPOJO {
 
     private  String report;
 
+    private String trainId;
+
     private  Integer teacherId;
 
     private String userTrueName;
@@ -163,8 +165,18 @@ public class UserScoreRecordPOJO {
         this.ipAddress = ipAddress;
     }
 
+    public String getReport() {
+        return report;
+    }
+
     public void setReport(String report) {
         this.report = report;
+    }
+
+    public String getTrainId() { return trainId; }
+
+    public void setTrainId(String trainId) {
+        this.trainId = trainId;
     }
 
     public Integer getTeacherId() {

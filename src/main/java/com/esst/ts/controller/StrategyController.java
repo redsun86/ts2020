@@ -1163,12 +1163,14 @@ public class StrategyController {
 
         Date StartTime = new Date();
 
+        //<editor-fold desc="登录者身份。学生/老师">
         if (null != reqMod.getUserId() & reqMod.getUserId() > 0) {
             User umod = UserService.getUserById(Integer.valueOf(reqMod.getUserId()));
             if (null != umod) {
                 reqMod.setIsAdmin(umod.getIsAdmin());
             }
         }
+        //</editor-fold>
 
         //<editor-fold desc="返回参数初始化">
         r.setMsg(requestContext.getMessage("OK"));

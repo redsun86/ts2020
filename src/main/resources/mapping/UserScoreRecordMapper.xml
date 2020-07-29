@@ -15,6 +15,7 @@
     <result column="mac_address" property="macAddress" jdbcType="VARCHAR" />
     <result column="ip_address" property="ipAddress" jdbcType="VARCHAR" />
     <result column="report" property="report" jdbcType="VARCHAR" />
+    <result column="train_id" property="trainId" jdbcType="VARCHAR" />
     <result column="teacher_id" property="teacherId" jdbcType="INTEGER" />
     <result column="rel_name" property="userTrueName" jdbcType="VARCHAR" />
     <result column="st_num" property="userStNum" jdbcType="VARCHAR" />
