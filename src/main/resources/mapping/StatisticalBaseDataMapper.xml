@@ -20,8 +20,8 @@ select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.
 ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
 ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
 ,uld.study_type,MAX(uld.study_duration) study_duration
-	,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else op.o_count*100 end) total_score
--- 	,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
+,MAX(uld.current_score) current_score,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else op.o_count*100 end) total_score
+-- 	,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
 from (
 	select max(id) id	from user_live_data
 -- 	where teacher_id=1 and study_type=1 and task_id=157

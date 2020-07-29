@@ -20,7 +20,7 @@
         select date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
-        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,uld.study_type,MAX(uld.study_duration) study_duration,MAX(uld.current_score) current_score
         ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
         op.o_count*100 end) total_score
         -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
@@ -75,7 +75,7 @@
         select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
-        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,uld.study_type,MAX(uld.study_duration) study_duration,MAX(uld.current_score) current_score
         ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
         op.o_count*100 end) total_score
         -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
@@ -150,7 +150,7 @@
         select date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
-        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,uld.study_type,MAX(uld.study_duration) study_duration,MAX(uld.current_score) current_score
         ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
         op.o_count*100 end) total_score
         -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
@@ -226,7 +226,7 @@
         select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
-        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,uld.study_type,MAX(uld.study_duration) study_duration,MAX(uld.current_score) current_score
         ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
         op.o_count*100 end) total_score
         -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
@@ -280,7 +280,7 @@
         select date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
-        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,uld.study_type,MAX(uld.study_duration) study_duration,MAX(uld.current_score) current_score
         ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
         op.o_count*100 end) total_score
         -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
@@ -333,7 +333,7 @@
         select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
-        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,uld.study_type,MAX(uld.study_duration) study_duration,MAX(uld.current_score) current_score
         ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
         op.o_count*100 end) total_score
         -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
@@ -397,7 +397,7 @@
         select date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
-        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,uld.study_type,MAX(uld.study_duration) study_duration,MAX(uld.current_score) current_score
         ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
         op.o_count*100 end) total_score
         -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
@@ -463,7 +463,7 @@
         select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
-        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,uld.study_type,MAX(uld.study_duration) study_duration,MAX(uld.current_score) current_score
         ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
         op.o_count*100 end) total_score
         -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
@@ -530,7 +530,7 @@
         select date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
-        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,uld.study_type,MAX(uld.study_duration) study_duration,MAX(uld.current_score) current_score
         ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
         op.o_count*100 end) total_score
         -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
@@ -598,7 +598,7 @@
         select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
-        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,uld.study_type,MAX(uld.study_duration) study_duration,MAX(uld.current_score) current_score
         ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
         op.o_count*100 end) total_score
         -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
@@ -646,13 +646,13 @@
         ) scbv on cj.xAxis_id=scbv.xAxis_id
     </select>
     <select id="GetListWithPingJun0" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
-        select bv.operate_name xAxis,cast(AVG(bv.prop_scroe) as DECIMAL(10,2)) yAxis
+        select bv.operate_name xAxis,cast(AVG(bv.current_score) as DECIMAL(10,2)) yAxis
         from (
 
         select date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
-        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,uld.study_type,MAX(uld.study_duration) study_duration,MAX(uld.current_score) current_score
         ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
         op.o_count*100 end) total_score
         -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
@@ -698,13 +698,13 @@
         ) bv group by bv.task_id,bv.operate_id
     </select>
     <select id="GetListWithPingJun1" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
-        select bv.task_id,bv.operate_id,bv.operate_name xAxis,cast(AVG(bv.prop_scroe) as DECIMAL(10,2)) yAxis
+        select bv.task_id,bv.operate_id,bv.operate_name xAxis,cast(AVG(bv.current_score) as DECIMAL(10,2)) yAxis
         from (
 
         select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
-        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,uld.study_type,MAX(uld.study_duration) study_duration,MAX(uld.current_score) current_score
         ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
         op.o_count*100 end) total_score
         -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
@@ -758,7 +758,7 @@
         select date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
-        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,uld.study_type,MAX(uld.study_duration) study_duration,MAX(uld.current_score) current_score
         ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
         op.o_count*100 end) total_score
         -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count
@@ -814,7 +814,7 @@
         select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
         ,uld.task_id,uld.report,(case when uld.study_type=1 then qp.exam_name else op.task_name end) task_name
         ,uld.operate_id,(case when uld.study_type=1 then qp.question_name else op.operate_name end) operate_name
-        ,uld.study_type,MAX(uld.study_duration) study_duration
+        ,uld.study_type,MAX(uld.study_duration) study_duration,MAX(uld.current_score) current_score
         ,ROUND(MAX(uld.current_score)*ifnull(qp.prop,1),2) prop_scroe,(case when uld.study_type=1 then 100 else
         op.o_count*100 end) total_score
         -- ,MAX(uld.current_score) current_score,ifnull(qp.prop,1) prop,qp.q_count,qp.prop qp_prop,op.o_count

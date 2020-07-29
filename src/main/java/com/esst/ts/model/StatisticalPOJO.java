@@ -25,6 +25,14 @@ public class StatisticalPOJO {
     private String stopTime;
     private Short isAdmin;
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     public Integer getStudyType() {
         return studyType;
     }
@@ -41,12 +49,12 @@ public class StatisticalPOJO {
         this.exameId = exameId;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getTeacherId() {
+        return teacherId;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setTeacherId(Integer teacherId) {
+        this.teacherId = teacherId;
     }
 
     public Integer getIsHistory() {
