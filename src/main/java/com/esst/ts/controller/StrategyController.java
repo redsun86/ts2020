@@ -1,8 +1,11 @@
 package com.esst.ts.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.esst.ts.constants.Constants;
 import com.esst.ts.model.*;
 import com.esst.ts.utils.StringUtils;
+import org.apache.ibatis.binding.MapperMethod;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -32,6 +35,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/web/v1/strategy")
 public class StrategyController {
+
     //<editor-fold desc="Service对象初始化">
     /**
      * 产品包——业务逻辑层接口服务
@@ -108,7 +112,6 @@ public class StrategyController {
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     //</editor-fold>
 
-
     //  接收AD500u.ini 解析并入库
 
     /**
@@ -118,7 +121,9 @@ public class StrategyController {
      */
     @ResponseBody
     @RequestMapping(value = "/AD500u", method = RequestMethod.POST)
-    public Result AD500u(@RequestParam("file") MultipartFile objFile, HttpServletRequest request) throws IOException {
+    public Result AD500u(
+            @RequestParam("file") MultipartFile objFile,
+            HttpServletRequest request) throws IOException {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
         //<editor-fold desc="返回参数初始化">
@@ -130,19 +135,18 @@ public class StrategyController {
         InputStream fileStream = objFile.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(fileStream));
 
-//        try {
-//            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//            DocumentBuilder builder = factory.newDocumentBuilder();
-//            Document doc = builder.parse(fileStream);
-//            NodeList nl = doc.getElementsByTagName("VALUE");
-//            for (int i = 0; i < nl.getLength(); i++) {
-//                System.out.print("车牌号码:"+ doc.getElementsByTagName("NO").item(i).getFirstChild().getNodeValue());
-//                System.out.println("车主地址:"+ doc.getElementsByTagName("ADDR").item(i).getFirstChild().getNodeValue());
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
+        //        try {
+        //            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        //            DocumentBuilder builder = factory.newDocumentBuilder();
+        //            Document doc = builder.parse(fileStream);
+        //            NodeList nl = doc.getElementsByTagName("VALUE");
+        //            for (int i = 0; i < nl.getLength(); i++) {
+        //                System.out.print("车牌号码:"+ doc.getElementsByTagName("NO").item(i).getFirstChild().getNodeValue());
+        //                System.out.println("车主地址:"+ doc.getElementsByTagName("ADDR").item(i).getFirstChild().getNodeValue());
+        //            }
+        //        } catch (Exception e) {
+        //            e.printStackTrace();
+        //        }
 
         //<editor-fold desc="Description">
         String line = null;
@@ -1158,11 +1162,25 @@ public class StrategyController {
             @RequestParam(value = "token", required = false) String strToken,
             @ModelAttribute("reqMod") StatisticalPOJO reqMod,
             HttpServletRequest request) {
+
         RequestContext requestContext = new RequestContext(request);
+
+        //<editor-fold desc="初始化">
         Result r = new Result();
 
-        Date StartTime = new Date();
+        r.setMsg(requestContext.getMessage("OK"));
+        r.setCode(Result.SUCCESS);
 
+        Map<String, Object> responseDataMap = new HashMap<>();
+
+
+        //</editor-fold>
+
+        //<editor-fold desc="业务操作并赋值">
+
+        StatisticalChartPOJO modMap;
+        List<StatisticalChartDataPOJO> dstaLst;
+        StatisticalChartDataPOJO mod;
         //<editor-fold desc="登录者身份。学生/老师">
         if (null != reqMod.getUserId() & reqMod.getUserId() > 0) {
             User umod = UserService.getUserById(Integer.valueOf(reqMod.getUserId()));
@@ -1171,17 +1189,6 @@ public class StrategyController {
             }
         }
         //</editor-fold>
-
-        //<editor-fold desc="返回参数初始化">
-        r.setMsg(requestContext.getMessage("OK"));
-        r.setCode(Result.SUCCESS);
-        //</editor-fold>
-        //<editor-fold desc="业务操作并赋值">
-        Map<String, Object> responseDataMap = new HashMap<>();
-
-        StatisticalChartPOJO modMap;
-        List<StatisticalChartDataPOJO> dstaLst;
-        StatisticalChartDataPOJO mod;
         //<editor-fold desc="是否历史数据默认值">
         if (null == reqMod.getIsHistory()) {
             reqMod.setIsHistory(0);
@@ -1321,7 +1328,7 @@ public class StrategyController {
         responseDataMap.put("averageScore", modMap);
         //</editor-fold>
 
-        //<editor-fold desc="附件参数赋值">
+        //<editor-fold desc="附加参数赋值">
         responseDataMap.put("loginUserCount", "0");
         responseDataMap.put("onlineUserCount", "0");
         if (currentExameId > 0) {
@@ -1335,14 +1342,24 @@ public class StrategyController {
         //</editor-fold>
         //</editor-fold>
 
+        try {
+            System.out.println();
+            Date StopTime = new Date();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            String strClassName = this.getClass().getName();
+            //String time_Date = simpleDateFormat.format(new Date(System.currentTimeMillis() * 1000L));
+            System.out.printf("当前时间：%s[%s][%s]", StopTime, simpleDateFormat.format(StopTime),System.currentTimeMillis());
+            for(int i=0;i<5;i++) {
+                System.out.println();
+            }
+            String jsonString = JSON.toJSONString(reqMod);
+            System.out.printf("reqMod：%s", jsonString);
+            System.out.println();
+            StatisticalPOJO modJson = JSON.parseObject(jsonString, StatisticalPOJO.class);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
-        Date StopTime = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        double millisecond = StopTime.getTime() - StartTime.getTime();
-        System.out.println("getStatisticalChartDataList");
-        System.out.println("StartTime：" + simpleDateFormat.format(StartTime));
-        System.out.println("StopTime：" + simpleDateFormat.format(StopTime));
-        System.out.println("millisecond：" + millisecond + "\n");
         return r;
     }
 
@@ -1355,9 +1372,10 @@ public class StrategyController {
      */
     @ResponseBody
     @RequestMapping(value = "/getDataList", method = RequestMethod.POST)
-    public Result getDataList(
-            @RequestBody List<Exam> reqModList,
-            HttpServletRequest request) {
+    public Result getDataList(@RequestBody List<Exam> reqModList, HttpServletRequest request) {
+        //计时开始
+        Date StartTime = new Date();
+
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
 
@@ -1449,6 +1467,16 @@ public class StrategyController {
         //查询任务单ID是1的工况
         reqMod.setTaskId(1);
         List<Operate> operateList = OperateService.GetList(reqMod);
+
+        //计时结束
+        Date StopTime = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        double millisecond = StopTime.getTime() - StartTime.getTime();
+        System.out.println("getStatisticalChartDataList");
+        System.out.println("StartTime：" + simpleDateFormat.format(StartTime));
+        System.out.println("StopTime：" + simpleDateFormat.format(StopTime));
+        System.out.println("millisecond：" + millisecond + "\n");
+
         return r;
     }
 

@@ -221,14 +221,14 @@ public class ExcelUtils {
             c0.setCellValue("登录时间");
             c0.setCellStyle(headerStyle);
             HSSFCell c1 = r0.createCell(1);
-            c1.setCellValue("学号");
+            c1.setCellValue("机器号");
             c1.setCellStyle(headerStyle);
             HSSFCell c2 = r0.createCell(2);
             c2.setCellStyle(headerStyle);
             c2.setCellValue("姓名");
             HSSFCell c3 = r0.createCell(3);
             c3.setCellStyle(headerStyle);
-            c3.setCellValue("机器号");
+            c3.setCellValue("学号");
             HSSFCell c4 = r0.createCell(4);
             c4.setCellStyle(headerStyle);
             c4.setCellValue("任务单/试卷名称");
@@ -249,9 +249,9 @@ public class ExcelUtils {
                 UserScoreRecordPOJO employee = employeeList.get(i);
                 HSSFRow row = sheet.createRow(i + 1);
                 row.createCell(0).setCellValue(employee.getStudyDate());
-                row.createCell(1).setCellValue(employee.getUserStNum());
+                row.createCell(1).setCellValue(employee.getMacAddress());
                 row.createCell(2).setCellValue(employee.getUserTrueName());
-                row.createCell(3).setCellValue(employee.getMacAddress());
+                row.createCell(3).setCellValue(employee.getUserStNum());
                 row.createCell(4).setCellValue(employee.getTaskName());
                 if (employee.getStudyType() == 0) {
                     row.createCell(5).setCellValue("练习模式");
