@@ -237,7 +237,7 @@ public class ExcelUtils {
             c5.setCellValue("模式");
             HSSFCell c6 = r0.createCell(6);
             c6.setCellStyle(headerStyle);
-            c6.setCellValue("IP地址");
+            c6.setCellValue("班级");
             HSSFCell c7 = r0.createCell(7);
             c7.setCellStyle(headerStyle);
             c7.setCellValue("总成绩");
@@ -258,7 +258,7 @@ public class ExcelUtils {
                 } else {
                     row.createCell(5).setCellValue("考试模式");
                 }
-                row.createCell(6).setCellValue(employee.getIpAddress());
+                row.createCell(6).setCellValue(employee.getClassName());
                 row.createCell(7).setCellValue(employee.getScore());
                 if (employee.getLearnTimes() == null) {
                     row.createCell(8).setCellValue(0);
