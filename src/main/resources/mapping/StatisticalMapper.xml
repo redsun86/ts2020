@@ -13,7 +13,7 @@
     </resultMap>
     <select id="GetListWithDaBiaoLv0" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
         select count(distinct xAxis) xAxis,count(distinct user_id) yAxis from (
-        select bv.user_id,bv.task_id,bv.operate_id,(case when 50>bv.prop_scroe then bv.user_id else null end) xAxis from
+        select bv.user_id,bv.task_id,bv.operate_id,(case when 50>bv.current_score then bv.user_id else null end) xAxis from
         (
 
 
@@ -69,7 +69,7 @@
     </select>
     <select id="GetListWithDaBiaoLv1" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
         select count(distinct xAxis) xAxis,count(distinct user_id) yAxis from (
-        select bv.user_id,bv.task_id,bv.operate_id,(case when 50>bv.prop_scroe then bv.user_id else null end) xAxis from
+        select bv.user_id,bv.task_id,bv.operate_id,(case when 50>bv.current_score then bv.user_id else null end) xAxis from
         (
 
         select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
