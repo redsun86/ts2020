@@ -31,6 +31,8 @@ public class UserLive {
 
     private String trainId;
 
+    private Integer teacherId;
+
     public Integer getId() {
         return id;
     }
@@ -149,5 +151,13 @@ public class UserLive {
 
     public void setTrainId(String trainId) {
         this.trainId = trainId == null ? null : trainId.trim();
+    }
+
+    public Integer getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(Integer teacherId) {
+        this.teacherId = teacherId;
     }
 }

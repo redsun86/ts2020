@@ -285,6 +285,7 @@ public class FZhKTController {
         userlive.setStudyDuration(0.00);
         userlive.setScoreStatues(client_status);
         userlive.setTrainId(train_id);
+        userlive.setTeacherId(teacher_id);
         userlive = fzhktService.updateUserLive(userlive);
         uldscore.setStudyDuration(userlive.getStudyDuration());
         uldscore.setStartTime(userlive.getStartTime());

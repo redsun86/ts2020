@@ -222,8 +222,10 @@ public class StudyRecordController {
             m.setOperateId(newuserScoreRecordPOJO.getOperateId());
             m.setStudyType(newuserScoreRecordPOJO.getStudyType());
             m.setClassName(u.getClassName());
+            m.setTrainId(newuserScoreRecordPOJO.getTrainId());
             String beginTime=Long.toString(newuserScoreRecordPOJO.getBeginTime());
             m.setStudyDate(DateUtils.stampToDates(beginTime));
+            m.setTeacherId(newuserScoreRecordPOJO.getTeacherId());//教师ID
             double score=0;
             long leartime=0;
             //根据用户id和日期和任务单id进行分组查询对应的任务
@@ -303,10 +305,12 @@ public class StudyRecordController {
             m.setUserId(newuserScoreRecordPOJO.getUserId());
             m.setUserTrueName(u.getRelName());
             m.setUserStNum(u.getStNum());
+            m.setTrainId(newuserScoreRecordPOJO.getTrainId());
             m.setTaskId(newuserScoreRecordPOJO.getTaskId());
             m.setOperateId(newuserScoreRecordPOJO.getOperateId());
             m.setStudyType(newuserScoreRecordPOJO.getStudyType());
             m.setClassName(u.getClassName());
+            m.setTeacherId(newuserScoreRecordPOJO.getTeacherId());//教师ID
             String beginTime=Long.toString(newuserScoreRecordPOJO.getBeginTime());
             m.setStudyDate(DateUtils.stampToDate(beginTime));
 
@@ -362,6 +366,7 @@ public class StudyRecordController {
     public Result selectClassScoreDetail(@RequestParam(value = "date") String date,
                                    @RequestParam(value = "userId") Integer userId,
                                    @RequestParam(value = "id") Integer id,
+                                   @RequestParam(value = "teacherId") Integer teacherId,
                                    @RequestParam(value = "taskId") Integer taskId,
                                    @RequestParam(value = "studyType") Integer studyType,
                                    @RequestParam(value = "token") String token,
@@ -375,7 +380,7 @@ public class StudyRecordController {
         List<Questions> questionlistsql = fzhktService.getQuestionListAll();
         Map<Integer, Operate> operate_map = operatelistsql.stream().collect(Collectors.toMap(Operate::getId, Function.identity(), (key1, key2) -> key2));
         Map<Integer, Questions> questions_map = questionlistsql.stream().collect(Collectors.toMap(Questions::getId, Function.identity(), (key1, key2) -> key2));
-        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordDetail(date,id,taskId,studyType);
+        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordDetail(date,id,taskId,studyType,teacherId);
         List<UserScoreRecordPOJO> dataList = new ArrayList<UserScoreRecordPOJO>();
         for (UserScoreRecordPOJO newuserScoreRecordPOJO : userScoreRecordPOJO) {
             UserScoreRecordPOJO m = new UserScoreRecordPOJO();
@@ -483,6 +488,7 @@ public class StudyRecordController {
             m.setUserId(newuserScoreRecordPOJO.getUserId());//用户ID
             m.setTaskId(newuserScoreRecordPOJO.getTaskId());
             m.setOperateId(newuserScoreRecordPOJO.getOperateId());
+            m.setTrainId(newuserScoreRecordPOJO.getTrainId());
             m.setClassName(newuserScoreRecordPOJO.getClassName());
             m.settGroupName(newuserScoreRecordPOJO.getGroupName());
             m.setStudyDate(newuserScoreRecordPOJO.getStudyDate());//学习时间
@@ -490,6 +496,7 @@ public class StudyRecordController {
             m.setUserTrueName(newuserScoreRecordPOJO.getUserTrueName());//姓名
             m.setMacAddress(newuserScoreRecordPOJO.getMacAddress());//机器号
             m.setStudyType(newuserScoreRecordPOJO.getStudyType());//学习模式
+            m.setTeacherId(newuserScoreRecordPOJO.getTeacherId());//教师ID
             if(newuserScoreRecordPOJO.getStudyType()==0) {
                 //任务单
                 Task t = task_map.get(newuserScoreRecordPOJO.getTaskId());
@@ -573,12 +580,13 @@ public class StudyRecordController {
             m.setUserId(newuserScoreRecordPOJO.getUserId());
             m.setUserTrueName(u.getRelName());
             m.setUserStNum(u.getStNum());
+            m.setTrainId(newuserScoreRecordPOJO.getTrainId());
             m.setTaskId(newuserScoreRecordPOJO.getTaskId());
             m.setOperateId(newuserScoreRecordPOJO.getOperateId());
             m.setStudyType(newuserScoreRecordPOJO.getStudyType());
             m.setClassName(u.getClassName());
             m.setStudyDate(newuserScoreRecordPOJO.getStudyDate());
-
+            m.setTeacherId(newuserScoreRecordPOJO.getTeacherId());//教师ID
             double score=0;
             long leartime=0;
             double leartimes=0.0;
@@ -629,6 +637,7 @@ public class StudyRecordController {
     public Result selectPersonScoreDetail(@RequestParam(value = "date") String date,
                                             @RequestParam(value = "userId") Integer userId,
                                             @RequestParam(value = "id") Integer id,
+                                            @RequestParam(value = "teacherId") Integer teacherId,
                                             @RequestParam(value = "taskId") Integer taskId,
                                             @RequestParam(value = "studyType") Integer studyType,
                                             @RequestParam(value = "token") String token,
@@ -642,7 +651,7 @@ public class StudyRecordController {
         List<Questions> questionlistsql = fzhktService.getQuestionListAll();
         Map<Integer, Operate> operate_map = operatelistsql.stream().collect(Collectors.toMap(Operate::getId, Function.identity(), (key1, key2) -> key2));
         Map<Integer, Questions> questions_map = questionlistsql.stream().collect(Collectors.toMap(Questions::getId, Function.identity(), (key1, key2) -> key2));
-        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordDetail(date,id,taskId,studyType);
+        List<UserScoreRecordPOJO> userScoreRecordPOJO=studyRecordService.getUserStudyRecordDetail(date,id,taskId,studyType,0);
         List<UserScoreRecordPOJO> dataList = new ArrayList<UserScoreRecordPOJO>();
         for (UserScoreRecordPOJO newuserScoreRecordPOJO : userScoreRecordPOJO) {
             UserScoreRecordPOJO m = new UserScoreRecordPOJO();

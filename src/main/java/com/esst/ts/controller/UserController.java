@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,6 +45,32 @@ public class UserController {
     @Resource
     private SqlSessionTemplate sqlSessionTemplate;
 
+    /**
+     * 获取服务器IP地址
+     *
+     * @param userId 用户ID
+     * @param token token
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getServerIp", method = RequestMethod.POST)
+    public Result getServerIp(@RequestParam(value = "userId") Integer userId,
+                                 @RequestParam(value = "token") String token,
+                                 HttpServletRequest request) throws IOException {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        String ip=IpUtils.getServerIp();
+        if(ip.length()>0){
+            r.setMsg("OK");
+            r.setCode(0);
+            r.setData(ip);
+        }
+        else{
+            r.setMsg("Err");
+            r.setCode(1);
+            r.setData("获取IP地址失败");
+        }
+        return r;
+    }
 
     /**
      * 修改用户资料
@@ -288,7 +315,7 @@ public class UserController {
                         if(!f){
                             r.setMsg("Err");
                             r.setCode(202);
-                            r.setData("当前学员已在线");
+                            r.setData("已有他人使用该学号和姓名登录，请联系老师通过教师站确定登录者的机器号");
                             return r;
                         }
                         else{
