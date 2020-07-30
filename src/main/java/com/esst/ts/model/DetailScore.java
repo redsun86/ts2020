@@ -5,6 +5,10 @@ public class DetailScore {
 
     private String trainId;
 
+    private Long updatetime;
+
+    private Integer studentId;
+
     private String detailScore;
 
     public Integer getId() {
@@ -21,6 +25,22 @@ public class DetailScore {
 
     public void setTrainId(String trainId) {
         this.trainId = trainId == null ? null : trainId.trim();
+    }
+
+    public Long getUpdatetime() {
+        return updatetime;
+    }
+
+    public void setUpdatetime(Long updatetime) {
+        this.updatetime = updatetime;
+    }
+
+    public Integer getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Integer studentId) {
+        this.studentId = studentId;
     }
 
     public String getDetailScore() {

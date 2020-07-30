@@ -4,12 +4,14 @@
   <resultMap id="BaseResultMap" type="com.esst.ts.model.DetailScore" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="train_id" property="trainId" jdbcType="VARCHAR" />
+    <result column="updatetime" property="updatetime" jdbcType="BIGINT" />
+    <result column="student_id" property="studentId" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.esst.ts.model.DetailScore" extends="BaseResultMap" >
     <result column="detail_score" property="detailScore" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, train_id
+    id, train_id, updatetime, student_id
   </sql>
   <sql id="Blob_Column_List" >
     detail_score
@@ -27,10 +29,10 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.esst.ts.model.DetailScore" >
-    insert into detail_score (id, train_id, detail_score
-      )
-    values (#{id,jdbcType=INTEGER}, #{trainId,jdbcType=VARCHAR}, #{detailScore,jdbcType=LONGVARCHAR}
-      )
+    insert into detail_score (id, train_id, updatetime, 
+      student_id, detail_score)
+    values (#{id,jdbcType=INTEGER}, #{trainId,jdbcType=VARCHAR}, #{updatetime,jdbcType=BIGINT}, 
+      #{studentId,jdbcType=INTEGER}, #{detailScore,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.esst.ts.model.DetailScore" >
     insert into detail_score
@@ -40,6 +42,12 @@
       </if>
       <if test="trainId != null" >
         train_id,
+      </if>
+      <if test="updatetime != null" >
+        updatetime,
+      </if>
+      <if test="studentId != null" >
+        student_id,
       </if>
       <if test="detailScore != null" >
         detail_score,
@@ -52,6 +60,12 @@
       <if test="trainId != null" >
         #{trainId,jdbcType=VARCHAR},
       </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=BIGINT},
+      </if>
+      <if test="studentId != null" >
+        #{studentId,jdbcType=INTEGER},
+      </if>
       <if test="detailScore != null" >
         #{detailScore,jdbcType=LONGVARCHAR},
       </if>
@@ -63,6 +77,12 @@
       <if test="trainId != null" >
         train_id = #{trainId,jdbcType=VARCHAR},
       </if>
+      <if test="updatetime != null" >
+        updatetime = #{updatetime,jdbcType=BIGINT},
+      </if>
+      <if test="studentId != null" >
+        student_id = #{studentId,jdbcType=INTEGER},
+      </if>
       <if test="detailScore != null" >
         detail_score = #{detailScore,jdbcType=LONGVARCHAR},
       </if>
@@ -72,12 +92,16 @@
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.esst.ts.model.DetailScore" >
     update detail_score
     set train_id = #{trainId,jdbcType=VARCHAR},
+      updatetime = #{updatetime,jdbcType=BIGINT},
+      student_id = #{studentId,jdbcType=INTEGER},
       detail_score = #{detailScore,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.esst.ts.model.DetailScore" >
     update detail_score
-    set train_id = #{trainId,jdbcType=VARCHAR}
+    set train_id = #{trainId,jdbcType=VARCHAR},
+      updatetime = #{updatetime,jdbcType=BIGINT},
+      student_id = #{studentId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -499,6 +499,9 @@ public class FZhKTController {
         DetailScore detailScore1 = new DetailScore();
         detailScore1.setDetailScore(detailScore);
         detailScore1.setTrainId(trainId);
+        detailScore1.setStudentId(userId);
+        Long curretime = new Date().getTime();
+        detailScore1.setUpdatetime(curretime);
         fzhktService.insertDetailScore(detailScore1);
         r.setMsg("上传成功");
         return r;
