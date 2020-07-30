@@ -723,7 +723,7 @@ public class UserController {
         } else {
             r.setMsg(requestContext.getMessage("Err"));
             r.setCode(201);
-            r.setData("文件为空");
+            r.setData("文件不正确");
         }
         return r;
     }

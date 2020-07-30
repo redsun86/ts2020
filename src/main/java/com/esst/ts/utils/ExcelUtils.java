@@ -1,4 +1,5 @@
 package com.esst.ts.utils;
+
 import com.esst.ts.model.UserScoreRecordPOJO;
 import okhttp3.Response;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,6 +21,7 @@ import java.util.List;
 public class ExcelUtils {
     /**
      * 获取并解析excel文件，返回一个二维集合
+     *
      * @param file 上传的文件
      * @return 二维集合（第一重集合为行，第二重集合为列，每一行包含该行的列集合，列集合包含该行的全部单元格的值）
      */
@@ -26,67 +29,82 @@ public class ExcelUtils {
         ArrayList<ArrayList<String>> row = new ArrayList<>();
         //获取文件名称
         String fileName = file.getOriginalFilename();
-        try {
-            //获取输入流
-            InputStream in = file.getInputStream();
-            //判断excel版本
-            Workbook workbook = null;
-            if (judegExcelEdition(fileName)) {
-                workbook = new XSSFWorkbook(in);
-            } else {
-                workbook = new HSSFWorkbook(in);
-            }
-
-            //获取第一张工作表
-            Sheet sheet = workbook.getSheetAt(1);
-            //从第二行开始获取
-            //int aa=sheet.getPhysicalNumberOfRows();
-            //int bb=sheet.getLastRowNum();
-            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-                //循环获取工作表的每一行
-                if(sheet.getRow(i)==null){}
-                else{
-                    Row sheetRow = sheet.getRow(i);
-                    //循环获取每一列
-                    ArrayList<String> cell = new ArrayList<>();
-                    //int ssss1=sheetRow.getPhysicalNumberOfCells();
-                    //int ssss2=sheetRow.getLastCellNum();
-                    for (int j = 0; j < 9; j++) {
-                        //将每一个单元格的值装入列集合
-                        if(sheetRow.getCell(j)==null){
-                            cell.add("");
+        String fileLastName = fileName.substring(fileName.lastIndexOf(".") + 1);
+        if (fileLastName.equals("xls") || fileLastName.equals("xlsx")) {
+            try {
+                //获取输入流
+                InputStream in = file.getInputStream();
+                //判断excel版本
+                Workbook workbook = null;
+                if (judegExcelEdition(fileName)) {
+                    workbook = new XSSFWorkbook(in);
+                } else {
+                    workbook = new HSSFWorkbook(in);
+                }
+                if (workbook.getNumberOfSheets() == 2) {
+                    //获取第一张工作表
+                    Sheet sheet = workbook.getSheetAt(1);
+                    int coloumNum = sheet.getRow(0).getPhysicalNumberOfCells();
+                    if (coloumNum == 9) {
+                        Row fistSheetRow = sheet.getRow(0);
+                        if (fistSheetRow.getCell(0) == null || fistSheetRow.getCell(1) == null || fistSheetRow.getCell(2) == null || fistSheetRow.getCell(3) == null || fistSheetRow.getCell(4) == null || fistSheetRow.getCell(5) == null || fistSheetRow.getCell(6) == null || fistSheetRow.getCell(7) == null || fistSheetRow.getCell(8) == null) {
+                            return row;
                         }
                         else{
-                            cell.add(sheetRow.getCell(j).getStringCellValue());
+                            if(fistSheetRow.getCell(0).getStringCellValue().equals("学号") && fistSheetRow.getCell(1).getStringCellValue().equals("姓名") && fistSheetRow.getCell(2).getStringCellValue().equals("班级") && fistSheetRow.getCell(3).getStringCellValue().equals("登录账号") && fistSheetRow.getCell(4).getStringCellValue().equals("手机号") && fistSheetRow.getCell(5).getStringCellValue().equals("分组信息") && fistSheetRow.getCell(6).getStringCellValue().equals("操作模式") && fistSheetRow.getCell(7).getStringCellValue().equals("角色") && fistSheetRow.getCell(8).getStringCellValue().equals("备注")){
+                                for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                                    //循环获取工作表的每一行
+                                    if (sheet.getRow(i) == null) {
+                                    } else {
+                                        Row sheetRow = sheet.getRow(i);
+                                        //循环获取每一列
+                                        ArrayList<String> cell = new ArrayList<>();
+                                        //int ssss1=sheetRow.getPhysicalNumberOfCells();
+                                        //int ssss2=sheetRow.getLastCellNum();
+                                        for (int j = 0; j < 9; j++) {
+                                            //将每一个单元格的值装入列集合
+                                            if (sheetRow.getCell(j) == null) {
+                                                cell.add("");
+                                            } else {
+                                                cell.add(sheetRow.getCell(j).getStringCellValue());
+                                            }
+                                        }
+                                        //将装有每一列的集合装入大集合
+                                        row.add(cell);
+                                        //关闭资源
+                                    }
+                                }
+                            }
+                            else{
+                                return row;
+                            }
                         }
                     }
-                    //将装有每一列的集合装入大集合
-                    row.add(cell);
-                    //关闭资源
                 }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return row;
     }
 
     /**
      * 判断上传的excel文件版本（xls为2003，xlsx为2017）
+     *
      * @param fileName 文件路径
      * @return excel2007及以上版本返回true，excel2007以下版本返回false
      */
-    private static boolean judegExcelEdition(String fileName){
-        if (fileName.matches("^.+\\.(?i)(xls)$")){
+    private static boolean judegExcelEdition(String fileName) {
+        if (fileName.matches("^.+\\.(?i)(xls)$")) {
             return false;
-        }else {
+        } else {
             return true;
         }
     }
 
-    public static ResponseEntity<byte[]> exportEmp(List<UserScoreRecordPOJO> employeeList,Integer type) {
+    public static ResponseEntity<byte[]> exportEmp(List<UserScoreRecordPOJO> employeeList, Integer type) {
         //1.创建一个excel文档
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
         //2.创建文档摘要
@@ -120,7 +138,7 @@ public class ExcelUtils {
         HSSFCellStyle dateCellStyle = hssfWorkbook.createCellStyle();
         //这里的m/d/yy 相当于yyyy-MM-dd
         //dateCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
-        if(type==0) {
+        if (type == 0) {
             HSSFSheet sheet = hssfWorkbook.createSheet("班级成绩");
             //设置每一列的宽度
             sheet.setColumnWidth(0, 25 * 256);
@@ -201,9 +219,8 @@ public class ExcelUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return new ResponseEntity<byte[]>(stream.toByteArray(),headers, HttpStatus.CREATED);
-        }else
-        {
+            return new ResponseEntity<byte[]>(stream.toByteArray(), headers, HttpStatus.CREATED);
+        } else {
             HSSFSheet sheet = hssfWorkbook.createSheet("个人成绩");
             //设置每一列的宽度
             sheet.setColumnWidth(0, 25 * 256);
@@ -279,7 +296,7 @@ public class ExcelUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return new ResponseEntity<byte[]>(stream.toByteArray(),headers, HttpStatus.CREATED);
+            return new ResponseEntity<byte[]>(stream.toByteArray(), headers, HttpStatus.CREATED);
         }
     }
 }
