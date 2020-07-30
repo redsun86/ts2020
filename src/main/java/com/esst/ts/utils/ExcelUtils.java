@@ -48,6 +48,9 @@ public class ExcelUtils {
                     if (coloumNum == 9) {
                         Row fistSheetRow = sheet.getRow(0);
                         if (fistSheetRow.getCell(0) == null || fistSheetRow.getCell(1) == null || fistSheetRow.getCell(2) == null || fistSheetRow.getCell(3) == null || fistSheetRow.getCell(4) == null || fistSheetRow.getCell(5) == null || fistSheetRow.getCell(6) == null || fistSheetRow.getCell(7) == null || fistSheetRow.getCell(8) == null) {
+                            ArrayList<String> arrayList = new ArrayList<>();
+                            arrayList.add("文件列头错误");
+                            row.add(arrayList);
                             return row;
                         }
                         else{
@@ -76,16 +79,37 @@ public class ExcelUtils {
                                 }
                             }
                             else{
+                                ArrayList<String> arrayList = new ArrayList<>();
+                                arrayList.add("文件列头错误");
+                                row.add(arrayList);
                                 return row;
                             }
                         }
                     }
+                    else{
+                        ArrayList<String> arrayList = new ArrayList<>();
+                        arrayList.add("文件列头错误");
+                        row.add(arrayList);
+                        return row;
+                    }
+                }
+                else{
+                    ArrayList<String> arrayList = new ArrayList<>();
+                    arrayList.add("文件sheet错误");
+                    row.add(arrayList);
+                    return row;
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        else{
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add("文件类型错误");
+            row.add(arrayList);
+            return row;
         }
         return row;
     }
