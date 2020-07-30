@@ -396,6 +396,7 @@ public class StudyRecordController {
             m.settGroupName(newuserScoreRecordPOJO.getGroupName());
             m.setStudyDate(newuserScoreRecordPOJO.getStudyDate());
             m.setStudyType(newuserScoreRecordPOJO.getStudyType());
+            m.setTrainId(newuserScoreRecordPOJO.getTrainId());
             if(newuserScoreRecordPOJO.getStudyType()==0) {
                 Operate t = operate_map.get(newuserScoreRecordPOJO.getOperateId());
                 m.setTaskName(t.getOperateName());
@@ -667,6 +668,7 @@ public class StudyRecordController {
             m.settGroupName(newuserScoreRecordPOJO.getGroupName());
             m.setStudyDate(newuserScoreRecordPOJO.getStudyDate());
             m.setStudyType(newuserScoreRecordPOJO.getStudyType());
+            m.setTrainId(newuserScoreRecordPOJO.getTrainId());
             if(newuserScoreRecordPOJO.getStudyType()==0) {
                 Operate t = operate_map.get(newuserScoreRecordPOJO.getOperateId());
                 m.setTaskName(t.getOperateName());

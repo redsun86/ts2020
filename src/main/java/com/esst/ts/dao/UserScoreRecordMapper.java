@@ -96,11 +96,11 @@ public interface UserScoreRecordMapper {
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getLearnTime(@Param("beginDate") String beginDate,@Param("userId") int userId,@Param("taskId") int taskId);
 
-    @Select("select id,user_id,task_id,operate_id,score,end_time - begin_time AS learn_time,FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d %H:%i:%s') AS studyDate,study_type from user_score_record where FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d') >=#{date} AND FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d') <=#{date} AND user_id=#{userId} and task_id=#{taskId} and study_type=#{studyType} and teacher_id=#{teacherId} ORDER BY id ASC")
+    @Select("select id,user_id,task_id,operate_id,score,train_id,end_time - begin_time AS learn_time,FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d %H:%i:%s') AS studyDate,study_type from user_score_record where FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d') >=#{date} AND FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d') <=#{date} AND user_id=#{userId} and task_id=#{taskId} and study_type=#{studyType} and teacher_id=#{teacherId} ORDER BY id ASC")
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getUserStudyRecordDetail(@Param("date") String date,@Param("userId") int userId,@Param("taskId") int taskId,@Param("studyType") int studyType,@Param("teacherId") int teacherId);
 
-    @Select("select id,user_id,task_id,operate_id,score,end_time - begin_time AS learn_time,FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d %H:%i:%s') AS studyDate,study_type from user_score_record where FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d') >=#{date} AND FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d') <=#{date} AND user_id=#{userId} and task_id=#{taskId} and study_type=#{studyType} ORDER BY id ASC")
+    @Select("select id,user_id,task_id,operate_id,score,train_id,end_time - begin_time AS learn_time,FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d %H:%i:%s') AS studyDate,study_type from user_score_record where FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d') >=#{date} AND FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d') <=#{date} AND user_id=#{userId} and task_id=#{taskId} and study_type=#{studyType} ORDER BY id ASC")
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getPersonUserStudyRecordDetail(@Param("date") String date,@Param("userId") int userId,@Param("taskId") int taskId,@Param("studyType") int studyType);
 
