@@ -27,8 +27,8 @@
   </insert>
     <insert id="insertTaskIds">
         delete from user_task_relation where user_id=#{userId};
-        insert into user_task_relation (user_id, task_id)
-        select bv.user_id,bv.task_id from (
+        insert into user_task_relation (user_id, task_id,release_time)
+        select bv.user_id,bv.task_id,REPLACE(unix_timestamp(current_timestamp(3)),'.','') release_time from (
         select 0 user_id, 0 task_id
         <foreach collection="idList" index="index" item="item" open="" separator="" close="">
             union

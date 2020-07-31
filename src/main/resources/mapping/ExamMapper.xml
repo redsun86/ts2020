@@ -23,11 +23,10 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="com.esst.ts.model.Exam">
-    insert into exam (id, exam_name, exam_attribute,
-      status, create_user)
-    values (#{id,jdbcType=INTEGER}, #{examName,jdbcType=VARCHAR}, #{examAttribute,jdbcType=INTEGER},
-      #{status,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER});
-  </insert>
+        insert into exam (id, exam_name, exam_attribute,status, create_user)
+        values (#{id,jdbcType=INTEGER}, #{examName,jdbcType=VARCHAR}, #{examAttribute,jdbcType=INTEGER},
+        #{status,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER});
+    </insert>
     <insert id="insertSelective" parameterType="com.esst.ts.model.Exam">
         insert into exam
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -88,7 +87,7 @@
         <if test="status == 1">
             UPDATE exam SET status=0 where create_User=#{userId} and is_deleted=0;
         </if>
-        UPDATE exam SET status=#{status}
+        UPDATE exam SET status=#{status},release_time=REPLACE(unix_timestamp(current_timestamp(3)),'.','')
         <where>
             create_User=#{userId} and is_deleted=0 and id in
             <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
@@ -97,10 +96,11 @@
         </where>
     </update>
     <select id="getInsertModel" resultMap="BaseResultMap" parameterType="com.esst.ts.model.Exam">
-        insert into exam (exam_name, exam_attribute,status, create_user)
-        values (#{examName,jdbcType=VARCHAR}, #{examAttribute,jdbcType=INTEGER},#{status,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER});
+        insert into exam (exam_name,exam_attribute,status,create_user,is_deleted,create_time,release_time)
+        values (#{examName,jdbcType=VARCHAR}, #{examAttribute,jdbcType=INTEGER},#{status,jdbcType=INTEGER}
+        , #{createUser,jdbcType=INTEGER},0,REPLACE(unix_timestamp(current_timestamp(3)),'.',''),null);
         select * from exam where id = @@IDENTITY;
-</select>
+    </select>
     <resultMap id="BaseResultPOJOMap" type="com.esst.ts.model.ExamPOJO">
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="exam_name" property="examName" jdbcType="VARCHAR"/>
@@ -114,7 +114,8 @@
         <result column="teacher_id" property="teacherId" javaType="INTEGER"/>
     </resultMap>
     <select id="GetList" resultMap="BaseResultPOJOMap" parameterType="com.esst.ts.model.Exam">
-        select e.id,e.create_user teacher_id,e.exam_name,e.`status`,e.create_user,ifnull(uc.user_count,0) user_count,e.exam_attribute
+        select e.id,e.create_user teacher_id,e.exam_name,e.`status`,e.create_user,ifnull(uc.user_count,0)
+        user_count,e.exam_attribute
         ,(case e.`status` when 1 then '发布' else '未发布' end) status_name,ifnull(eq.questionsCount,0) questionsCount
         ,concat((case e.exam_attribute when 1 then '考试' else '联合操作' end),'，',ifnull(eq.questionsCount,0),'题'
         ,(case e.exam_attribute when 1 then CONCAT('，',ifnull(eq.time_limit,0),'分钟') else '，不限时' end)) edit_info
@@ -139,9 +140,11 @@
         <if test='status != null'>
             and e.`status`=#{status,jdbcType=INTEGER}
         </if>
+        order by e.release_time desc,e.exam_name asc
     </select>
     <select id="GetListWithStudent" resultMap="BaseResultPOJOMap" parameterType="com.esst.ts.model.Exam">
-        select e.id,e.create_user teacher_id,concat(u.rel_name,'老师：',e.exam_name) exam_name,e.`status`,e.create_user,ifnull(uc.user_count,0)
+        select e.id,e.create_user teacher_id,concat(u.rel_name,'老师：',e.exam_name)
+        exam_name,e.`status`,e.create_user,ifnull(uc.user_count,0)
         user_count,e.exam_attribute
         ,(case e.`status` when 1 then '发布' else '未发布' end) status_name,ifnull(eq.questionsCount,0) questionsCount
         ,concat((case e.exam_attribute when 1 then '考试' else '联合操作' end),'，',ifnull(eq.questionsCount,0),'题'
@@ -174,10 +177,11 @@
         <if test='status != null'>
             and e.`status`=#{status,jdbcType=INTEGER}
         </if>
+        order by e.release_time desc,e.exam_name asc
     </select>
-
     <select id="GetListWithDefault" resultMap="BaseResultPOJOMap" parameterType="com.esst.ts.model.Exam">
-        select e.id,e.create_user teacher_id,concat(u.rel_name,'老师：',e.exam_name) exam_name,e.`status`,e.create_user,ifnull(uc.user_count,0)
+        select e.id,e.create_user teacher_id,concat(u.rel_name,'老师：',e.exam_name)
+        exam_name,e.`status`,e.create_user,ifnull(uc.user_count,0)
         user_count,e.exam_attribute
         ,(case e.`status` when 1 then '发布' else '未发布' end) status_name,ifnull(eq.questionsCount,0) questionsCount
         ,concat((case e.exam_attribute when 1 then '考试' else '联合操作' end),'，',ifnull(eq.questionsCount,0),'题'
@@ -201,5 +205,6 @@
         <if test='status != null'>
             and e.`status`=#{status,jdbcType=INTEGER}
         </if>
+        order by e.release_time desc,e.exam_name asc
     </select>
 </mapper>

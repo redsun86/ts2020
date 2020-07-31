@@ -113,7 +113,7 @@
         select t.id,t.task_code,ut.user_id teacher_id,concat(ut.rel_name,'老师：',t.task_name) task_name,t.technology_id,t.shibiao
         ,(case when ut.task_id is null then 0 else 1 end) `status`
         from task t right join (
-        select u.rel_name,utr.user_id,utr.task_id from user_task_relation utr
+        select u.rel_name,utr.user_id,utr.task_id,max(utr.release_time) release_time from user_task_relation utr
         LEFT JOIN `user` u ON utr.user_id=u.id
         WHERE utr.user_id in
         <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
@@ -130,13 +130,13 @@
                 and ut.task_id is null
             </if>
         </where>
-        ORDER BY ut.rel_name,t.id
+        ORDER BY ut.release_time desc,ut.rel_name,t.id
     </select>
     <select id="GetListWithTeacherIdsAndStatus" resultMap="BasePOJOResultMap">
         select t.id,t.task_code,t.task_name,t.technology_id,t.shibiao
         ,(case when ut.task_id is null then 0 else 1 end) `status`
         from task t left join (
-        select utr.user_id,utr.task_id from user_task_relation utr
+        select utr.user_id,utr.task_id,max(utr.release_time) release_time from user_task_relation utr
         WHERE utr.user_id in
         <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
             #{item,jdbcType=INTEGER}
@@ -152,6 +152,6 @@
                 and ut.task_id is null
             </if>
         </where>
-        ORDER BY t.id
+        ORDER BY ut.release_time desc,t.id
     </select>
 </mapper>

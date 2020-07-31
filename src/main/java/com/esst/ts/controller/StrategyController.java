@@ -599,9 +599,12 @@ public class StrategyController {
             reqMod.setExamName(examName);
             List<ExamPOJO> examsLst = new ArrayList<>();
             User umod = UserService.getUserById(Integer.valueOf(userId));
+            //根据用户身份获取数据
             if (null != umod && umod.getIsAdmin() == 1) {
+                //用户身份：老师
                 examsLst = ExamService.GetList(reqMod);
             } else {
+                //用户身份：学生
                 reqMod.setStatus(1);
                 examsLst = ExamService.GetListWithStudent(reqMod);
                 if (null != examsLst && examsLst.size() > 0) {
@@ -1343,19 +1346,21 @@ public class StrategyController {
         //</editor-fold>
 
         try {
-            System.out.println();
-            Date StopTime = new Date();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-            String strClassName = this.getClass().getName();
-            //String time_Date = simpleDateFormat.format(new Date(System.currentTimeMillis() * 1000L));
-            System.out.printf("当前时间：%s[%s][%s]", StopTime, simpleDateFormat.format(StopTime),System.currentTimeMillis());
-            for(int i=0;i<5;i++) {
+            for (int i = 0; i < 5; i++) {
                 System.out.println();
             }
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            //String time_Date = simpleDateFormat.format(new Date(System.currentTimeMillis() * 1000L));
             String jsonString = JSON.toJSONString(reqMod);
-            System.out.printf("reqMod：%s", jsonString);
-            System.out.println();
             StatisticalPOJO modJson = JSON.parseObject(jsonString, StatisticalPOJO.class);
+            String strClassName = this.getClass().getName();
+            String strMethodName = new Exception().getStackTrace()[0].getMethodName();
+            System.out.printf("[友情提示][%s]【%s.%s】", simpleDateFormat.format(new Date()), strClassName, strMethodName);
+            System.out.println();
+            System.out.printf("[友情提示]【%s】", jsonString);
+            for (int i = 0; i < 5; i++) {
+                System.out.println();
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
