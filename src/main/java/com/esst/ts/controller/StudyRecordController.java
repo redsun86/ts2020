@@ -63,9 +63,9 @@ public class StudyRecordController {
         String t="";
         List<UserLoginLogListitem> listTeacher = new ArrayList<UserLoginLogListitem>();
         List<UserLoginLogLists> listss = new ArrayList<UserLoginLogLists>();
-        String beginDate=year+"-"+month+"-"+"1";
-        String endDate=year+"-"+month+"-"+"31";
-        List<UserLoginLogPOJO> userLoginLogList=studyRecordService.getDistinctDateForDate(beginDate,endDate);
+        //String beginDate=year+"-"+month+"-"+"1 00:00:00";
+        //String endDate=year+"-"+month+"-"+"31 23:59:59";
+        List<UserLoginLogPOJO> userLoginLogList=studyRecordService.getDistinctDateForDate(year,month);
         for (int i=0;i<userLoginLogList.size();i++) {
             //根据日期查询当前日期下是否有学员进行学习记录
             int s=0;

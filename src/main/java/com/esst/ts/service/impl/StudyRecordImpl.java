@@ -29,8 +29,8 @@ public class StudyRecordImpl implements StudyRecordService {
     }
 
     @Override
-    public List<UserLoginLogPOJO> getDistinctDateForDate(String beginDate, String endDate) {
-        return userLoginLogMapper.getDistinctDateForDate(beginDate,endDate);
+    public List<UserLoginLogPOJO> getDistinctDateForDate(Integer year, Integer month) {
+        return userLoginLogMapper.getDistinctDateForDate(year,month);
     }
 
     @Override

@@ -11,7 +11,7 @@ public interface StudyRecordService {
 
     List<UserLoginLog> getUserloginLogForDate(String beginDate, String endDate);
 
-    List<UserLoginLogPOJO> getDistinctDateForDate(String beginDate, String endDate);
+    List<UserLoginLogPOJO> getDistinctDateForDate(Integer year, Integer month);
 
     List<UserScoreRecord> getUserStudyRecord(String beginDate,String endDate,Integer userId);
 
