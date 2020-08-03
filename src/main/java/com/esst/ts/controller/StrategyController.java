@@ -159,19 +159,23 @@ public class StrategyController {
                             .replaceAll("；", ",")
                             .replaceAll("，", ",");
                     //出现* 表示可以开始解析并入库了
-                    if (strLine.contains("*")) {
+                    if (strLine.contains("@")) {
                         isBegin = true;
                     }
                     if (isBegin) {
                         String[] Items = strLine.split(",");
                         if (Items.length >= 2) {
                             String strName = Items[0].trim()
+                                    .replace("@", "")
                                     .replace("*", "")
                                     .replaceAll("\\t", "");
                             String strCode = Items[1].trim()
                                     .replace("-", "")
                                     .replaceAll("\\t", "");
-                            if (Items[0].contains("*")) {
+                            if (Items[0].contains("@")) {
+                                contentList.add(strCode);
+                            }
+                            else if (Items[0].contains("*")) {
                                 contentList.add(strName);
                             } else {
                                 contentList.add(strCode + "、" + strName);
