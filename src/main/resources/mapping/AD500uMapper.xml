@@ -23,7 +23,44 @@
         TRUNCATE TABLE trouble;
         -- 数据库中已有的任务单，默认所有老师均为发布状态
         TRUNCATE TABLE user_task_relation;
+
+        TRUNCATE TABLE user_live;
+        TRUNCATE TABLE user_token;
+        TRUNCATE TABLE exam;
+        TRUNCATE TABLE questions;
+        TRUNCATE TABLE exam_user_relation;
+        TRUNCATE TABLE user_login_log;
+        TRUNCATE TABLE user_score_record;
+        TRUNCATE TABLE detail_score;
+        TRUNCATE TABLE user_live_data;
+        TRUNCATE TABLE teacher_student_relation;
+
+        truncate table `user`;
+
         SET foreign_key_checks = 1;
+
+        DROP PROCEDURE IF EXISTS proc_insertTeacher; -- 如果存在此存储过程则删掉
+        -- DELIMITER $
+        CREATE PROCEDURE proc_insertTeacher(IN num INT)
+        BEGIN
+        DECLARE i INT DEFAULT 1;
+
+        -- 插入未知老师
+        INSERT INTO `user`(user_name,rel_name,`password`,`status`,is_admin,is_del)
+        select 'teacher' user_name,'未知老师' rel_name,'670B14728AD9902AECBA32E22FA4F6BD' `password`,0 `status`,-1
+        is_admin,0 is_del;
+
+        WHILE num>=i DO
+        -- 插入默认老师账号
+        INSERT INTO `user`(user_name,rel_name,`password`,`status`,is_admin,is_del)
+        select CONCAT('teacher',i) user_name,CONCAT('老师',i) rel_name,'670B14728AD9902AECBA32E22FA4F6BD' `password`,0
+        `status`,1 is_admin,0 is_del;
+        SET i = i+1;
+        END WHILE;
+        END
+        ;
+        CALL proc_insertTeacher(20);
+        DROP PROCEDURE IF EXISTS proc_insertTeacher; -- 如果存在此存储过程则删掉
     </update>
     <insert id="insertProduct" parameterType="com.esst.ts.model.Product" useGeneratedKeys="true" keyProperty="id"
             keyColumn="id">
@@ -93,8 +130,8 @@
         select technology_id task_id,id operate_id from operate;
         INSERT INTO trouble(trouble_name, trouble_code, technology)
         select '无事故' trouble_name, '0' trouble_code, id technology from technology order by id;
-        INSERT INTO user_task_relation(user_id,task_id)
-        select u.id user_id,t.id task_id from `user` u left join task t on 1=1 where u.is_admin=1
+        INSERT INTO user_task_relation(user_id,task_id,release_time)
+        select u.id user_id,t.id task_id,REPLACE(unix_timestamp(current_timestamp(3)),'.','') release_time from `user` u left join task t on 1=1 where u.is_admin=1
         and t.id is not null
         order by user_id,task_id;
     </update>
