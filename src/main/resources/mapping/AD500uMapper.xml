@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esst.ts.dao.AD500uMapper">
+    <update id="truncatetable">
+        SET foreign_key_checks = 0;
+        -- 风格
+        TRUNCATE TABLE style;
+        -- 时标
+        TRUNCATE TABLE timescale;
+        -- 产品
+        TRUNCATE TABLE product;
+        -- 工艺单元
+        TRUNCATE TABLE technology;
+        -- 产品工艺关系表
+        TRUNCATE TABLE pro_tech_relation;
+        -- 任务单
+        TRUNCATE TABLE task;
+        -- 工况
+        TRUNCATE TABLE operate;
+        -- 任务单工况关系表
+        TRUNCATE TABLE task_oper_relation;
+        -- 事故策略
+        TRUNCATE TABLE trouble;
+        -- 数据库中已有的任务单，默认所有老师均为发布状态
+        TRUNCATE TABLE user_task_relation;
+        SET foreign_key_checks = 1;
+    </update>
+    <insert id="insertProduct" parameterType="com.esst.ts.model.Product" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        INSERT INTO product(product_code,product_name,product_name2)
+        values(#{productCode,jdbcType=VARCHAR},#{productName,jdbcType=VARCHAR},#{productName2,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertTechnology" parameterType="com.esst.ts.model.Technology" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        INSERT INTO technology(technology_code,technology_zh_name,technology_en_name,style_id)
+        values(#{technologyCode,jdbcType=VARCHAR},#{technologyZhName,jdbcType=VARCHAR}
+        ,#{technologyEnName,jdbcType=VARCHAR},#{styleId,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertProTechRelation" parameterType="com.esst.ts.model.ProTechRelation">
+        INSERT INTO pro_tech_relation(product_id, technology_id)
+        select bv.* from (select #{productId,jdbcType=INTEGER} product_id, #{technologyId,jdbcType=INTEGER}
+        technology_id) bv left join pro_tech_relation p on
+        p.product_id=bv.product_id and p.technology_id=bv.technology_id
+        <where>p.id is null</where>
+    </insert>
+    <insert id="insertOperate" parameterType="com.esst.ts.model.Operate">
+        insert into operate(technology_id,operate_name,operate_code,is_deleted)
+        values (#{technologyId,jdbcType=INTEGER}, #{operateName,jdbcType=VARCHAR}, #{operateCode,jdbcType=VARCHAR}
+        ,#{isDeleted,jdbcType=INTEGER});
+    </insert>
+
+    <update id="insertDefoultSetting">
+        INSERT INTO style(style_name,style_code)
+        select '通用DCS 2005 版' style_name,'1' style_code
+        union all select 'TDC3000风格' style_name,'2' style_code
+        union all select '分析实验风格' style_name,'3' style_code
+        union all select 'IA风格' style_name,'4' style_code
+        union all select 'CS3000风格' style_name,'5' style_code
+        union all select 'InTouch风格' style_name,'6' style_code
+        union all select 'DeltaV风格' style_name,'7' style_code
+        union all select 'Citect风格' style_name,'8' style_code
+        union all select 'OASyS_SCADA风格' style_name,'9' style_code
+        union all select 'PKS风格' style_name,'10' style_code
+        union all select 'PKS_CN风格' style_name,'11' style_code
+        union all select 'Freelance_2000风格' style_name,'12' style_code
+        union all select '仪器分析2010' style_name,'13' style_code
+        union all select 'DeltaV_New风格' style_name,'14' style_code
+        union all select '通用DCS 2010 版' style_name,'15' style_code
+        union all select 'PKS_New风格' style_name,'16' style_code
+        union all select 'IA_New风格' style_name,'17' style_code
+        union all select 'CS3000_New风格' style_name,'18' style_code
+        union all select 'Freelance2000_New' style_name,'19' style_code
+        union all select '测试DCS风格' style_name,'20' style_code
+        union all select 'IA_HN风格' style_name,'21' style_code
+        union all select 'Siemens PCS7' style_name,'22' style_code
+        union all select 'System 800xA' style_name,'23' style_code
+        union all select 'Siemens SG' style_name,'24' style_code
+        union all select '实验风格' style_name,'25' style_code
+        union all select '26' style_name,'26' style_code
+        union all select '27' style_name,'27' style_code
+        union all select '通用DCS2019' style_name,'28' style_code;
+        insert into timescale(timescale_code,timescale_name)
+        select '25' timescale_code,'25%' timescale_name
+        union all select '50' timescale_code,'50%' timescale_name
+        union all select '100' timescale_code,'100%' timescale_name
+        union all select '200' timescale_code,'200%' timescale_name
+        union all select '300' timescale_code,'300%' timescale_name
+        union all select '400' timescale_code,'400%' timescale_name;
+        INSERT INTO task(task_code,task_name,technology_id,shibiao)
+        select t.id task_code,concat(t.technology_zh_name,'任务单') task_name,t.id technology_id, '100'
+        shibiao from technology t;
+        insert into task_oper_relation(task_id,operate_id)
+        select technology_id task_id,id operate_id from operate;
+        INSERT INTO trouble(trouble_name, trouble_code, technology)
+        select '无事故' trouble_name, '0' trouble_code, id technology from technology order by id;
+        INSERT INTO user_task_relation(user_id,task_id)
+        select u.id user_id,t.id task_id from `user` u left join task t on 1=1 where u.is_admin=1
+        and t.id is not null
+        order by user_id,task_id;
+    </update>
+</mapper>
