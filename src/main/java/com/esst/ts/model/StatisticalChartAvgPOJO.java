@@ -9,9 +9,17 @@ public class StatisticalChartAvgPOJO {
      */
     private String avgDuration;
     /**
+     * 总时长（min：分钟）
+     */
+    private String totalDuration;
+    /**
      * 平均分
      */
     private String avgScore;
+    /**
+     * 最高分
+     */
+    private String totalScore;
     /**
      * 满分
      */
@@ -25,12 +33,28 @@ public class StatisticalChartAvgPOJO {
         this.avgDuration = avgDuration;
     }
 
+    public String getTotalDuration() {
+        return totalDuration;
+    }
+
+    public void setTotalDuration(String totalDuration) {
+        this.totalDuration = totalDuration;
+    }
+
     public String getAvgScore() {
         return avgScore;
     }
 
     public void setAvgScore(String avgScore) {
         this.avgScore = avgScore;
+    }
+
+    public String getTotalScore() {
+        return totalScore;
+    }
+
+    public void setTotalScore(String totalScore) {
+        this.totalScore = totalScore;
     }
 
     public String getSumScore() {

@@ -1313,6 +1313,8 @@ public class StrategyController {
 
         StatisticalChartAvgPOJO avgMod = StatisticalService.GetAvgModel(reqMod);
 
+        reqMod.setTotalScore(avgMod.getTotalScore());
+        reqMod.setTotalDuration(avgMod.getTotalDuration());
         //</editor-fold>
 
         //<editor-fold desc="成绩达标率">

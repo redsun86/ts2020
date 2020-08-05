@@ -25,6 +25,16 @@ public class StatisticalPOJO {
     private String stopTime;
     private Short isAdmin;
 
+    /**
+     * 总时长（min：分钟），用于动态生成区间
+     */
+    private String totalDuration;
+    /**
+     * 最高分，用于动态生成区间
+     */
+    private String totalScore;
+
+
     public Integer getUserId() {
         return userId;
     }
@@ -87,5 +97,21 @@ public class StatisticalPOJO {
 
     public void setIsAdmin(Short isAdmin) {
         this.isAdmin = isAdmin;
+    }
+
+    public String getTotalDuration() {
+        return totalDuration;
+    }
+
+    public void setTotalDuration(String totalDuration) {
+        this.totalDuration = totalDuration;
+    }
+
+    public String getTotalScore() {
+        return totalScore;
+    }
+
+    public void setTotalScore(String totalScore) {
+        this.totalScore = totalScore;
     }
 }
