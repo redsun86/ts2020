@@ -71,7 +71,7 @@ public interface UserMapper {
     @ResultMap("BaseResultMap")
     User selectLastRecord();
 
-    @Select("select * from User")
+    @Select("select * from user")
     @ResultMap("BaseResultMap")
     List<User> getUserListAll();
 
