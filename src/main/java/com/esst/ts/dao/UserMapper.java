@@ -60,6 +60,10 @@ public interface UserMapper {
     @ResultMap("BaseResultMap")
     List<User> getUserByTrueName(@Param("userTrueName") String userTrueName);
 
+    @Select("select * from user where rel_name like '%${userTrueName}%' AND is_admin=0 and id in(select student_id from teacher_student_relation where teacher_id=#{teacherId} )")
+    @ResultMap("BaseResultMap")
+    List<User> getStudentByTrueName(@Param("userTrueName") String userTrueName,@Param("teacherId") int teacherId);
+
     @Update("update user set password = #{password} where id = #{userId}")
     int updateUserPwd(@Param("userId") int userId,@Param("password") String password);
 

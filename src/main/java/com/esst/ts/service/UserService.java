@@ -67,6 +67,8 @@ public interface UserService {
      */
     List<User> getUserByTrueName(String userTrueName);
 
+    List<User> getStudentByTrueName(String userTrueName,Integer teacherId);
+
     List<UserLoginLogPOJO> getUserLogByUserId(Integer userId,String BeginDate,String endDate);
     /**
      * 修改用户信息
