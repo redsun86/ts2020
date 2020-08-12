@@ -99,6 +99,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getStudentByTrueName(String userTrueName, Integer teacherId) {
+        return userMapper.getStudentByTrueName(userTrueName,teacherId);
+    }
+
+    @Override
     public List<UserLoginLogPOJO> getUserLogByUserId(Integer userId,String beginDate,String endDate) {
         return userLoginLogMapper.getUserLogByUserId(userId,beginDate,endDate);
     }

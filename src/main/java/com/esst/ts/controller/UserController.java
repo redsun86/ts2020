@@ -46,6 +46,50 @@ public class UserController {
     private SqlSessionTemplate sqlSessionTemplate;
 
     /**
+     * 根据真实姓名获取用户
+     *
+     * @param userId 用户ID
+     * @param token token
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getStudentInfo", method = RequestMethod.POST)
+    public Result getStudentInfo(@RequestParam(value = "userId") Integer userId,
+                                 @RequestParam(value = "trueName") String trueName,
+                                 @RequestParam(value = "token") String token,
+                                 HttpServletRequest request) throws IOException {
+        RequestContext requestContext = new RequestContext(request);
+        List<User> userList=userService.getStudentByTrueName(trueName,userId);
+        Result r = new Result();
+        //<editor-fold desc="返回参数初始化">
+        r.setMsg(requestContext.getMessage("OK"));
+        r.setCode(200);
+        //</editor-fold>
+        List<User> dataList = new ArrayList<User>();
+        //<editor-fold desc="实时数据列表赋值：datalist">
+        for (User user : userList) {
+            User m = new User();
+            m.setId(user.getId());
+            m.setUserName(user.getUserName());
+            m.setStNum(user.getStNum());
+            m.setRelName(user.getRelName());
+            m.setStatus(user.getStatus());
+            m.setCreateTime(user.getCreateTime());
+            m.setCreateUser(user.getCreateUser());
+            m.setClassName(user.getClassName());
+            m.setMobile(user.getMobile());
+            m.setGroupName(user.getGroupName());
+            m.setRoleName(user.getRoleName());
+            m.setOperateMode(user.getOperateMode());
+            dataList.add(m);
+        }
+        //</editor-fold>
+        Map<String, Object> UserListMap = new HashMap<>();
+        UserListMap.put("dataList", dataList);
+        r.setData(UserListMap);
+        return r;
+    }
+
+    /**
      * 获取服务器IP地址
      *
      * @param userId 用户ID
