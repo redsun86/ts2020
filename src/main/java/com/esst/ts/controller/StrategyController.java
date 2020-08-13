@@ -556,6 +556,7 @@ public class StrategyController {
         if (productId != null && productId != "" && productId != "0") {
             reqMod.setProductId(Integer.valueOf(productId));
         }
+        reqMod.setTechnologyZhName(technologyName);
         techPojoLst = TechnologyService.GetPojoAllList(reqMod);
 
         String reqUserIds = "";
