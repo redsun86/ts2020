@@ -1,9 +1,6 @@
 package com.esst.ts.service.impl;
 
-import com.esst.ts.model.Operate;
-import com.esst.ts.model.ProTechRelation;
-import com.esst.ts.model.Product;
-import com.esst.ts.model.Technology;
+import com.esst.ts.model.*;
 import com.esst.ts.service.AD500uService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +28,18 @@ public class AD500uServiceImpl implements AD500uService {
     }
 
     @Override
+    public Product getInsertProductModel(Product mod) {
+        return AD500uMapper.getInsertProductModel(mod);
+    }
+
+    @Override
     public int insertTechnology(Technology mod) {
         return AD500uMapper.insertTechnology(mod);
+    }
+
+    @Override
+    public Technology getInsertTechnologyModel(Technology mod) {
+        return AD500uMapper.getInsertTechnologyModel(mod);
     }
 
     @Override
@@ -41,8 +48,33 @@ public class AD500uServiceImpl implements AD500uService {
     }
 
     @Override
+    public int insertTask(Task mod) {
+        return AD500uMapper.insertTask(mod);
+    }
+
+    @Override
+    public Task getInsertTaskModel(Task mod) {
+        return AD500uMapper.getInsertTaskModel(mod);
+    }
+
+    @Override
+    public int insertUserTaskRelation(UserTaskRelation mod) {
+        return AD500uMapper.insertUserTaskRelation(mod);
+    }
+
+    @Override
+    public int insertTaskOperRelation(TaskOperRelation mod) {
+        return AD500uMapper.insertTaskOperRelation(mod);
+    }
+
+    @Override
     public int insertOperate(Operate mod) {
         return AD500uMapper.insertOperate(mod);
+    }
+
+    @Override
+    public Operate getInsertOperateModel(Operate mod) {
+        return AD500uMapper.getInsertOperateModel(mod);
     }
 
     @Override
