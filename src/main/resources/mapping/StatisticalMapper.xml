@@ -566,13 +566,13 @@
         ) cj left join (
         select gbv.xAxis_id,count(distinct user_id) yAxis from(
         select bv.user_id,bv.task_id,sum(bv.prop_scroe) prop_scroe,(case
-        when ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/7)>=ifnull(sum(bv.prop_scroe),0) then 1
-        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/7) and
-        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/7)*2 >= ifnull(sum(bv.prop_scroe),0) then 2
-        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/7)*2 and
-        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/7)*3 >= ifnull(sum(bv.prop_scroe),0) then 3
-        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/7)*3 and
-        ceiling(#{totalScore,jdbcType=VARCHAR}) >= ifnull(sum(bv.prop_scroe),0) then 4
+        when ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)>=ifnull(sum(bv.prop_scroe),0) then 1
+        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5) and
+        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*2 >= ifnull(sum(bv.prop_scroe),0) then 2
+        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*2 and
+        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*3 >= ifnull(sum(bv.prop_scroe),0) then 3
+        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*3 and
+        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*4 >= ifnull(sum(bv.prop_scroe),0) then 4
         else 5 end) xAxis_id from (
 
 
@@ -646,13 +646,13 @@
         ) cj left join (
         select gbv.xAxis_id,count(distinct user_id) yAxis from(
         select bv.user_id,bv.task_id,sum(bv.prop_scroe) prop_scroe,(case
-        when ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/7)>=ifnull(sum(bv.prop_scroe),0) then 1
-        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/7) and
-        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/7)*2 >= ifnull(sum(bv.prop_scroe),0) then 2
-        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/7)*2 and
-        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/7)*3 >= ifnull(sum(bv.prop_scroe),0) then 3
-        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/7)*3 and
-        ceiling(#{totalScore,jdbcType=VARCHAR}) >= ifnull(sum(bv.prop_scroe),0) then 4
+        when ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)>=ifnull(sum(bv.prop_scroe),0) then 1
+        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5) and
+        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*2 >= ifnull(sum(bv.prop_scroe),0) then 2
+        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*2 and
+        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*3 >= ifnull(sum(bv.prop_scroe),0) then 3
+        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*3 and
+        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*4 >= ifnull(sum(bv.prop_scroe),0) then 4
         else 5 end) xAxis_id from (
 
 
