@@ -112,18 +112,16 @@ public class StrategyController {
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     //</editor-fold>
 
-    //  接收AD500u.ini 解析并入库
+    //  接收AD500u.ini 解析入库
 
     /**
      * @param file
      * @param request
-     * @return 解析AD500u.ini并入库
+     * @return 解析AD500u.ini入库
      */
     @ResponseBody
     @RequestMapping(value = "/AD500u", method = RequestMethod.POST)
-    public Result AD500u(
-            @RequestParam("file") MultipartFile objFile,
-            HttpServletRequest request) throws IOException {
+    public Result AD500u(@RequestParam("file") MultipartFile objFile, HttpServletRequest request) throws IOException {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
         r.setMsg(requestContext.getMessage("请求失败"));
@@ -131,7 +129,8 @@ public class StrategyController {
         Map<String, Object> responseDataMap = new HashMap<>();
         try {
             //计时开始
-//        Date StartTime = new Date();
+            //Date StartTime = new Date();
+
             //<editor-fold desc="返回参数初始化">
             List<String> contentList = new ArrayList<>();
 
@@ -143,7 +142,192 @@ public class StrategyController {
             boolean isBegin = false;
             int productId = 0;
             int technologyId = 0;
-//        int rowIndex = 0;
+            int taskId = 0;
+            //        int rowIndex = 0;
+            try {
+                try {
+                    //AD500uService.truncatetable();
+                } catch (Exception e) {
+                    responseDataMap.put("respMsg", e.getMessage());
+                }
+                while ((line = reader.readLine()) != null) {
+                    //rowIndex++;
+                    //System.out.println(rowIndex);
+                    if (StringUtils.isNotEmpty(line)) {
+                        String strLine = line.trim()
+                                .replaceAll(";", ",")
+                                .replaceAll("；", ",")
+                                .replaceAll("，", ",");
+                        //出现* 表示可以开始解析并入库了
+                        if (strLine.contains("@")) {
+                            isBegin = true;
+                        }
+                        if (isBegin) {
+                            String[] Items = strLine.split(",");
+                            if (Items.length >= 2) {
+                                String str1 = Items[0].trim()
+                                        .replace("@", "")
+                                        .replace("*", "")
+                                        .replaceAll("\\t", "");
+                                String str2 = Items[1].trim()
+                                        .replace("-", "")
+                                        .replaceAll("\\t", "");
+                                String str3 = Items[2].trim()
+                                        .replace("\\", "")
+                                        .replaceAll("\\t", "");
+                                if (Items[0].contains("@")) {
+                                    contentList.add("产品：" + str1);
+                                    // 格式文档不存在名称为空，暂时不需要为空判断
+                                    //if(StringUtils.isNotEmpty(strCode)){
+                                    //存储并返回id
+                                    Product proMod = new Product();
+                                    proMod.setProductCode(str1);
+                                    proMod.setProductName(str2);
+                                    proMod.setProductName2(str3);
+                                    try {
+                                        //插入产品
+                                        Product proRespMod = AD500uService.getInsertProductModel(proMod);
+                                        productId = proRespMod.getId();
+                                    } catch (Exception e) {
+                                        responseDataMap.put("respMsg", e.getMessage());
+                                    }
+                                    //}
+                                } else if (Items[0].contains("*")) {
+                                    contentList.add("__工艺：" + str2);
+                                    if (productId > 0) {
+                                        //存储并返回id
+                                        Technology techMod = new Technology();
+                                        techMod.setTechnologyCode("0");
+                                        techMod.setTechnologyZhName(str1);
+                                        techMod.setTechnologyEnName(str3);
+                                        techMod.setStyleId("1");
+                                        try {
+                                            //插入工艺/单元
+                                            Technology techRespMod = AD500uService.getInsertTechnologyModel(techMod);
+                                            technologyId = techRespMod.getId();
+                                            //插入任务单
+                                            Task taskMod = new Task();
+                                            taskMod.setTaskCode(String.valueOf(technologyId));
+                                            taskMod.setTechnologyId(technologyId);
+                                            taskMod.setTaskName(str1 + "任务单");
+                                            taskMod.setShibiao("100");
+                                            Task taskRespMod = AD500uService.getInsertTaskModel(taskMod);
+                                            taskId = taskRespMod.getId();
+                                            //新任务单所有老师默认开放
+                                            UserTaskRelation utrMod = new UserTaskRelation();
+                                            utrMod.setTaskId(taskId);
+                                            AD500uService.insertUserTaskRelation(utrMod);
+
+                                        } catch (Exception e) {
+                                            responseDataMap.put("respMsg", e.getMessage());
+                                        }
+                                        //建立关系
+                                        ProTechRelation ptrMod = new ProTechRelation();
+                                        ptrMod.setProductId(productId);
+                                        ptrMod.setTechnologyId(technologyId);
+                                        try {
+                                            //插入产品工艺关系
+                                            AD500uService.insertProTechRelation(ptrMod);
+                                        } catch (Exception e) {
+                                            responseDataMap.put("respMsg", e.getMessage());
+                                        }
+                                    }
+                                } else {
+                                    contentList.add("____工况：" + str1 + "、" + str2);
+                                    if (technologyId > 0) {
+                                        //存储
+                                        Operate operMod = new Operate();
+                                        operMod.setTechnologyId(technologyId);
+                                        operMod.setOperateCode(str2);
+                                        operMod.setOperateName(str1);
+                                        operMod.setIsDeleted(0);
+                                        try {
+                                            //插入工况
+                                            Operate operRespMod = AD500uService.getInsertOperateModel(operMod);
+                                            TaskOperRelation torMod = new TaskOperRelation();
+                                            torMod.setTaskId(taskId);
+                                            torMod.setOperateId(operRespMod.getId());
+                                            AD500uService.insertTaskOperRelation(torMod);
+                                        } catch (Exception e) {
+                                            responseDataMap.put("respMsg", e.getMessage());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                // 添加风格
+                // 添加时标
+                // 添加默认任务单
+                // 添加任务单工况关系表
+                // 添加事故策略
+                // 数据库中已有的任务单，默认所有老师均为发布状态
+                try {
+                    //AD500uService.insertDefoultSetting();
+                } catch (Exception e) {
+                    responseDataMap.put("respMsg", e.getMessage());
+                }
+
+                r.setMsg(requestContext.getMessage("OK"));
+                r.setCode(Result.SUCCESS);
+            } catch (IOException e) {
+                // e.printStackTrace();
+                responseDataMap.put("respMsg", e.getMessage());
+            } finally {
+                try {
+                    fileStream.close();
+                } catch (IOException e) {
+                    // e.printStackTrace();
+                    responseDataMap.put("respMsg", e.getMessage());
+                }
+            }
+            //</editor-fold>
+            //responseDataMap.put(objFile.getOriginalFilename() + "的内容：", contentList);
+            r.setData(responseDataMap);
+            //</editor-fold>
+
+            ////计时结束
+            //Date StopTime = new Date();
+            //double millisecond = StopTime.getTime() - StartTime.getTime();
+            //System.out.println("millisecond：" + millisecond + "\n");
+        } catch (Exception e) {
+            responseDataMap.put("respMsg", e.getMessage());
+        }
+        return r;
+    }
+
+    //  接收AD500u.ini 解析入库并初始化数据库
+
+    /**
+     * @param file
+     * @param request
+     * @return 解析AD500u.ini入库并初始化数据库
+     */
+    @ResponseBody
+    @RequestMapping(value = "/AD500uInitData", method = RequestMethod.POST)
+    public Result AD500uInitData(@RequestParam("file") MultipartFile objFile, HttpServletRequest request) throws IOException {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        r.setMsg(requestContext.getMessage("请求失败"));
+        r.setCode(Result.ERROR);
+        Map<String, Object> responseDataMap = new HashMap<>();
+        try {
+            //计时开始
+            //Date StartTime = new Date();
+
+            //<editor-fold desc="返回参数初始化">
+            List<String> contentList = new ArrayList<>();
+
+            InputStream fileStream = objFile.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fileStream));
+
+            //<editor-fold desc="Description">
+            String line = null;
+            boolean isBegin = false;
+            int productId = 0;
+            int technologyId = 0;
+            //        int rowIndex = 0;
             try {
                 try {
                     AD500uService.truncatetable();
@@ -152,8 +336,8 @@ public class StrategyController {
                 }
 
                 while ((line = reader.readLine()) != null) {
-//                rowIndex++;
-//                System.out.println(rowIndex);
+                    //rowIndex++;
+                    //System.out.println(rowIndex);
                     if (StringUtils.isNotEmpty(line)) {
                         String strLine = line.trim()
                                 .replaceAll(";", ",")
@@ -263,15 +447,14 @@ public class StrategyController {
                 }
             }
             //</editor-fold>
-//        responseDataMap.put(objFile.getOriginalFilename() + "的内容：", contentList);
+            //responseDataMap.put(objFile.getOriginalFilename() + "的内容：", contentList);
             r.setData(responseDataMap);
             //</editor-fold>
 
-
-//        //计时结束
-//        Date StopTime = new Date();
-//        double millisecond = StopTime.getTime() - StartTime.getTime();
-//        System.out.println("millisecond：" + millisecond + "\n");
+            ////计时结束
+            //Date StopTime = new Date();
+            //double millisecond = StopTime.getTime() - StartTime.getTime();
+            //System.out.println("millisecond：" + millisecond + "\n");
         } catch (Exception e) {
             responseDataMap.put("respMsg", e.getMessage());
         }
@@ -373,6 +556,7 @@ public class StrategyController {
         if (productId != null && productId != "" && productId != "0") {
             reqMod.setProductId(Integer.valueOf(productId));
         }
+        reqMod.setTechnologyZhName(technologyName);
         techPojoLst = TechnologyService.GetPojoAllList(reqMod);
 
         String reqUserIds = "";

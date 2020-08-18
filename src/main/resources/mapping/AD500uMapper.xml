@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.esst.ts.dao.AD500uMapper">
+    <resultMap id="BaseProductResultMap" type="com.esst.ts.model.Product">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="product_code" property="productCode" jdbcType="VARCHAR"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+        <result column="product_name2" property="productName2" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="BaseTechnologyResultMap" type="com.esst.ts.model.Technology">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="technology_code" property="technologyCode" jdbcType="VARCHAR"/>
+        <result column="technology_zh_name" property="technologyZhName" jdbcType="VARCHAR"/>
+        <result column="technology_en_name" property="technologyEnName" jdbcType="VARCHAR"/>
+        <result column="style_id" property="styleId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="BaseTaskResultMap" type="com.esst.ts.model.Task">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="task_code" property="taskCode" jdbcType="VARCHAR"/>
+        <result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+        <result column="technology_id" property="technologyId" jdbcType="INTEGER"/>
+        <result column="shibiao" property="shibiao" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="BaseOperateResultMap" type="com.esst.ts.model.Operate">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="technology_id" property="technologyId" jdbcType="INTEGER"/>
+        <result column="operate_code" property="operateCode" jdbcType="VARCHAR"/>
+        <result column="operate_name" property="operateName" jdbcType="VARCHAR"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+    </resultMap>
     <update id="truncatetable">
         SET foreign_key_checks = 0;
         -- 风格
@@ -65,14 +92,36 @@
     <insert id="insertProduct" parameterType="com.esst.ts.model.Product" useGeneratedKeys="true" keyProperty="id"
             keyColumn="id">
         INSERT INTO product(product_code,product_name,product_name2)
-        values(#{productCode,jdbcType=VARCHAR},#{productName,jdbcType=VARCHAR},#{productName2,jdbcType=VARCHAR})
+        select bv.* from (select #{productCode,jdbcType=VARCHAR} product_code,#{productName,jdbcType=VARCHAR}
+        product_name,#{productName2,jdbcType=VARCHAR} product_name2) bv left join product p on
+        p.product_code=bv.product_code and p.product_name=bv.product_name
+        <where>p.id is null</where>
     </insert>
+    <select id="getInsertProductModel" resultMap="BaseProductResultMap" parameterType="com.esst.ts.model.Product">
+        INSERT INTO product(product_code,product_name,product_name2)
+        select bv.* from (select #{productCode,jdbcType=VARCHAR} product_code,#{productName,jdbcType=VARCHAR}
+        product_name,#{productName2,jdbcType=VARCHAR} product_name2) bv left join product p on
+        p.product_code=bv.product_code and p.product_name=bv.product_name
+        <where>p.id is null</where>;
+        select * from product where product_code = #{productCode,jdbcType=VARCHAR} and
+        product_name=#{productName,jdbcType=VARCHAR} LIMIT 0,1;
+    </select>
     <insert id="insertTechnology" parameterType="com.esst.ts.model.Technology" useGeneratedKeys="true" keyProperty="id"
             keyColumn="id">
         INSERT INTO technology(technology_code,technology_zh_name,technology_en_name,style_id)
         values(#{technologyCode,jdbcType=VARCHAR},#{technologyZhName,jdbcType=VARCHAR}
         ,#{technologyEnName,jdbcType=VARCHAR},#{styleId,jdbcType=VARCHAR})
     </insert>
+    <select id="getInsertTechnologyModel" resultMap="BaseTechnologyResultMap"
+            parameterType="com.esst.ts.model.Technology">
+        INSERT INTO technology(technology_code,technology_zh_name,technology_en_name,style_id)
+        select bv.* from (select #{technologyCode,jdbcType=VARCHAR} technology_code,#{technologyZhName,jdbcType=VARCHAR}
+        technology_zh_name,#{technologyEnName,jdbcType=VARCHAR} technology_en_name,#{styleId,jdbcType=VARCHAR} style_id)
+        bv left join technology p on
+        p.technology_zh_name=bv.technology_zh_name
+        <where>p.id is null</where>;
+        select * from technology where technology_zh_name = #{technologyZhName,jdbcType=VARCHAR} LIMIT 0,1;
+    </select>
     <insert id="insertProTechRelation" parameterType="com.esst.ts.model.ProTechRelation">
         INSERT INTO pro_tech_relation(product_id, technology_id)
         select bv.* from (select #{productId,jdbcType=INTEGER} product_id, #{technologyId,jdbcType=INTEGER}
@@ -80,10 +129,54 @@
         p.product_id=bv.product_id and p.technology_id=bv.technology_id
         <where>p.id is null</where>
     </insert>
-    <insert id="insertOperate" parameterType="com.esst.ts.model.Operate">
+    <insert id="insertTask" parameterType="com.esst.ts.model.Task" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        INSERT INTO task(task_code,task_name,technology_id,shibiao)
+        values(#{taskCode,jdbcType=VARCHAR},#{taskName,jdbcType=VARCHAR}
+        ,#{technologyId,jdbcType=INTEGER},#{shibiao,jdbcType=VARCHAR})
+    </insert>
+    <select id="getInsertTaskModel" resultMap="BaseTaskResultMap"
+            parameterType="com.esst.ts.model.Task">
+        INSERT INTO task(task_code,task_name,technology_id,shibiao)
+        select bv.* from (select #{taskCode,jdbcType=VARCHAR} task_code,#{taskName,jdbcType=VARCHAR}
+        task_name,#{technologyId,jdbcType=INTEGER} technology_id,#{shibiao,jdbcType=VARCHAR} shibiao)
+        bv left join task p on
+        p.technology_id=bv.technology_id and p.task_name=bv.task_name
+        <where>p.id is null</where>;
+        select * from task where technology_id = #{technologyId,jdbcType=INTEGER} and task_name =
+        #{taskName,jdbcType=VARCHAR} LIMIT 0,1;
+    </select>
+    <insert id="insertOperate" parameterType="com.esst.ts.model.Operate" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
         insert into operate(technology_id,operate_name,operate_code,is_deleted)
         values (#{technologyId,jdbcType=INTEGER}, #{operateName,jdbcType=VARCHAR}, #{operateCode,jdbcType=VARCHAR}
-        ,#{isDeleted,jdbcType=INTEGER});
+        ,#{isDeleted,jdbcType=INTEGER})
+    </insert>
+    <select id="getInsertOperateModel" resultMap="BaseOperateResultMap"
+            parameterType="com.esst.ts.model.Operate">
+        insert into operate(technology_id,operate_name,operate_code,is_deleted)
+        select bv.* from (select #{technologyId,jdbcType=INTEGER} technology_id,#{operateName,jdbcType=VARCHAR}
+        operate_name,#{operateCode,jdbcType=VARCHAR}
+        operate_code,#{isDeleted,jdbcType=INTEGER} is_deleted)
+        bv left join operate p on
+        p.technology_id=bv.technology_id and p.operate_name=bv.operate_name
+        <where>p.id is null</where>;
+        select * from operate where technology_id = #{technologyId,jdbcType=INTEGER} and operate_name =
+        #{operateName,jdbcType=VARCHAR} LIMIT 0,1;
+    </select>
+    <insert id="insertUserTaskRelation" parameterType="com.esst.ts.model.UserTaskRelation">
+        INSERT INTO user_task_relation(user_id,task_id,release_time)
+        select bv.* from (select u.id user_id,#{taskId,jdbcType=INTEGER}
+        task_id,REPLACE(unix_timestamp(current_timestamp(3)),'.','')
+        release_time from `user` u where u.is_admin=1) bv left join user_task_relation p ON bv.user_id=p.user_id and
+        bv.task_id=p.task_id
+        <where>p.id is null</where>
+    </insert>
+    <insert id="insertTaskOperRelation" parameterType="com.esst.ts.model.TaskOperRelation">
+        insert into task_oper_relation(task_id,operate_id)
+        select bv.* from (select #{taskId,jdbcType=INTEGER} task_id,#{operateId,jdbcType=INTEGER} operate_id) bv left
+        join task_oper_relation p on bv.task_id=p.task_id and bv.operate_id=p.operate_id
+        <where>p.id is null</where>;
     </insert>
 
     <update id="insertDefoultSetting">
