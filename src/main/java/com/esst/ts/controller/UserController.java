@@ -102,7 +102,7 @@ public class UserController {
                                  HttpServletRequest request) throws IOException {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
-        String ip=IpUtils.getServerIp();
+        String ip = request.getServerName();
         if(ip.length()>0){
             r.setMsg("OK");
             r.setCode(0);
