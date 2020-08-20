@@ -21,7 +21,7 @@ public class Constants {
     }
 
     //超时时间
-    public static final Integer WEB_OUT_TIME = 600000; // token超时时间
+    public static final Integer WEB_OUT_TIME = 3000000; // token超时时间
 
     public static final Integer APP_OUT_TIME = 30000000; // token超时时间
 

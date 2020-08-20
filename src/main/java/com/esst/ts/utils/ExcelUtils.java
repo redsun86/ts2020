@@ -212,7 +212,7 @@ public class ExcelUtils {
                 UserScoreRecordPOJO employee = employeeList.get(i);
                 HSSFRow row = sheet.createRow(i + 1);
                 row.createCell(0).setCellValue(employee.getStudyDate());
-                row.createCell(1).setCellValue(employee.getIpAddress());
+                row.createCell(1).setCellValue(employee.getMacAddress());
                 row.createCell(2).setCellValue(employee.getUserTrueName());
                 row.createCell(3).setCellValue(employee.getUserStNum());
                 row.createCell(4).setCellValue(employee.getTaskName());
