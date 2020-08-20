@@ -799,34 +799,34 @@ public class StrategyController {
 
         //<editor-fold desc="从数据库中读取 工艺/单元、任务单、工况">
         taskMod = TaskService.selectByPrimaryKey(Integer.valueOf(taskId));
+        if (null != taskMod) {
+            TechnologyPOJO reqMod = new TechnologyPOJO();
+            reqMod.setId(taskMod.getTechnologyId());
+            techPojoLst = TechnologyService.GetPojoAllList(reqMod);
+            Operate operateReqMod = new Operate();
+            operateReqMod.setTaskId(Integer.valueOf(taskId));
+            operLst = OperateService.GetList(operateReqMod);
+            //</editor-fold>
 
-        TechnologyPOJO reqMod = new TechnologyPOJO();
-        reqMod.setId(taskMod.getTechnologyId());
-        techPojoLst = TechnologyService.GetPojoAllList(reqMod);
-        Operate operateReqMod = new Operate();
-        operateReqMod.setTaskId(Integer.valueOf(taskId));
-        operLst = OperateService.GetList(operateReqMod);
-        //</editor-fold>
-
-        //<editor-fold desc="工艺/工况、工况 合并">
-        Map<String, List<Operate>> mapOperLst = new HashMap<>();
-        for (int i = 0; i < operLst.size(); i++) {
-            Operate mod = operLst.get(i);
-            int pid = mod.getTechnologyId();
-            if (mapOperLst.containsKey(toString().valueOf(pid))) {
-                mapOperLst.get(toString().valueOf(pid)).add(mod);
-            } else {
-                List<Operate> dlist = new ArrayList<>();
-                dlist.add(mod);
-                mapOperLst.put(toString().valueOf(pid), dlist);
+            //<editor-fold desc="工艺/工况、工况 合并">
+            Map<String, List<Operate>> mapOperLst = new HashMap<>();
+            for (int i = 0; i < operLst.size(); i++) {
+                Operate mod = operLst.get(i);
+                int pid = mod.getTechnologyId();
+                if (mapOperLst.containsKey(toString().valueOf(pid))) {
+                    mapOperLst.get(toString().valueOf(pid)).add(mod);
+                } else {
+                    List<Operate> dlist = new ArrayList<>();
+                    dlist.add(mod);
+                    mapOperLst.put(toString().valueOf(pid), dlist);
+                }
             }
+            for (TechnologyPOJO techPojo : techPojoLst) {
+                techPojo.setOperateList(mapOperLst.get(toString().valueOf(techPojo.getId())));
+            }
+            //</editor-fold>
+            responseDataMap.put("dataList", techPojoLst);
         }
-        for (TechnologyPOJO techPojo : techPojoLst) {
-            techPojo.setOperateList(mapOperLst.get(toString().valueOf(techPojo.getId())));
-        }
-        //</editor-fold>
-
-        responseDataMap.put("dataList", techPojoLst);
         r.setData(responseDataMap);
         //</editor-fold>
         return r;
@@ -1298,7 +1298,11 @@ public class StrategyController {
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
         List<Technology> techLst = TechnologyService.GetList();
-        Integer strRespMsg = TechnologyService.GetTechnologyName(1);
+        Integer strRespMsg = 0;
+        try {
+            strRespMsg = TechnologyService.GetStyleId(1);
+        } catch (Exception e) {
+        }
         responseDataMap.put("dataList", techLst);
         responseDataMap.put("respMsg", strRespMsg);
         r.setData(responseDataMap);
@@ -1434,13 +1438,8 @@ public class StrategyController {
 
         //<editor-fold desc="初始化">
         Result r = new Result();
-
-        r.setMsg(requestContext.getMessage("OK"));
-        r.setCode(Result.SUCCESS);
-
+        r.setCode(Result.ERROR);
         Map<String, Object> responseDataMap = new HashMap<>();
-
-
         //</editor-fold>
 
         //<editor-fold desc="业务操作并赋值">
@@ -1448,155 +1447,160 @@ public class StrategyController {
         StatisticalChartPOJO modMap;
         List<StatisticalChartDataPOJO> dstaLst;
         StatisticalChartDataPOJO mod;
-        //<editor-fold desc="登录者身份。学生/老师">
-        if (null != reqMod.getUserId() & reqMod.getUserId() > 0) {
-            User umod = UserService.getUserById(Integer.valueOf(reqMod.getUserId()));
-            if (null != umod) {
-                reqMod.setIsAdmin(umod.getIsAdmin());
-            }
-        }
-        //</editor-fold>
-        //<editor-fold desc="是否历史数据默认值">
-        if (null == reqMod.getIsHistory()) {
-            reqMod.setIsHistory(0);
-        }
-        //</editor-fold>
-        //<editor-fold desc="日期默认值">
-        if (null == reqMod.getStartTime() || reqMod.getStartTime() == "") {
-            SimpleDateFormat dfStart = new SimpleDateFormat("yyyy-MM-01");
-            SimpleDateFormat dfStop = new SimpleDateFormat("yyyy-MM-dd");
-            reqMod.setStartTime(dfStop.format(new Date()));
-            reqMod.setStopTime(dfStop.format(new Date()));
-        }
-        if (null == reqMod.getStopTime() || reqMod.getStopTime() == "") {
-            reqMod.setStopTime(reqMod.getStartTime());
-        }
-        //</editor-fold>
-        //<editor-fold desc="图表数据展示默认值">
         int currentExameId = 0;
         int currentStudyType = 0;
-        if (null != reqMod && null != reqMod.getExameId() && reqMod.getExameId() > 0) {
-            currentExameId = 0;
-        } else {
-            StatisticalChartDataPOJO defaultMod = StatisticalService.GetDefaultModel(reqMod);
-            if (null != defaultMod) {
-                reqMod.setExameId(Integer.valueOf(defaultMod.getxAxis()));
-                reqMod.setStudyType(Integer.valueOf(defaultMod.getyAxis()));
-                currentExameId = Integer.valueOf(defaultMod.getxAxis());
-                currentStudyType = Integer.valueOf(defaultMod.getyAxis());
-            } else {
-                reqMod.setExameId(0);
-                reqMod.setStudyType(1);
+        try {
+            //<editor-fold desc="登录者身份。学生/老师">
+            if (null != reqMod.getUserId() & reqMod.getUserId() > 0) {
+                User umod = UserService.getUserById(Integer.valueOf(reqMod.getUserId()));
+                if (null != umod) {
+                    reqMod.setIsAdmin(umod.getIsAdmin());
+                }
+            }
+            //</editor-fold>
+            //<editor-fold desc="是否历史数据默认值">
+            if (null == reqMod.getIsHistory()) {
+                reqMod.setIsHistory(0);
+            }
+            //</editor-fold>
+            //<editor-fold desc="日期默认值">
+            if (null == reqMod.getStartTime() || reqMod.getStartTime() == "") {
+                SimpleDateFormat dfStart = new SimpleDateFormat("yyyy-MM-01");
+                SimpleDateFormat dfStop = new SimpleDateFormat("yyyy-MM-dd");
+                reqMod.setStartTime(dfStop.format(new Date()));
+                reqMod.setStopTime(dfStop.format(new Date()));
+            }
+            if (null == reqMod.getStopTime() || reqMod.getStopTime() == "") {
+                reqMod.setStopTime(reqMod.getStartTime());
+            }
+            //</editor-fold>
+            //<editor-fold desc="图表数据展示默认值">
+            if (null != reqMod && null != reqMod.getExameId() && reqMod.getExameId() > 0) {
                 currentExameId = 0;
-                currentStudyType = 1;
+            } else {
+                StatisticalChartDataPOJO defaultMod = StatisticalService.GetDefaultModel(reqMod);
+                if (null != defaultMod) {
+                    reqMod.setExameId(Integer.valueOf(defaultMod.getxAxis()));
+                    reqMod.setStudyType(Integer.valueOf(defaultMod.getyAxis()));
+                    currentExameId = Integer.valueOf(defaultMod.getxAxis());
+                    currentStudyType = Integer.valueOf(defaultMod.getyAxis());
+                } else {
+                    reqMod.setExameId(0);
+                    reqMod.setStudyType(1);
+                    currentExameId = 0;
+                    currentStudyType = 1;
+                }
             }
-        }
-        //</editor-fold>
+            //</editor-fold>
 
-        //<editor-fold desc="平均时长 平均成绩 总成绩">
+            //<editor-fold desc="平均时长 平均成绩 总成绩">
 
-        StatisticalChartAvgPOJO avgMod = StatisticalService.GetAvgModel(reqMod);
+            StatisticalChartAvgPOJO avgMod = StatisticalService.GetAvgModel(reqMod);
 
-        reqMod.setTotalScore(avgMod.getTotalScore());
-        reqMod.setTotalDuration(avgMod.getTotalDuration());
-        //</editor-fold>
+            reqMod.setTotalScore(avgMod.getTotalScore());
+            reqMod.setTotalDuration(avgMod.getTotalDuration());
+            //</editor-fold>
 
-        //<editor-fold desc="成绩达标率">
-        modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("");
-        modMap.setNotes("成绩达标率");
+            //<editor-fold desc="成绩达标率">
+            modMap = new StatisticalChartPOJO();
+            modMap.setDescribe("");
+            modMap.setNotes("成绩达标率");
 
-        dstaLst = new ArrayList<>();
-        try {
-            List<StatisticalChartDataPOJO> dblist = StatisticalService.GetListWithDaBiaoLv(reqMod);
-            if (dblist.size() > 0) {
-                StatisticalChartDataPOJO moddb = dblist.get(0);
-                mod = new StatisticalChartDataPOJO();
-                mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
-                mod.setyAxis("已达标");
-                dstaLst.add(mod);
-                mod = new StatisticalChartDataPOJO();
-                mod.setxAxis(moddb.getxAxis());
-                mod.setyAxis("未达标");
-                dstaLst.add(mod);
+            dstaLst = new ArrayList<>();
+            try {
+                List<StatisticalChartDataPOJO> dblist = StatisticalService.GetListWithDaBiaoLv(reqMod);
+                if (dblist.size() > 0) {
+                    StatisticalChartDataPOJO moddb = dblist.get(0);
+                    mod = new StatisticalChartDataPOJO();
+                    mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
+                    mod.setyAxis("已达标");
+                    dstaLst.add(mod);
+                    mod = new StatisticalChartDataPOJO();
+                    mod.setxAxis(moddb.getxAxis());
+                    mod.setyAxis("未达标");
+                    dstaLst.add(mod);
+                }
+            } catch (Exception e) {
+                //e.printStackTrace();
+                responseDataMap.put("respMsg", e.getMessage());
             }
+            modMap.setDataList(dstaLst);
+
+            responseDataMap.put("upToStandard", modMap);
+            //</editor-fold>
+            //<editor-fold desc="报告提交率">
+            modMap = new StatisticalChartPOJO();
+            modMap.setDescribe("");
+            modMap.setNotes("报告提交率");
+
+            dstaLst = new ArrayList<>();
+            try {
+                List<StatisticalChartDataPOJO> dblist = StatisticalService.GetListWithBaoGao(reqMod);
+                if (dblist.size() > 0) {
+                    StatisticalChartDataPOJO moddb = dblist.get(0);
+
+                    mod = new StatisticalChartDataPOJO();
+                    mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
+                    mod.setyAxis("已提交");
+                    dstaLst.add(mod);
+                    mod = new StatisticalChartDataPOJO();
+                    mod.setxAxis(moddb.getxAxis());
+                    mod.setyAxis("未提交");
+                    dstaLst.add(mod);
+                }
+            } catch (Exception e) {
+                //e.printStackTrace();
+                responseDataMap.put("respMsg", e.getMessage());
+            }
+
+            modMap.setDataList(dstaLst);
+
+            responseDataMap.put("submit", modMap);
+            //</editor-fold>
+
+            //<editor-fold desc="学习时长分布">
+            modMap = new StatisticalChartPOJO();
+            if (null != avgMod) {
+                modMap.setDescribe("平均时长：" + avgMod.getAvgDuration() + "min");
+            }
+            modMap.setNotes("学习时长分布");
+
+            dstaLst = StatisticalService.GetListWithShiChang(reqMod);
+
+            modMap.setDataList(dstaLst);
+
+            responseDataMap.put("learningTime", modMap);
+            //</editor-fold>
+
+            //<editor-fold desc="任务单/试卷成绩分布">
+            modMap = new StatisticalChartPOJO();
+            if (null != avgMod) {
+                modMap.setDescribe("满分：" + avgMod.getSumScore() + "分；平均分：" + avgMod.getAvgScore() + "分");
+            }
+            modMap.setNotes("任务单/试卷成绩分布");
+
+            dstaLst = StatisticalService.GetListWithChengJi(reqMod);
+
+            modMap.setDataList(dstaLst);
+
+            responseDataMap.put("questionScore", modMap);
+            //</editor-fold>
+            //<editor-fold desc="各任务/试题平均成绩分布">
+            modMap = new StatisticalChartPOJO();
+            modMap.setDescribe("");
+            modMap.setNotes("各任务/试题平均成绩分布");
+
+            dstaLst = StatisticalService.GetListWithPingJun(reqMod);
+
+            modMap.setDataList(dstaLst);
+
+            responseDataMap.put("averageScore", modMap);
+            //</editor-fold>
+
+            r.setMsg(requestContext.getMessage("OK"));
+            r.setCode(Result.SUCCESS);
         } catch (Exception e) {
-            //e.printStackTrace();
-            responseDataMap.put("respMsg", e.getMessage());
         }
-        modMap.setDataList(dstaLst);
-
-        responseDataMap.put("upToStandard", modMap);
-        //</editor-fold>
-        //<editor-fold desc="报告提交率">
-        modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("");
-        modMap.setNotes("报告提交率");
-
-        dstaLst = new ArrayList<>();
-        try {
-            List<StatisticalChartDataPOJO> dblist = StatisticalService.GetListWithBaoGao(reqMod);
-            if (dblist.size() > 0) {
-                StatisticalChartDataPOJO moddb = dblist.get(0);
-
-                mod = new StatisticalChartDataPOJO();
-                mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
-                mod.setyAxis("已提交");
-                dstaLst.add(mod);
-                mod = new StatisticalChartDataPOJO();
-                mod.setxAxis(moddb.getxAxis());
-                mod.setyAxis("未提交");
-                dstaLst.add(mod);
-            }
-        } catch (Exception e) {
-            //e.printStackTrace();
-            responseDataMap.put("respMsg", e.getMessage());
-        }
-
-        modMap.setDataList(dstaLst);
-
-        responseDataMap.put("submit", modMap);
-        //</editor-fold>
-
-        //<editor-fold desc="学习时长分布">
-        modMap = new StatisticalChartPOJO();
-        if (null != avgMod) {
-            modMap.setDescribe("平均时长：" + avgMod.getAvgDuration() + "min");
-        }
-        modMap.setNotes("学习时长分布");
-
-        dstaLst = StatisticalService.GetListWithShiChang(reqMod);
-
-        modMap.setDataList(dstaLst);
-
-        responseDataMap.put("learningTime", modMap);
-        //</editor-fold>
-
-        //<editor-fold desc="任务单/试卷成绩分布">
-        modMap = new StatisticalChartPOJO();
-        if (null != avgMod) {
-            modMap.setDescribe("满分：" + avgMod.getSumScore() + "分；平均分：" + avgMod.getAvgScore() + "分");
-        }
-        modMap.setNotes("任务单/试卷成绩分布");
-
-        dstaLst = StatisticalService.GetListWithChengJi(reqMod);
-
-        modMap.setDataList(dstaLst);
-
-        responseDataMap.put("questionScore", modMap);
-        //</editor-fold>
-        //<editor-fold desc="各任务/试题平均成绩分布">
-        modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("");
-        modMap.setNotes("各任务/试题平均成绩分布");
-
-        dstaLst = StatisticalService.GetListWithPingJun(reqMod);
-
-        modMap.setDataList(dstaLst);
-
-        responseDataMap.put("averageScore", modMap);
-        //</editor-fold>
-
         //<editor-fold desc="附加参数赋值">
         responseDataMap.put("loginUserCount", "0");
         responseDataMap.put("onlineUserCount", "0");

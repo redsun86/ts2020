@@ -31,6 +31,6 @@ public interface TechnologyMapper {
 
 
     @Select("select style_id from technology t where t.id=#{technologyId}")
-    int GetTechnologyName(@Param("technologyId") int technologyId);
+    int GetStyleId(@Param("technologyId") int technologyId);
 
 }
