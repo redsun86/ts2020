@@ -391,31 +391,31 @@
     </select>
     <select id="GetListWithShiChang0" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
         select sc.xAxis,ifnull(scbv.yAxis,0) yAxis from (
-        select 1 xAxis_id,CONCAT('小于',ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5),'分钟') xAxis
+        select 1 xAxis_id,CONCAT('小于',CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2)),'分钟') xAxis
         union all select 2
-        xAxis_id,CONCAT(ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5),'~'
-        ,ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5)*2,'分钟')
+        xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2)),'~'
+        ,CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*2,'分钟')
         xAxis
         union all select 3
-        xAxis_id,CONCAT(ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5)*2,'~'
-        ,ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5)*3,'分钟')
+        xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*2,'~'
+        ,CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*3,'分钟')
         xAxis
         union all select 4
-        xAxis_id,CONCAT(ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5)*3,'~'
-        ,ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5)*4,'分钟')
+        xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*3,'~'
+        ,CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*4,'分钟')
         xAxis
-        union all select 5 xAxis_id,CONCAT(ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5)*4,'分钟以上')
+        union all select 5 xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*4,'分钟以上')
         xAxis
         ) sc left join (
         select gbv.xAxis_id,count(distinct user_id) yAxis from(
         select bv.user_id,bv.task_id,sum(bv.study_duration) study_duration,(case
-        when ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR})/5)>=SUM(ifnull(study_duration,0)) then 1
-        when SUM(ifnull(study_duration,0))>ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR})/5) and
-        ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR})/5)*2 >= SUM(ifnull(study_duration,0)) then 2
-        when SUM(ifnull(study_duration,0))>ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR})/5)*2 and
-        ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR})/5)*3 >= SUM(ifnull(study_duration,0)) then 3
-        when SUM(ifnull(study_duration,0))>ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR})/5)*3 and
-        ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR})/5)*4 >= SUM(ifnull(study_duration,0)) then 4
+        when CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))>=SUM(ifnull(study_duration,0)) then 1
+        when SUM(ifnull(study_duration,0))>CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2)) and
+        CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*2 >= SUM(ifnull(study_duration,0)) then 2
+        when SUM(ifnull(study_duration,0))>CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*2 and
+        CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*3 >= SUM(ifnull(study_duration,0)) then 3
+        when SUM(ifnull(study_duration,0))>CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*3 and
+        CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*4 >= SUM(ifnull(study_duration,0)) then 4
         else 5 end) xAxis_id from (
 
         select date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
@@ -470,31 +470,31 @@
     </select>
     <select id="GetListWithShiChang1" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
         select sc.xAxis,ifnull(scbv.yAxis,0) yAxis from (
-        select 1 xAxis_id,CONCAT('小于',ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5),'分钟') xAxis
+        select 1 xAxis_id,CONCAT('小于',CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2)),'分钟') xAxis
         union all select 2
-        xAxis_id,CONCAT(ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5),'~'
-        ,ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5)*2,'分钟')
+        xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2)),'~'
+        ,CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*2,'分钟')
         xAxis
         union all select 3
-        xAxis_id,CONCAT(ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5)*2,'~'
-        ,ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5)*3,'分钟')
+        xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*2,'~'
+        ,CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*3,'分钟')
         xAxis
         union all select 4
-        xAxis_id,CONCAT(ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5)*3,'~'
-        ,ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5)*4,'分钟')
+        xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*3,'~'
+        ,CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*4,'分钟')
         xAxis
-        union all select 5 xAxis_id,CONCAT(ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR}/60/1000)/5)*4,'分钟以上')
+        union all select 5 xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*4,'分钟以上')
         xAxis
         ) sc left join (
         select gbv.xAxis_id,count(distinct user_id) yAxis from(
         select bv.user_id,bv.task_id,sum(bv.study_duration) study_duration,(case
-        when ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR})/5)>=SUM(ifnull(study_duration,0)) then 1
-        when SUM(ifnull(study_duration,0))>ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR})/5) and
-        ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR})/5)*2 >= SUM(ifnull(study_duration,0)) then 2
-        when SUM(ifnull(study_duration,0))>ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR})/5)*2 and
-        ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR})/5)*3 >= SUM(ifnull(study_duration,0)) then 3
-        when SUM(ifnull(study_duration,0))>ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR})/5)*3 and
-        ceiling(ceiling(#{totalDuration,jdbcType=VARCHAR})/5)*4 >= SUM(ifnull(study_duration,0)) then 4
+        when CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))>=SUM(ifnull(study_duration,0)) then 1
+        when SUM(ifnull(study_duration,0))>CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2)) and
+        CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*2 >= SUM(ifnull(study_duration,0)) then 2
+        when SUM(ifnull(study_duration,0))>CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*2 and
+        CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*3 >= SUM(ifnull(study_duration,0)) then 3
+        when SUM(ifnull(study_duration,0))>CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*3 and
+        CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*4 >= SUM(ifnull(study_duration,0)) then 4
         else 5 end) xAxis_id from (
 
         select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
