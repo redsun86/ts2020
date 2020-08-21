@@ -47,7 +47,6 @@ public class StudyRecordController {
     @RequestMapping(value = "/selectScore", method = RequestMethod.POST)
     public Result selectScore(@RequestParam(value = "date",required = true) String date,
                               @RequestParam(value = "userId",required = true) Integer userId,
-                              @RequestParam(value = "teacherId",required = true) Integer teacherId,
                               @RequestParam(value = "token",required = true) String token,
                              HttpServletRequest request) throws ParseException {
         RequestContext requestContext = new RequestContext(request);
