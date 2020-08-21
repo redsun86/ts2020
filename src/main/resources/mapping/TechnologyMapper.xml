@@ -109,6 +109,9 @@
             <if test="id != null">
                 and t.id=#{id,jdbcType=INTEGER}
             </if>
+            <if test="technologyZhName != null">
+                and t.technology_zh_name like CONCAT('%', #{technologyZhName,jdbcType=VARCHAR}, '%')
+            </if>
         </where>
     </select>
 </mapper>

@@ -4,8 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.esst.ts.constants.Constants;
 import com.esst.ts.model.*;
 import com.esst.ts.utils.StringUtils;
-import org.apache.ibatis.binding.MapperMethod;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -108,93 +106,358 @@ public class StrategyController {
      */
     @Resource
     private com.esst.ts.service.TeacherStudentRelationService TeacherStudentRelationService;
+    @Resource
+    private com.esst.ts.service.AD500uService AD500uService;
 
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     //</editor-fold>
 
-    //  接收AD500u.ini 解析并入库
+    //  接收AD500u.ini 解析入库
 
     /**
      * @param file
      * @param request
-     * @return 解析AD500u.ini并入库
+     * @return 解析AD500u.ini入库
      */
     @ResponseBody
     @RequestMapping(value = "/AD500u", method = RequestMethod.POST)
-    public Result AD500u(
-            @RequestParam("file") MultipartFile objFile,
-            HttpServletRequest request) throws IOException {
+    public Result AD500u(@RequestParam("file") MultipartFile objFile, HttpServletRequest request) throws IOException {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
-        //<editor-fold desc="返回参数初始化">
-        r.setMsg(requestContext.getMessage("OK"));
-        r.setCode(Result.SUCCESS);
+        r.setMsg(requestContext.getMessage("请求失败"));
+        r.setCode(Result.ERROR);
         Map<String, Object> responseDataMap = new HashMap<>();
-        List<String> contentList = new ArrayList<>();
-
-        InputStream fileStream = objFile.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(fileStream));
-
-        //        try {
-        //            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        //            DocumentBuilder builder = factory.newDocumentBuilder();
-        //            Document doc = builder.parse(fileStream);
-        //            NodeList nl = doc.getElementsByTagName("VALUE");
-        //            for (int i = 0; i < nl.getLength(); i++) {
-        //                System.out.print("车牌号码:"+ doc.getElementsByTagName("NO").item(i).getFirstChild().getNodeValue());
-        //                System.out.println("车主地址:"+ doc.getElementsByTagName("ADDR").item(i).getFirstChild().getNodeValue());
-        //            }
-        //        } catch (Exception e) {
-        //            e.printStackTrace();
-        //        }
-
-        //<editor-fold desc="Description">
-        String line = null;
-        boolean isBegin = false;
         try {
-            while ((line = reader.readLine()) != null) {
-                if (StringUtils.isNotEmpty(line)) {
-                    String strLine = line.trim()
-                            .replaceAll(";", ",")
-                            .replaceAll("；", ",")
-                            .replaceAll("，", ",");
-                    //出现* 表示可以开始解析并入库了
-                    if (strLine.contains("*")) {
-                        isBegin = true;
-                    }
-                    if (isBegin) {
-                        String[] Items = strLine.split(",");
-                        if (Items.length >= 2) {
-                            String strName = Items[0].trim()
-                                    .replace("*", "")
-                                    .replaceAll("\\t", "");
-                            String strCode = Items[1].trim()
-                                    .replace("-", "")
-                                    .replaceAll("\\t", "");
-                            if (Items[0].contains("*")) {
-                                contentList.add(strName);
-                            } else {
-                                contentList.add(strCode + "、" + strName);
+            //计时开始
+            //Date StartTime = new Date();
+
+            //<editor-fold desc="返回参数初始化">
+            List<String> contentList = new ArrayList<>();
+
+            InputStream fileStream = objFile.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fileStream));
+
+            //<editor-fold desc="Description">
+            String line = null;
+            boolean isBegin = false;
+            int productId = 0;
+            int technologyId = 0;
+            int taskId = 0;
+            //        int rowIndex = 0;
+            try {
+                try {
+                    //AD500uService.truncatetable();
+                } catch (Exception e) {
+                    responseDataMap.put("respMsg", e.getMessage());
+                }
+                while ((line = reader.readLine()) != null) {
+                    //rowIndex++;
+                    //System.out.println(rowIndex);
+                    if (StringUtils.isNotEmpty(line)) {
+                        String strLine = line.trim()
+                                .replaceAll(";", ",")
+                                .replaceAll("；", ",")
+                                .replaceAll("，", ",");
+                        //出现* 表示可以开始解析并入库了
+                        if (strLine.contains("@")) {
+                            isBegin = true;
+                        }
+                        if (isBegin) {
+                            String[] Items = strLine.split(",");
+                            if (Items.length >= 2) {
+                                String str1 = Items[0].trim()
+                                        .replace("@", "")
+                                        .replace("*", "")
+                                        .replaceAll("\\t", "");
+                                String str2 = Items[1].trim()
+                                        .replace("-", "")
+                                        .replaceAll("\\t", "");
+                                String str3 = Items[2].trim()
+                                        .replace("\\", "")
+                                        .replaceAll("\\t", "");
+                                if (Items[0].contains("@")) {
+                                    contentList.add("产品：" + str1);
+                                    // 格式文档不存在名称为空，暂时不需要为空判断
+                                    //if(StringUtils.isNotEmpty(strCode)){
+                                    //存储并返回id
+                                    Product proMod = new Product();
+                                    proMod.setProductCode(str1);
+                                    proMod.setProductName(str2);
+                                    proMod.setProductName2(str3);
+                                    try {
+                                        //插入产品
+                                        Product proRespMod = AD500uService.getInsertProductModel(proMod);
+                                        productId = proRespMod.getId();
+                                    } catch (Exception e) {
+                                        responseDataMap.put("respMsg", e.getMessage());
+                                    }
+                                    //}
+                                } else if (Items[0].contains("*")) {
+                                    contentList.add("__工艺：" + str2);
+                                    if (productId > 0) {
+                                        //存储并返回id
+                                        Technology techMod = new Technology();
+                                        techMod.setTechnologyCode("0");
+                                        techMod.setTechnologyZhName(str1);
+                                        techMod.setTechnologyEnName(str3);
+                                        techMod.setStyleId("1");
+                                        try {
+                                            //插入工艺/单元
+                                            Technology techRespMod = AD500uService.getInsertTechnologyModel(techMod);
+                                            technologyId = techRespMod.getId();
+                                            //插入任务单
+                                            Task taskMod = new Task();
+                                            taskMod.setTaskCode(String.valueOf(technologyId));
+                                            taskMod.setTechnologyId(technologyId);
+                                            taskMod.setTaskName(str1 + "任务单");
+                                            taskMod.setShibiao("100");
+                                            Task taskRespMod = AD500uService.getInsertTaskModel(taskMod);
+                                            taskId = taskRespMod.getId();
+                                            //新任务单所有老师默认开放
+                                            UserTaskRelation utrMod = new UserTaskRelation();
+                                            utrMod.setTaskId(taskId);
+                                            AD500uService.insertUserTaskRelation(utrMod);
+
+                                        } catch (Exception e) {
+                                            responseDataMap.put("respMsg", e.getMessage());
+                                        }
+                                        //建立关系
+                                        ProTechRelation ptrMod = new ProTechRelation();
+                                        ptrMod.setProductId(productId);
+                                        ptrMod.setTechnologyId(technologyId);
+                                        try {
+                                            //插入产品工艺关系
+                                            AD500uService.insertProTechRelation(ptrMod);
+                                        } catch (Exception e) {
+                                            responseDataMap.put("respMsg", e.getMessage());
+                                        }
+                                    }
+                                } else {
+                                    contentList.add("____工况：" + str1 + "、" + str2);
+                                    if (technologyId > 0) {
+                                        //存储
+                                        Operate operMod = new Operate();
+                                        operMod.setTechnologyId(technologyId);
+                                        operMod.setOperateCode(str2);
+                                        operMod.setOperateName(str1);
+                                        operMod.setIsDeleted(0);
+                                        try {
+                                            //插入工况
+                                            Operate operRespMod = AD500uService.getInsertOperateModel(operMod);
+                                            TaskOperRelation torMod = new TaskOperRelation();
+                                            torMod.setTaskId(taskId);
+                                            torMod.setOperateId(operRespMod.getId());
+                                            AD500uService.insertTaskOperRelation(torMod);
+                                        } catch (Exception e) {
+                                            responseDataMap.put("respMsg", e.getMessage());
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
-            }
-        } catch (IOException e) {
-            // e.printStackTrace();
-            responseDataMap.put("respMsg", e.getMessage());
-        } finally {
-            try {
-                fileStream.close();
+                // 添加风格
+                // 添加时标
+                // 添加默认任务单
+                // 添加任务单工况关系表
+                // 添加事故策略
+                // 数据库中已有的任务单，默认所有老师均为发布状态
+                try {
+                    //AD500uService.insertDefoultSetting();
+                } catch (Exception e) {
+                    responseDataMap.put("respMsg", e.getMessage());
+                }
+
+                r.setMsg(requestContext.getMessage("OK"));
+                r.setCode(Result.SUCCESS);
             } catch (IOException e) {
                 // e.printStackTrace();
                 responseDataMap.put("respMsg", e.getMessage());
+            } finally {
+                try {
+                    fileStream.close();
+                } catch (IOException e) {
+                    // e.printStackTrace();
+                    responseDataMap.put("respMsg", e.getMessage());
+                }
             }
+            //</editor-fold>
+            //responseDataMap.put(objFile.getOriginalFilename() + "的内容：", contentList);
+            r.setData(responseDataMap);
+            //</editor-fold>
+
+            ////计时结束
+            //Date StopTime = new Date();
+            //double millisecond = StopTime.getTime() - StartTime.getTime();
+            //System.out.println("millisecond：" + millisecond + "\n");
+        } catch (Exception e) {
+            responseDataMap.put("respMsg", e.getMessage());
         }
-        //</editor-fold>
-        responseDataMap.put(objFile.getOriginalFilename() + "的内容：", contentList);
-        r.setData(responseDataMap);
-        //</editor-fold>
+        return r;
+    }
+
+    //  接收AD500u.ini 解析入库并初始化数据库
+
+    /**
+     * @param file
+     * @param request
+     * @return 解析AD500u.ini入库并初始化数据库
+     */
+    @ResponseBody
+    @RequestMapping(value = "/AD500uInitData", method = RequestMethod.POST)
+    public Result AD500uInitData(@RequestParam("file") MultipartFile objFile, HttpServletRequest request) throws IOException {
+        RequestContext requestContext = new RequestContext(request);
+        Result r = new Result();
+        r.setMsg(requestContext.getMessage("请求失败"));
+        r.setCode(Result.ERROR);
+        Map<String, Object> responseDataMap = new HashMap<>();
+        try {
+            //计时开始
+            //Date StartTime = new Date();
+
+            //<editor-fold desc="返回参数初始化">
+            List<String> contentList = new ArrayList<>();
+
+            InputStream fileStream = objFile.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fileStream));
+
+            //<editor-fold desc="Description">
+            String line = null;
+            boolean isBegin = false;
+            int productId = 0;
+            int technologyId = 0;
+            //        int rowIndex = 0;
+            try {
+                try {
+                    AD500uService.truncatetable();
+                } catch (Exception e) {
+                    responseDataMap.put("respMsg", e.getMessage());
+                }
+
+                while ((line = reader.readLine()) != null) {
+                    //rowIndex++;
+                    //System.out.println(rowIndex);
+                    if (StringUtils.isNotEmpty(line)) {
+                        String strLine = line.trim()
+                                .replaceAll(";", ",")
+                                .replaceAll("；", ",")
+                                .replaceAll("，", ",");
+                        //出现* 表示可以开始解析并入库了
+                        if (strLine.contains("@")) {
+                            isBegin = true;
+                        }
+                        if (isBegin) {
+                            String[] Items = strLine.split(",");
+                            if (Items.length >= 2) {
+                                String str1 = Items[0].trim()
+                                        .replace("@", "")
+                                        .replace("*", "")
+                                        .replaceAll("\\t", "");
+                                String str2 = Items[1].trim()
+                                        .replace("-", "")
+                                        .replaceAll("\\t", "");
+                                String str3 = Items[2].trim()
+                                        .replace("\\", "")
+                                        .replaceAll("\\t", "");
+                                if (Items[0].contains("@")) {
+                                    contentList.add("产品：" + str1);
+                                    // 格式文档不存在名称为空，暂时不需要为空判断
+                                    //if(StringUtils.isNotEmpty(strCode)){
+                                    //存储并返回id
+                                    Product proMod = new Product();
+                                    proMod.setProductCode(str1);
+                                    proMod.setProductName(str2);
+                                    proMod.setProductName2(str3);
+                                    try {
+                                        AD500uService.insertProduct(proMod);
+                                        productId = proMod.getId();
+                                    } catch (Exception e) {
+                                        responseDataMap.put("respMsg", e.getMessage());
+                                    }
+                                    //}
+                                } else if (Items[0].contains("*")) {
+                                    contentList.add("__工艺：" + str2);
+                                    if (productId > 0) {
+                                        //存储并返回id
+                                        Technology techMod = new Technology();
+                                        techMod.setTechnologyCode("0");
+                                        techMod.setTechnologyZhName(str1);
+                                        techMod.setTechnologyEnName(str3);
+                                        techMod.setStyleId("1");
+                                        try {
+                                            AD500uService.insertTechnology(techMod);
+                                            technologyId = techMod.getId();
+                                        } catch (Exception e) {
+                                            responseDataMap.put("respMsg", e.getMessage());
+                                        }
+                                        //建立关系
+                                        ProTechRelation ptrMod = new ProTechRelation();
+                                        ptrMod.setProductId(productId);
+                                        ptrMod.setTechnologyId(technologyId);
+                                        try {
+                                            AD500uService.insertProTechRelation(ptrMod);
+                                        } catch (Exception e) {
+                                            responseDataMap.put("respMsg", e.getMessage());
+                                        }
+                                    }
+                                } else {
+                                    contentList.add("____工况：" + str1 + "、" + str2);
+                                    if (technologyId > 0) {
+                                        //存储
+                                        Operate operMod = new Operate();
+                                        operMod.setTechnologyId(technologyId);
+                                        operMod.setOperateCode(str2);
+                                        operMod.setOperateName(str1);
+                                        operMod.setIsDeleted(0);
+                                        try {
+                                            AD500uService.insertOperate(operMod);
+                                        } catch (Exception e) {
+                                            responseDataMap.put("respMsg", e.getMessage());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                // 添加风格
+                // 添加时标
+                // 添加默认任务单
+                // 添加任务单工况关系表
+                // 添加事故策略
+                // 数据库中已有的任务单，默认所有老师均为发布状态
+                try {
+                    AD500uService.insertDefoultSetting();
+                } catch (Exception e) {
+                    responseDataMap.put("respMsg", e.getMessage());
+                }
+
+                r.setMsg(requestContext.getMessage("OK"));
+                r.setCode(Result.SUCCESS);
+            } catch (IOException e) {
+                // e.printStackTrace();
+                responseDataMap.put("respMsg", e.getMessage());
+            } finally {
+                try {
+                    fileStream.close();
+                } catch (IOException e) {
+                    // e.printStackTrace();
+                    responseDataMap.put("respMsg", e.getMessage());
+                }
+            }
+            //</editor-fold>
+            //responseDataMap.put(objFile.getOriginalFilename() + "的内容：", contentList);
+            r.setData(responseDataMap);
+            //</editor-fold>
+
+            ////计时结束
+            //Date StopTime = new Date();
+            //double millisecond = StopTime.getTime() - StartTime.getTime();
+            //System.out.println("millisecond：" + millisecond + "\n");
+        } catch (Exception e) {
+            responseDataMap.put("respMsg", e.getMessage());
+        }
         return r;
     }
 
@@ -293,6 +556,7 @@ public class StrategyController {
         if (productId != null && productId != "" && productId != "0") {
             reqMod.setProductId(Integer.valueOf(productId));
         }
+        reqMod.setTechnologyZhName(technologyName);
         techPojoLst = TechnologyService.GetPojoAllList(reqMod);
 
         String reqUserIds = "";
@@ -535,34 +799,34 @@ public class StrategyController {
 
         //<editor-fold desc="从数据库中读取 工艺/单元、任务单、工况">
         taskMod = TaskService.selectByPrimaryKey(Integer.valueOf(taskId));
+        if (null != taskMod) {
+            TechnologyPOJO reqMod = new TechnologyPOJO();
+            reqMod.setId(taskMod.getTechnologyId());
+            techPojoLst = TechnologyService.GetPojoAllList(reqMod);
+            Operate operateReqMod = new Operate();
+            operateReqMod.setTaskId(Integer.valueOf(taskId));
+            operLst = OperateService.GetList(operateReqMod);
+            //</editor-fold>
 
-        TechnologyPOJO reqMod = new TechnologyPOJO();
-        reqMod.setId(taskMod.getTechnologyId());
-        techPojoLst = TechnologyService.GetPojoAllList(reqMod);
-        Operate operateReqMod = new Operate();
-        operateReqMod.setTaskId(Integer.valueOf(taskId));
-        operLst = OperateService.GetList(operateReqMod);
-        //</editor-fold>
-
-        //<editor-fold desc="工艺/工况、工况 合并">
-        Map<String, List<Operate>> mapOperLst = new HashMap<>();
-        for (int i = 0; i < operLst.size(); i++) {
-            Operate mod = operLst.get(i);
-            int pid = mod.getTechnologyId();
-            if (mapOperLst.containsKey(toString().valueOf(pid))) {
-                mapOperLst.get(toString().valueOf(pid)).add(mod);
-            } else {
-                List<Operate> dlist = new ArrayList<>();
-                dlist.add(mod);
-                mapOperLst.put(toString().valueOf(pid), dlist);
+            //<editor-fold desc="工艺/工况、工况 合并">
+            Map<String, List<Operate>> mapOperLst = new HashMap<>();
+            for (int i = 0; i < operLst.size(); i++) {
+                Operate mod = operLst.get(i);
+                int pid = mod.getTechnologyId();
+                if (mapOperLst.containsKey(toString().valueOf(pid))) {
+                    mapOperLst.get(toString().valueOf(pid)).add(mod);
+                } else {
+                    List<Operate> dlist = new ArrayList<>();
+                    dlist.add(mod);
+                    mapOperLst.put(toString().valueOf(pid), dlist);
+                }
             }
+            for (TechnologyPOJO techPojo : techPojoLst) {
+                techPojo.setOperateList(mapOperLst.get(toString().valueOf(techPojo.getId())));
+            }
+            //</editor-fold>
+            responseDataMap.put("dataList", techPojoLst);
         }
-        for (TechnologyPOJO techPojo : techPojoLst) {
-            techPojo.setOperateList(mapOperLst.get(toString().valueOf(techPojo.getId())));
-        }
-        //</editor-fold>
-
-        responseDataMap.put("dataList", techPojoLst);
         r.setData(responseDataMap);
         //</editor-fold>
         return r;
@@ -1034,7 +1298,11 @@ public class StrategyController {
         r.setCode(Result.SUCCESS);
         Map<String, Object> responseDataMap = new HashMap<>();
         List<Technology> techLst = TechnologyService.GetList();
-        Integer strRespMsg = TechnologyService.GetTechnologyName(1);
+        Integer strRespMsg = 0;
+        try {
+            strRespMsg = TechnologyService.GetStyleId(1);
+        } catch (Exception e) {
+        }
         responseDataMap.put("dataList", techLst);
         responseDataMap.put("respMsg", strRespMsg);
         r.setData(responseDataMap);
@@ -1170,13 +1438,8 @@ public class StrategyController {
 
         //<editor-fold desc="初始化">
         Result r = new Result();
-
-        r.setMsg(requestContext.getMessage("OK"));
-        r.setCode(Result.SUCCESS);
-
+        r.setCode(Result.ERROR);
         Map<String, Object> responseDataMap = new HashMap<>();
-
-
         //</editor-fold>
 
         //<editor-fold desc="业务操作并赋值">
@@ -1184,153 +1447,160 @@ public class StrategyController {
         StatisticalChartPOJO modMap;
         List<StatisticalChartDataPOJO> dstaLst;
         StatisticalChartDataPOJO mod;
-        //<editor-fold desc="登录者身份。学生/老师">
-        if (null != reqMod.getUserId() & reqMod.getUserId() > 0) {
-            User umod = UserService.getUserById(Integer.valueOf(reqMod.getUserId()));
-            if (null != umod) {
-                reqMod.setIsAdmin(umod.getIsAdmin());
-            }
-        }
-        //</editor-fold>
-        //<editor-fold desc="是否历史数据默认值">
-        if (null == reqMod.getIsHistory()) {
-            reqMod.setIsHistory(0);
-        }
-        //</editor-fold>
-        //<editor-fold desc="日期默认值">
-        if (null == reqMod.getStartTime() || reqMod.getStartTime() == "") {
-            SimpleDateFormat dfStart = new SimpleDateFormat("yyyy-MM-01");
-            SimpleDateFormat dfStop = new SimpleDateFormat("yyyy-MM-dd");
-            reqMod.setStartTime(dfStop.format(new Date()));
-            reqMod.setStopTime(dfStop.format(new Date()));
-        }
-        if (null == reqMod.getStopTime() || reqMod.getStopTime() == "") {
-            reqMod.setStopTime(reqMod.getStartTime());
-        }
-        //</editor-fold>
-        //<editor-fold desc="图表数据展示默认值">
         int currentExameId = 0;
         int currentStudyType = 0;
-        if (null != reqMod && null != reqMod.getExameId() && reqMod.getExameId() > 0) {
-            currentExameId = 0;
-        } else {
-            StatisticalChartDataPOJO defaultMod = StatisticalService.GetDefaultModel(reqMod);
-            if (null != defaultMod) {
-                reqMod.setExameId(Integer.valueOf(defaultMod.getxAxis()));
-                reqMod.setStudyType(Integer.valueOf(defaultMod.getyAxis()));
-                currentExameId = Integer.valueOf(defaultMod.getxAxis());
-                currentStudyType = Integer.valueOf(defaultMod.getyAxis());
-            } else {
-                reqMod.setExameId(0);
-                reqMod.setStudyType(1);
+        try {
+            //<editor-fold desc="登录者身份。学生/老师">
+            if (null != reqMod.getUserId() & reqMod.getUserId() > 0) {
+                User umod = UserService.getUserById(Integer.valueOf(reqMod.getUserId()));
+                if (null != umod) {
+                    reqMod.setIsAdmin(umod.getIsAdmin());
+                }
+            }
+            //</editor-fold>
+            //<editor-fold desc="是否历史数据默认值">
+            if (null == reqMod.getIsHistory()) {
+                reqMod.setIsHistory(0);
+            }
+            //</editor-fold>
+            //<editor-fold desc="日期默认值">
+            if (null == reqMod.getStartTime() || reqMod.getStartTime() == "") {
+                SimpleDateFormat dfStart = new SimpleDateFormat("yyyy-MM-01");
+                SimpleDateFormat dfStop = new SimpleDateFormat("yyyy-MM-dd");
+                reqMod.setStartTime(dfStop.format(new Date()));
+                reqMod.setStopTime(dfStop.format(new Date()));
+            }
+            if (null == reqMod.getStopTime() || reqMod.getStopTime() == "") {
+                reqMod.setStopTime(reqMod.getStartTime());
+            }
+            //</editor-fold>
+            //<editor-fold desc="图表数据展示默认值">
+            if (null != reqMod && null != reqMod.getExameId() && reqMod.getExameId() > 0) {
                 currentExameId = 0;
-                currentStudyType = 1;
+            } else {
+                StatisticalChartDataPOJO defaultMod = StatisticalService.GetDefaultModel(reqMod);
+                if (null != defaultMod) {
+                    reqMod.setExameId(Integer.valueOf(defaultMod.getxAxis()));
+                    reqMod.setStudyType(Integer.valueOf(defaultMod.getyAxis()));
+                    currentExameId = Integer.valueOf(defaultMod.getxAxis());
+                    currentStudyType = Integer.valueOf(defaultMod.getyAxis());
+                } else {
+                    reqMod.setExameId(0);
+                    reqMod.setStudyType(1);
+                    currentExameId = 0;
+                    currentStudyType = 1;
+                }
             }
-        }
-        //</editor-fold>
+            //</editor-fold>
 
-        //<editor-fold desc="平均时长 平均成绩 总成绩">
+            //<editor-fold desc="平均时长 平均成绩 总成绩">
 
-        StatisticalChartAvgPOJO avgMod = StatisticalService.GetAvgModel(reqMod);
+            StatisticalChartAvgPOJO avgMod = StatisticalService.GetAvgModel(reqMod);
 
-        //</editor-fold>
+            reqMod.setTotalScore(avgMod.getTotalScore());
+            reqMod.setTotalDuration(avgMod.getTotalDuration());
+            //</editor-fold>
 
-        //<editor-fold desc="成绩达标率">
-        modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("");
-        modMap.setNotes("成绩达标率");
+            //<editor-fold desc="成绩达标率">
+            modMap = new StatisticalChartPOJO();
+            modMap.setDescribe("");
+            modMap.setNotes("成绩达标率");
 
-        dstaLst = new ArrayList<>();
-        try {
-            List<StatisticalChartDataPOJO> dblist = StatisticalService.GetListWithDaBiaoLv(reqMod);
-            if (dblist.size() > 0) {
-                StatisticalChartDataPOJO moddb = dblist.get(0);
-                mod = new StatisticalChartDataPOJO();
-                mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
-                mod.setyAxis("已达标");
-                dstaLst.add(mod);
-                mod = new StatisticalChartDataPOJO();
-                mod.setxAxis(moddb.getxAxis());
-                mod.setyAxis("未达标");
-                dstaLst.add(mod);
+            dstaLst = new ArrayList<>();
+            try {
+                List<StatisticalChartDataPOJO> dblist = StatisticalService.GetListWithDaBiaoLv(reqMod);
+                if (dblist.size() > 0) {
+                    StatisticalChartDataPOJO moddb = dblist.get(0);
+                    mod = new StatisticalChartDataPOJO();
+                    mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
+                    mod.setyAxis("已达标");
+                    dstaLst.add(mod);
+                    mod = new StatisticalChartDataPOJO();
+                    mod.setxAxis(moddb.getxAxis());
+                    mod.setyAxis("未达标");
+                    dstaLst.add(mod);
+                }
+            } catch (Exception e) {
+                //e.printStackTrace();
+                responseDataMap.put("respMsg", e.getMessage());
             }
+            modMap.setDataList(dstaLst);
+
+            responseDataMap.put("upToStandard", modMap);
+            //</editor-fold>
+            //<editor-fold desc="报告提交率">
+            modMap = new StatisticalChartPOJO();
+            modMap.setDescribe("");
+            modMap.setNotes("报告提交率");
+
+            dstaLst = new ArrayList<>();
+            try {
+                List<StatisticalChartDataPOJO> dblist = StatisticalService.GetListWithBaoGao(reqMod);
+                if (dblist.size() > 0) {
+                    StatisticalChartDataPOJO moddb = dblist.get(0);
+
+                    mod = new StatisticalChartDataPOJO();
+                    mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
+                    mod.setyAxis("已提交");
+                    dstaLst.add(mod);
+                    mod = new StatisticalChartDataPOJO();
+                    mod.setxAxis(moddb.getxAxis());
+                    mod.setyAxis("未提交");
+                    dstaLst.add(mod);
+                }
+            } catch (Exception e) {
+                //e.printStackTrace();
+                responseDataMap.put("respMsg", e.getMessage());
+            }
+
+            modMap.setDataList(dstaLst);
+
+            responseDataMap.put("submit", modMap);
+            //</editor-fold>
+
+            //<editor-fold desc="学习时长分布">
+            modMap = new StatisticalChartPOJO();
+            if (null != avgMod) {
+                modMap.setDescribe("平均时长：" + avgMod.getAvgDuration() + "min");
+            }
+            modMap.setNotes("学习时长分布");
+
+            dstaLst = StatisticalService.GetListWithShiChang(reqMod);
+
+            modMap.setDataList(dstaLst);
+
+            responseDataMap.put("learningTime", modMap);
+            //</editor-fold>
+
+            //<editor-fold desc="任务单/试卷成绩分布">
+            modMap = new StatisticalChartPOJO();
+            if (null != avgMod) {
+                modMap.setDescribe("满分：" + avgMod.getSumScore() + "分；平均分：" + avgMod.getAvgScore() + "分");
+            }
+            modMap.setNotes("任务单/试卷成绩分布");
+
+            dstaLst = StatisticalService.GetListWithChengJi(reqMod);
+
+            modMap.setDataList(dstaLst);
+
+            responseDataMap.put("questionScore", modMap);
+            //</editor-fold>
+            //<editor-fold desc="各任务/试题平均成绩分布">
+            modMap = new StatisticalChartPOJO();
+            modMap.setDescribe("");
+            modMap.setNotes("各任务/试题平均成绩分布");
+
+            dstaLst = StatisticalService.GetListWithPingJun(reqMod);
+
+            modMap.setDataList(dstaLst);
+
+            responseDataMap.put("averageScore", modMap);
+            //</editor-fold>
+
+            r.setMsg(requestContext.getMessage("OK"));
+            r.setCode(Result.SUCCESS);
         } catch (Exception e) {
-            //e.printStackTrace();
-            responseDataMap.put("respMsg", e.getMessage());
         }
-        modMap.setDataList(dstaLst);
-
-        responseDataMap.put("upToStandard", modMap);
-        //</editor-fold>
-        //<editor-fold desc="报告提交率">
-        modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("");
-        modMap.setNotes("报告提交率");
-
-        dstaLst = new ArrayList<>();
-        try {
-            List<StatisticalChartDataPOJO> dblist = StatisticalService.GetListWithBaoGao(reqMod);
-            if (dblist.size() > 0) {
-                StatisticalChartDataPOJO moddb = dblist.get(0);
-
-                mod = new StatisticalChartDataPOJO();
-                mod.setxAxis(String.valueOf(Integer.valueOf(moddb.getyAxis()) - Integer.valueOf(moddb.getxAxis())));
-                mod.setyAxis("已提交");
-                dstaLst.add(mod);
-                mod = new StatisticalChartDataPOJO();
-                mod.setxAxis(moddb.getxAxis());
-                mod.setyAxis("未提交");
-                dstaLst.add(mod);
-            }
-        } catch (Exception e) {
-            //e.printStackTrace();
-            responseDataMap.put("respMsg", e.getMessage());
-        }
-
-        modMap.setDataList(dstaLst);
-
-        responseDataMap.put("submit", modMap);
-        //</editor-fold>
-
-        //<editor-fold desc="学习时长分布">
-        modMap = new StatisticalChartPOJO();
-        if (null != avgMod) {
-            modMap.setDescribe("平均时长：" + avgMod.getAvgDuration() + "min");
-        }
-        modMap.setNotes("学习时长分布");
-
-        dstaLst = StatisticalService.GetListWithShiChang(reqMod);
-
-        modMap.setDataList(dstaLst);
-
-        responseDataMap.put("learningTime", modMap);
-        //</editor-fold>
-
-        //<editor-fold desc="任务单/试卷成绩分布">
-        modMap = new StatisticalChartPOJO();
-        if (null != avgMod) {
-            modMap.setDescribe("满分：" + avgMod.getSumScore() + "分；平均分：" + avgMod.getAvgScore() + "分");
-        }
-        modMap.setNotes("任务单/试卷成绩分布");
-
-        dstaLst = StatisticalService.GetListWithChengJi(reqMod);
-
-        modMap.setDataList(dstaLst);
-
-        responseDataMap.put("questionScore", modMap);
-        //</editor-fold>
-        //<editor-fold desc="各任务/试题平均成绩分布">
-        modMap = new StatisticalChartPOJO();
-        modMap.setDescribe("");
-        modMap.setNotes("各任务/试题平均成绩分布");
-
-        dstaLst = StatisticalService.GetListWithPingJun(reqMod);
-
-        modMap.setDataList(dstaLst);
-
-        responseDataMap.put("averageScore", modMap);
-        //</editor-fold>
-
         //<editor-fold desc="附加参数赋值">
         responseDataMap.put("loginUserCount", "0");
         responseDataMap.put("onlineUserCount", "0");

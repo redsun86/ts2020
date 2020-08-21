@@ -8,12 +8,15 @@
     </resultMap>
     <resultMap id="BaseResultAvgMap" type="com.esst.ts.model.StatisticalChartAvgPOJO">
         <result column="avg_duration" property="avgDuration" jdbcType="VARCHAR"/>
+        <result column="total_duration" property="totalDuration" jdbcType="VARCHAR"/>
         <result column="avg_score" property="avgScore" jdbcType="VARCHAR"/>
+        <result column="total_score" property="totalScore" jdbcType="VARCHAR"/>
         <result column="sum_score" property="sumScore" jdbcType="VARCHAR"/>
     </resultMap>
     <select id="GetListWithDaBiaoLv0" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
         select count(distinct xAxis) xAxis,count(distinct user_id) yAxis from (
-        select bv.user_id,bv.task_id,bv.operate_id,(case when 50>bv.current_score then bv.user_id else null end) xAxis from
+        select bv.user_id,bv.task_id,bv.operate_id,(case when 50>bv.current_score then bv.user_id else null end) xAxis
+        from
         (
 
 
@@ -69,7 +72,8 @@
     </select>
     <select id="GetListWithDaBiaoLv1" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
         select count(distinct xAxis) xAxis,count(distinct user_id) yAxis from (
-        select bv.user_id,bv.task_id,bv.operate_id,(case when 50>bv.current_score then bv.user_id else null end) xAxis from
+        select bv.user_id,bv.task_id,bv.operate_id,(case when 50>bv.current_score then bv.user_id else null end) xAxis
+        from
         (
 
         select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
@@ -127,9 +131,11 @@
         (
         select tv.task_id,tv.operate_id,tv.study_type,tv.user_id,ifnull(scorev.prop_scroe,0.00) prop_scroe from (
         select * from (
-        select tor.task_id,tor.operate_id,0 study_type from task_oper_relation tor left join operate o on tor.operate_id=o.id where o.is_deleted=0
+        select tor.task_id,tor.operate_id,0 study_type from task_oper_relation tor left join operate o on
+        tor.operate_id=o.id where o.is_deleted=0
         union all
-        select e.id task_id,q.id operate_id,1 study_type from exam e left join questions q on q.exame_id=e.id where e.is_deleted=0 and q.is_deleted=0
+        select e.id task_id,q.id operate_id,1 study_type from exam e left join questions q on q.exame_id=e.id where
+        e.is_deleted=0 and q.is_deleted=0
         ) tor
         left join (select distinct uld.user_id from (
         select max(id) id from user_score_record
@@ -144,7 +150,8 @@
         group by
         teacher_id,user_id,task_id,operate_id,study_type,train_id,date_format(FROM_UNIXTIME(begin_time/1000),'%Y.%m.%d')
         ) studybv left join (select id,teacher_id,user_id,task_id,operate_id,report,study_type,score
-        current_score,begin_time,end_time-begin_time study_duration from user_score_record) uld on uld.id=studybv.id) u on 1=1
+        current_score,begin_time,end_time-begin_time study_duration from user_score_record) uld on uld.id=studybv.id) u
+        on 1=1
         where tor.study_type=0 and tor.task_id=1
         ) tv left join (
         select date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
@@ -193,7 +200,8 @@
         uld.teacher_id,uld.user_id,uld.task_id,uld.report,uld.operate_id,uld.study_type
         ,date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d'),qp.q_count,qp.prop,op.o_count
 
-        ) scorev on tv.task_id=scorev.task_id and tv.operate_id=scorev.operate_id and tv.study_type=scorev.study_type and tv.user_id=scorev.user_id
+        ) scorev on tv.task_id=scorev.task_id and tv.operate_id=scorev.operate_id and tv.study_type=scorev.study_type
+        and tv.user_id=scorev.user_id
         ) bv
         ) gbv
     </select>
@@ -203,9 +211,11 @@
         (
         select tv.task_id,tv.operate_id,tv.study_type,tv.user_id,ifnull(scorev.prop_scroe,0.00) prop_scroe from (
         select * from (
-        select tor.task_id,tor.operate_id,0 study_type from task_oper_relation tor left join operate o on tor.operate_id=o.id where o.is_deleted=0
+        select tor.task_id,tor.operate_id,0 study_type from task_oper_relation tor left join operate o on
+        tor.operate_id=o.id where o.is_deleted=0
         union all
-        select e.id task_id,q.id operate_id,1 study_type from exam e left join questions q on q.exame_id=e.id where e.is_deleted=0 and q.is_deleted=0
+        select e.id task_id,q.id operate_id,1 study_type from exam e left join questions q on q.exame_id=e.id where
+        e.is_deleted=0 and q.is_deleted=0
         ) tor
         left join (select distinct uld.user_id from (
         select max(id) id from user_live_data
@@ -268,7 +278,8 @@
         uld.teacher_id,uld.user_id,uld.task_id,uld.report,uld.operate_id,uld.study_type
         ,date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d'),qp.q_count,qp.prop,op.o_count
 
-        ) scorev on tv.task_id=scorev.task_id and tv.operate_id=scorev.operate_id and tv.study_type=scorev.study_type and tv.user_id=scorev.user_id
+        ) scorev on tv.task_id=scorev.task_id and tv.operate_id=scorev.operate_id and tv.study_type=scorev.study_type
+        and tv.user_id=scorev.user_id
 
         ) bv
         ) gbv
@@ -380,18 +391,31 @@
     </select>
     <select id="GetListWithShiChang0" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
         select sc.xAxis,ifnull(scbv.yAxis,0) yAxis from (
-        select 1 xAxis_id,'小于10分钟' xAxis
-        union all select 2 xAxis_id,'10~20分钟' xAxis
-        union all select 3 xAxis_id,'20~30分钟' xAxis
-        union all select 4 xAxis_id,'30~40分钟' xAxis
-        union all select 5 xAxis_id,'40分钟以上' xAxis
+        select 1 xAxis_id,CONCAT('小于',CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2)),'分钟') xAxis
+        union all select 2
+        xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2)),'~'
+        ,CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*2,'分钟')
+        xAxis
+        union all select 3
+        xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*2,'~'
+        ,CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*3,'分钟')
+        xAxis
+        union all select 4
+        xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*3,'~'
+        ,CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*4,'分钟')
+        xAxis
+        union all select 5 xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*4,'分钟以上')
+        xAxis
         ) sc left join (
         select gbv.xAxis_id,count(distinct user_id) yAxis from(
         select bv.user_id,bv.task_id,sum(bv.study_duration) study_duration,(case
-        when 10*60*1000>=SUM(ifnull(study_duration,0)) then 1
-        when SUM(ifnull(study_duration,0))>10*60*1000 and 20*60*1000 >= SUM(ifnull(study_duration,0)) then 2
-        when SUM(ifnull(study_duration,0))>20*60*1000 and 30*60*1000 >= SUM(ifnull(study_duration,0)) then 3
-        when SUM(ifnull(study_duration,0))>30*60*1000 and 40*60*1000 >= SUM(ifnull(study_duration,0)) then 4
+        when CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))>=SUM(ifnull(study_duration,0)) then 1
+        when SUM(ifnull(study_duration,0))>CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2)) and
+        CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*2 >= SUM(ifnull(study_duration,0)) then 2
+        when SUM(ifnull(study_duration,0))>CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*2 and
+        CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*3 >= SUM(ifnull(study_duration,0)) then 3
+        when SUM(ifnull(study_duration,0))>CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*3 and
+        CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*4 >= SUM(ifnull(study_duration,0)) then 4
         else 5 end) xAxis_id from (
 
         select date_format(FROM_UNIXTIME(uld.begin_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
@@ -446,18 +470,31 @@
     </select>
     <select id="GetListWithShiChang1" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
         select sc.xAxis,ifnull(scbv.yAxis,0) yAxis from (
-        select 1 xAxis_id,'小于10分钟' xAxis
-        union all select 2 xAxis_id,'10~20分钟' xAxis
-        union all select 3 xAxis_id,'20~30分钟' xAxis
-        union all select 4 xAxis_id,'30~40分钟' xAxis
-        union all select 5 xAxis_id,'40分钟以上' xAxis
+        select 1 xAxis_id,CONCAT('小于',CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2)),'分钟') xAxis
+        union all select 2
+        xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2)),'~'
+        ,CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*2,'分钟')
+        xAxis
+        union all select 3
+        xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*2,'~'
+        ,CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*3,'分钟')
+        xAxis
+        union all select 4
+        xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*3,'~'
+        ,CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*4,'分钟')
+        xAxis
+        union all select 5 xAxis_id,CONCAT(CAST((#{totalDuration,jdbcType=VARCHAR}/60/1000)/5 as DECIMAL(10,2))*4,'分钟以上')
+        xAxis
         ) sc left join (
         select gbv.xAxis_id,count(distinct user_id) yAxis from(
         select bv.user_id,bv.task_id,sum(bv.study_duration) study_duration,(case
-        when 10*60*1000>=SUM(ifnull(study_duration,0)) then 1
-        when SUM(ifnull(study_duration,0))>10*60*1000 and 20*60*1000 >= SUM(ifnull(study_duration,0)) then 2
-        when SUM(ifnull(study_duration,0))>20*60*1000 and 30*60*1000 >= SUM(ifnull(study_duration,0)) then 3
-        when SUM(ifnull(study_duration,0))>30*60*1000 and 40*60*1000 >= SUM(ifnull(study_duration,0)) then 4
+        when CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))>=SUM(ifnull(study_duration,0)) then 1
+        when SUM(ifnull(study_duration,0))>CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2)) and
+        CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*2 >= SUM(ifnull(study_duration,0)) then 2
+        when SUM(ifnull(study_duration,0))>CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*2 and
+        CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*3 >= SUM(ifnull(study_duration,0)) then 3
+        when SUM(ifnull(study_duration,0))>CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*3 and
+        CAST((#{totalDuration,jdbcType=VARCHAR})/5 as DECIMAL(10,2))*4 >= SUM(ifnull(study_duration,0)) then 4
         else 5 end) xAxis_id from (
 
         select date_format(FROM_UNIXTIME(uld.start_time/1000),'%Y.%m.%d') date_time,uld.teacher_id,uld.user_id
@@ -512,18 +549,30 @@
     </select>
     <select id="GetListWithChengJi0" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
         select cj.xAxis,ifnull(scbv.yAxis,0) yAxis from(
-        select 1 xAxis_id,'小于50' xAxis
-        union all select 2 xAxis_id,'50~100' xAxis
-        union all select 3 xAxis_id,'100~150' xAxis
-        union all select 4 xAxis_id,'150~200' xAxis
-        union all select 5 xAxis_id,'200' xAxis
+        select 1 xAxis_id,CONCAT('小于',ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)) xAxis
+        union all select 2
+        xAxis_id,CONCAT(ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5),'~'
+        ,ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*2)
+        xAxis
+        union all select 3
+        xAxis_id,CONCAT(ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*2,'~'
+        ,ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*3)
+        xAxis
+        union all select 4
+        xAxis_id,CONCAT(ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*3,'~'
+        ,ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*4)
+        xAxis
+        union all select 5 xAxis_id,CONCAT(ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*4,'以上') xAxis
         ) cj left join (
         select gbv.xAxis_id,count(distinct user_id) yAxis from(
         select bv.user_id,bv.task_id,sum(bv.prop_scroe) prop_scroe,(case
-        when 50>=ifnull(sum(bv.prop_scroe),0) then 1
-        when ifnull(sum(bv.prop_scroe),0)>50 and 100 >= ifnull(sum(bv.prop_scroe),0) then 2
-        when ifnull(sum(bv.prop_scroe),0)>100 and 150 >= ifnull(sum(bv.prop_scroe),0) then 3
-        when ifnull(sum(bv.prop_scroe),0)>150 and 200 >= ifnull(sum(bv.prop_scroe),0) then 4
+        when ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)>=ifnull(sum(bv.prop_scroe),0) then 1
+        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5) and
+        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*2 >= ifnull(sum(bv.prop_scroe),0) then 2
+        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*2 and
+        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*3 >= ifnull(sum(bv.prop_scroe),0) then 3
+        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*3 and
+        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*4 >= ifnull(sum(bv.prop_scroe),0) then 4
         else 5 end) xAxis_id from (
 
 
@@ -580,18 +629,30 @@
     </select>
     <select id="GetListWithChengJi1" resultMap="BaseResultMap" parameterType="com.esst.ts.model.StatisticalPOJO">
         select cj.xAxis,ifnull(scbv.yAxis,0) yAxis from(
-        select 1 xAxis_id,'小于50' xAxis
-        union all select 2 xAxis_id,'50~100' xAxis
-        union all select 3 xAxis_id,'100~150' xAxis
-        union all select 4 xAxis_id,'150~200' xAxis
-        union all select 5 xAxis_id,'200' xAxis
+        select 1 xAxis_id,CONCAT('小于',ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)) xAxis
+        union all select 2
+        xAxis_id,CONCAT(ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5),'~'
+        ,ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*2)
+        xAxis
+        union all select 3
+        xAxis_id,CONCAT(ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*2,'~'
+        ,ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*3)
+        xAxis
+        union all select 4
+        xAxis_id,CONCAT(ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*3,'~'
+        ,ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*4)
+        xAxis
+        union all select 5 xAxis_id,CONCAT(ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*4,'以上') xAxis
         ) cj left join (
         select gbv.xAxis_id,count(distinct user_id) yAxis from(
         select bv.user_id,bv.task_id,sum(bv.prop_scroe) prop_scroe,(case
-        when 50>=ifnull(sum(bv.prop_scroe),0) then 1
-        when ifnull(sum(bv.prop_scroe),0)>50 and 100 >= ifnull(sum(bv.prop_scroe),0) then 2
-        when ifnull(sum(bv.prop_scroe),0)>100 and 150 >= ifnull(sum(bv.prop_scroe),0) then 3
-        when ifnull(sum(bv.prop_scroe),0)>150 and 200 >= ifnull(sum(bv.prop_scroe),0) then 4
+        when ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)>=ifnull(sum(bv.prop_scroe),0) then 1
+        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5) and
+        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*2 >= ifnull(sum(bv.prop_scroe),0) then 2
+        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*2 and
+        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*3 >= ifnull(sum(bv.prop_scroe),0) then 3
+        when ifnull(sum(bv.prop_scroe),0)>ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*3 and
+        ceiling(ceiling(#{totalScore,jdbcType=VARCHAR})/5)*4 >= ifnull(sum(bv.prop_scroe),0) then 4
         else 5 end) xAxis_id from (
 
 
@@ -750,8 +811,11 @@
         ) bv group by bv.task_id,bv.operate_id
     </select>
     <select id="GetAvgModel0" resultMap="BaseResultAvgMap" parameterType="com.esst.ts.model.StatisticalPOJO">
-        select count(distinct gbv.user_id) user_count,cast(avg(study_duration)/60/1000 as DECIMAL(10,0))
-        avg_duration,cast(avg(prop_scroe) as DECIMAL(10,2)) avg_score,max(total_score) sum_score from(
+        select count(distinct gbv.user_id) user_count,cast(sum(study_duration)/60/1000/count(distinct gbv.user_id) as
+        DECIMAL(10,0)) avg_duration,cast(avg(study_duration)/60/1000 as DECIMAL(10,0))
+        avg_durationbak,cast(sum(study_duration) as DECIMAL(10,0))
+        total_duration,cast(avg(prop_scroe) as DECIMAL(10,2)) avg_score,cast(max(prop_scroe) as DECIMAL(10,2))
+        total_score,max(total_score) sum_score from(
         select bv.user_id,sum(bv.study_duration) study_duration,sum(bv.prop_scroe) prop_scroe,bv.total_score from (
 
 
@@ -806,8 +870,12 @@
         ) gbv
     </select>
     <select id="GetAvgModel1" resultMap="BaseResultAvgMap" parameterType="com.esst.ts.model.StatisticalPOJO">
-        select count(distinct gbv.user_id) user_count,cast(avg(study_duration)/60/1000 as DECIMAL(10,0)) avg_duration
-        ,cast(avg(prop_scroe) as DECIMAL(10,2)) avg_score,max(total_score) sum_score from(
+        select count(distinct gbv.user_id) user_count,cast(sum(study_duration)/60/1000/count(distinct gbv.user_id) as
+        DECIMAL(10,0)) avg_duration,cast(avg(study_duration)/60/1000 as DECIMAL(10,0))
+        avg_durationbak,cast(sum(study_duration) as DECIMAL(10,0)) total_duration,cast(avg(prop_scroe) as
+        DECIMAL(10,2))
+        avg_score,cast(max(prop_scroe) as DECIMAL(10,2))
+        total_score,max(total_score) sum_score from(
         select bv.user_id,sum(bv.study_duration) study_duration,sum(bv.prop_scroe) prop_scroe,bv.total_score from (
 
 

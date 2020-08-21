@@ -19,6 +19,7 @@ import java.util.Set;
 public class LoginInterceptor implements HandlerInterceptor {
     @Resource
     private UserTokenService userTokenService;
+
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         Result r = new Result();
@@ -57,7 +58,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        if (userTokenService.checkToken(Integer.parseInt(userId), token, 1)) {
+        if (!StringUtils.isNum(userId) || userTokenService.checkToken(Integer.parseInt(userId), token, 1)) {
             httpServletResponse.reset();
             httpServletResponse.setCharacterEncoding("UTF-8");
             httpServletResponse.setContentType("application/json;charset=UTF-8");

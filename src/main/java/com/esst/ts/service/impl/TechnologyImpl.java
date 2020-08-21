@@ -29,7 +29,7 @@ public class TechnologyImpl implements TechnologyService {
     }
 
     @Override
-    public Integer GetTechnologyName(int technologyId) {
-        return TechnologyMapper.GetTechnologyName(technologyId);
+    public Integer GetStyleId(int technologyId) {
+        return TechnologyMapper.GetStyleId(technologyId);
     }
 }

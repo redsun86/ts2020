@@ -15,6 +15,6 @@ public interface TechnologyService {
 
     List<Technology> GetList();
 
-    Integer GetTechnologyName(int technologyId);
+    Integer GetStyleId(int technologyId);
 
 }
