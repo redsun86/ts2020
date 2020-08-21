@@ -88,6 +88,10 @@ public interface UserScoreRecordMapper {
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getoperateid(@Param("beginDate") String beginDate,@Param("userId") int userId,@Param("taskId") int taskId);
 
+    @Select("select *  from user_score_record where user_id=#{userId} and FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d')=#{beginDate} and task_id=#{taskId} GROUP BY operate_id order by id desc  LIMIT 1")
+    @ResultMap("BasePOJOResultMap")
+    List<UserScoreRecordPOJO> getexamscore(@Param("beginDate") String beginDate,@Param("userId") int userId,@Param("taskId") int taskId);
+
     @Select("select max(score) as score,begin_time,end_time  from user_score_record where user_id=#{userId} and FROM_UNIXTIME(begin_time / 1000,'%Y-%m-%d')=#{beginDate} and task_id=#{taskId} and operate_id=#{operateId}")
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getmaxscore(@Param("beginDate") String beginDate,@Param("userId") int userId,@Param("taskId") int taskId,@Param("operateId") int operateId);
