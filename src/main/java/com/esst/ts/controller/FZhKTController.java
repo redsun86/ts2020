@@ -458,7 +458,13 @@ public class FZhKTController {
                             scoreexcelitem.setLearnTime(learntime);
                             scoreexcelitem.setMachineNum(usld.getMacAddress());
                             scoreexcelitem.operateScoremap.put(usld.getOperateId(), usld.getCurrentScore());
-                            double toutalscore = scoreexcelitem.getTotalScore().doubleValue() + usld.getCurrentScore();
+                            double toutalscore=0;
+                            if(Integer.valueOf(tm.getStudy_type())==Constants.StudyType.EXAM.ordinal()){
+                                toutalscore=usld.getTotalScore();
+                            }
+                            else {
+                                toutalscore =scoreexcelitem.getTotalScore().doubleValue() + usld.getCurrentScore();
+                            }
                             scoreexcelitem.setTotalScore((double) Math.round(toutalscore * 100) / 100);
                             realTimeEcxelPOJO.realTimeExcelItemPOJOHashMapWithoutTeacher.put(user1.getId(), scoreexcelitem);
                             //</editor-fold>
@@ -469,7 +475,13 @@ public class FZhKTController {
                             rtitem.setLearnTime(learntime);
                             rtitem.setMachineNum(usld.getMacAddress());
                             rtitem.operateScoremap.put(usld.getOperateId(), usld.getCurrentScore());
-                            double toutalscore = rtitem.getTotalScore().doubleValue() + usld.getCurrentScore();
+                            double toutalscore=0;
+                            if(Integer.valueOf(tm.getStudy_type())==Constants.StudyType.EXAM.ordinal()){
+                                toutalscore=usld.getTotalScore();
+                            }
+                            else {
+                                toutalscore =rtitem.getTotalScore().doubleValue() + usld.getCurrentScore();
+                            }
                             rtitem.setTotalScore((double) Math.round(toutalscore * 100) / 100);
                             realTimeEcxelPOJO.realTimeExcelItemPOJOHashMap.put(usld.getUserId(), rtitem);
                             //</editor-fold>
