@@ -37,7 +37,7 @@ public interface UserLiveDataMapper {
     @Delete("delete from user_live_data where teacher_id=#{userId}")
     int deletUserliveByteacherid(@Param("userId") int userId);
     @Select("SELECT SUM(uld.study_duration) study_duration ,MAX(current_score) current_score,uld.* from user_live_data uld RIGHT JOIN \n" +
-            "(SELECT MAX(u.id) id from user_live_data u WHERE IF(#{userId}='',0=0,teacher_id=#{userId}) and task_id=#{taskId} AND study_type=#{studyType} GROUP BY train_id) e ON uld.id=e.id GROUP BY task_id,operate_id ")
+         "(SELECT MAX(u.id) id from user_live_data u WHERE IF(#{userId}='',0=0,teacher_id=#{userId}) and task_id=#{taskId} AND study_type=#{studyType} GROUP BY train_id) e ON uld.id=e.id GROUP BY task_id,operate_id,user_id")
     @ResultMap("ResultMapWithBLOBs")
     List<UserLiveDataWithBLOBs> getOperateMaxScore(@Param("userId") String userId,@Param("taskId") String taskId, @Param("studyType") String studyType);
 
