@@ -23,6 +23,8 @@ public interface StudyRecordService {
 
     List<UserScoreRecordPOJO> getoperateid(String beginDate, Integer userId,Integer taskId);
 
+    List<UserScoreRecordPOJO> getexamscore(String beginDate, Integer userId,Integer taskId);
+
     List<UserScoreRecordPOJO> getmaxscore(String beginDate, Integer userId,Integer taskId,Integer operateId);
 
     List<UserScoreRecordPOJO> getLearnTime(String beginDate, Integer userId,Integer taskId);

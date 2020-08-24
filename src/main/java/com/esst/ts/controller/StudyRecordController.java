@@ -47,7 +47,7 @@ public class StudyRecordController {
     @RequestMapping(value = "/selectScore", method = RequestMethod.POST)
     public Result selectScore(@RequestParam(value = "date",required = true) String date,
                               @RequestParam(value = "userId",required = true) Integer userId,
-                             @RequestParam(value = "token",required = true) String token,
+                              @RequestParam(value = "token",required = true) String token,
                              HttpServletRequest request) throws ParseException {
         RequestContext requestContext = new RequestContext(request);
         Result r = new Result();
@@ -229,11 +229,18 @@ public class StudyRecordController {
             double score=0;
             long leartime=0;
             //根据用户id和日期和任务单id进行分组查询对应的任务
-            List<UserScoreRecordPOJO> operateid=studyRecordService.getoperateid(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
-            for (UserScoreRecordPOJO operateidlist : operateid) {
-                //根据分组的operateid查询最大的成绩
-                List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
-                score+=maxscore.get(0).getScore();
+            if(newuserScoreRecordPOJO.getStudyType()==0) {
+                List<UserScoreRecordPOJO> operateid = studyRecordService.getoperateid(DateUtils.stampToDates(beginTime), newuserScoreRecordPOJO.getUserId(), newuserScoreRecordPOJO.getTaskId());
+                for (UserScoreRecordPOJO operateidlist : operateid) {
+                    //根据分组的operateid查询最大的成绩
+                    List<UserScoreRecordPOJO> maxscore = studyRecordService.getmaxscore(DateUtils.stampToDates(beginTime), newuserScoreRecordPOJO.getUserId(), newuserScoreRecordPOJO.getTaskId(), operateidlist.getOperateId());
+                    score += maxscore.get(0).getScore();
+                }
+            }
+            //考试成绩
+            if(newuserScoreRecordPOJO.getStudyType()==1){
+                List<UserScoreRecordPOJO> operateid = studyRecordService.getexamscore(DateUtils.stampToDates(beginTime), newuserScoreRecordPOJO.getUserId(), newuserScoreRecordPOJO.getTaskId());
+                score=operateid.get(0).getTotalScore();
             }
             m.setScore(Double.parseDouble(String.format("%.2f",score)));
             //根据用户id和日期和任务单id进行查询对应的任务
@@ -318,11 +325,18 @@ public class StudyRecordController {
             long leartime=0;
             double leartimes=0.0;
             //根据用户id和日期和任务单id进行分组查询对应的任务
-            List<UserScoreRecordPOJO> operateid=studyRecordService.getoperateid(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
-            for (UserScoreRecordPOJO operateidlist : operateid) {
-                //根据分组的operateid查询最大的成绩
-                List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
-                score+=maxscore.get(0).getScore();
+            if(newuserScoreRecordPOJO.getStudyType()==0) {
+                List<UserScoreRecordPOJO> operateid=studyRecordService.getoperateid(DateUtils.stampToDates(beginTime),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
+                for (UserScoreRecordPOJO operateidlist : operateid) {
+                    //根据分组的operateid查询最大的成绩
+                    List<UserScoreRecordPOJO> maxscore = studyRecordService.getmaxscore(DateUtils.stampToDates(beginTime), newuserScoreRecordPOJO.getUserId(), newuserScoreRecordPOJO.getTaskId(), operateidlist.getOperateId());
+                    score += maxscore.get(0).getScore();
+                }
+            }
+            //考试成绩
+            if(newuserScoreRecordPOJO.getStudyType()==1){
+                List<UserScoreRecordPOJO> operateid = studyRecordService.getexamscore(DateUtils.stampToDates(beginTime), newuserScoreRecordPOJO.getUserId(), newuserScoreRecordPOJO.getTaskId());
+                score=operateid.get(0).getTotalScore();
             }
             m.setScore(Double.parseDouble(String.format("%.2f",score)));
             //根据用户id和日期和任务单id进行查询对应的任务
@@ -520,11 +534,18 @@ public class StudyRecordController {
             double score=0;
             long leartime=0;
             //根据用户id和日期和任务单id进行分组查询对应的任务
-            List<UserScoreRecordPOJO> operateid=studyRecordService.getoperateid(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
-            for (UserScoreRecordPOJO operateidlist : operateid) {
-                //根据分组的operateid查询最大的成绩
-                List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
-                score+=maxscore.get(0).getScore();
+            if(newuserScoreRecordPOJO.getStudyType()==0) {
+                List<UserScoreRecordPOJO> operateid = studyRecordService.getoperateid(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()), newuserScoreRecordPOJO.getUserId(), newuserScoreRecordPOJO.getTaskId());
+                for (UserScoreRecordPOJO operateidlist : operateid) {
+                    //根据分组的operateid查询最大的成绩
+                    List<UserScoreRecordPOJO> maxscore = studyRecordService.getmaxscore(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()), newuserScoreRecordPOJO.getUserId(), newuserScoreRecordPOJO.getTaskId(), operateidlist.getOperateId());
+                    score += maxscore.get(0).getScore();
+                }
+            }
+            //考试成绩
+            if(newuserScoreRecordPOJO.getStudyType()==1){
+                List<UserScoreRecordPOJO> operateid = studyRecordService.getexamscore(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()), newuserScoreRecordPOJO.getUserId(), newuserScoreRecordPOJO.getTaskId());
+                score=operateid.get(0).getTotalScore();
             }
             m.setScore(Double.parseDouble(String.format("%.2f",score)));
             //根据用户id和日期和任务单id进行查询对应的任务
@@ -593,11 +614,18 @@ public class StudyRecordController {
             double leartimes=0.0;
             String studyTime="";
             //根据用户id和日期和任务单id进行分组查询对应的任务
-            List<UserScoreRecordPOJO> operateid=studyRecordService.getoperateid(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId());
-            for (UserScoreRecordPOJO operateidlist : operateid) {
-                //根据分组的operateid查询最大的成绩
-                List<UserScoreRecordPOJO> maxscore=studyRecordService.getmaxscore(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()),newuserScoreRecordPOJO.getUserId(),newuserScoreRecordPOJO.getTaskId(),operateidlist.getOperateId());
-                score+=maxscore.get(0).getScore();
+            if(newuserScoreRecordPOJO.getStudyType()==0) {
+                List<UserScoreRecordPOJO> operateid = studyRecordService.getoperateid(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()), newuserScoreRecordPOJO.getUserId(), newuserScoreRecordPOJO.getTaskId());
+                for (UserScoreRecordPOJO operateidlist : operateid) {
+                    //根据分组的operateid查询最大的成绩
+                    List<UserScoreRecordPOJO> maxscore = studyRecordService.getmaxscore(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()), newuserScoreRecordPOJO.getUserId(), newuserScoreRecordPOJO.getTaskId(), operateidlist.getOperateId());
+                    score += maxscore.get(0).getScore();
+                }
+            }
+            //考试成绩
+            if(newuserScoreRecordPOJO.getStudyType()==1){
+                List<UserScoreRecordPOJO> operateid = studyRecordService.getexamscore(DateUtils.stampToDates(newuserScoreRecordPOJO.getBeginTime().toString()), newuserScoreRecordPOJO.getUserId(), newuserScoreRecordPOJO.getTaskId());
+                score=operateid.get(0).getTotalScore();
             }
             m.setScore(Double.parseDouble(String.format("%.2f",score)));
             //根据用户id和日期和任务单id进行查询对应的任务
