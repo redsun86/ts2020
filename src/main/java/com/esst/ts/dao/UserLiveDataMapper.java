@@ -44,8 +44,8 @@ public interface UserLiveDataMapper {
     @Select("SELECT SUM(x.study_duration1) as study_duration,(case when x.study_type = 0 THEN SUM(x.total_score1) WHEN x.study_type=1 THEN x.total_score1 END)  as total_score,x.* FROM \n" +
             "(SELECT SUM(uld.study_duration) study_duration1 ,(case when uld.study_type = 0 THEN MAX(current_score) WHEN uld.study_type=1 THEN total_score END) total_score1,uld.* from user_live_data uld" +
             " RIGHT JOIN  (SELECT MAX(u.id) id from user_live_data u WHERE IF(#{userId}='',0=0,teacher_id=#{userId}) and IF(#{taskId}='',0=0,task_id=#{taskId} AND study_type=#{studyType}) GROUP BY train_id ORDER BY id DESC) e" +
-            " ON uld.id=e.id GROUP BY task_id,operate_id,user_id ORDER BY id DESC) x \n" +
-            "GROUP BY task_id,user_id")
+            " ON uld.id=e.id GROUP BY task_id,operate_id,user_id,study_type ORDER BY id DESC) x \n" +
+            "GROUP BY task_id,user_id,study_type ORDER BY id DESC")
     @ResultMap("ResultMapWithBLOBs")
     List<UserLiveDataWithBLOBs> getRealTimeByTeacherId(@Param("userId") String userId,@Param("taskId") String taskId,@Param("studyType") String studyType);
 }
