@@ -39,7 +39,7 @@ public interface UserScoreRecordMapper {
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoAll(@Param("beginDate") String beginDate, @Param("endDate") String endDate);
 
-    @Select("SELECT r.*,r.end_time-r.begin_time as learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') >=#{beginDate} AND FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') <= #{endDate} AND r.teacher_id=#{userId} GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id ORDER BY begin_time DESC")
+    @Select("SELECT r.*,r.end_time-r.begin_time as learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') >=#{beginDate} AND FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') <= #{endDate} AND r.teacher_id=#{userId} GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id,study_type ORDER BY begin_time DESC")
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoByUserAndDate(@Param("beginDate") String beginDate, @Param("endDate") String endDate,@Param("userId") int userId);
 
@@ -108,20 +108,20 @@ public interface UserScoreRecordMapper {
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getPersonUserStudyRecordDetail(@Param("date") String date,@Param("userId") int userId,@Param("taskId") int taskId,@Param("studyType") int studyType);
 
-    @Select("SELECT r.*, r.end_time - r.begin_time AS learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE user_id in(${userId}) GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id ORDER BY begin_time DESC")
+    @Select("SELECT r.*, r.end_time - r.begin_time AS learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE user_id in(${userId}) GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id,study_type ORDER BY begin_time DESC")
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoforPerson(@Param("userId") String userId);
 
-    @Select("SELECT r.*, r.end_time - r.begin_time AS learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE user_id in(${userId}) AND r.task_id=#{taskId} GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id ORDER BY begin_time DESC")
+    @Select("SELECT r.*, r.end_time - r.begin_time AS learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE user_id in(${userId}) AND r.task_id=#{taskId} GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id,study_type ORDER BY begin_time DESC")
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoforPersonByTaskId(@Param("userId") String userId,@Param("taskId") int taskId);
 
 
-    @Select("SELECT r.*, r.end_time - r.begin_time AS learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE user_id in(${userId}) AND r.task_id=#{taskId} AND r.study_type=#{studyType} GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id ORDER BY begin_time DESC")
+    @Select("SELECT r.*, r.end_time - r.begin_time AS learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE user_id in(${userId}) AND r.task_id=#{taskId} AND r.study_type=#{studyType} GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id,study_type ORDER BY begin_time DESC")
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoforPersonByTaskIdAndStudyType(@Param("userId") String userId,@Param("taskId") int taskId,@Param("studyType") String studyType);
 
-    @Select("SELECT r.*, r.end_time - r.begin_time AS learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE user_id in(${userId}) AND r.study_type=#{studyType} GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id ORDER BY begin_time DESC")
+    @Select("SELECT r.*, r.end_time - r.begin_time AS learn_time,FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d') as studyDate,u.rel_name,u.st_num,u.class_name,u.group_name FROM user_score_record r LEFT JOIN `user` u ON u.id = r.user_id WHERE user_id in(${userId}) AND r.study_type=#{studyType} GROUP BY FROM_UNIXTIME(r.begin_time / 1000,'%Y-%m-%d'),task_id,user_id,study_type ORDER BY begin_time DESC")
     @ResultMap("BasePOJOResultMap")
     List<UserScoreRecordPOJO> getUserStudyRecordAndUserInfoforPersonAndStudyType(@Param("userId") String userId,@Param("studyType") String studyType);
 
